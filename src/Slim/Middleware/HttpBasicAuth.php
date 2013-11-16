@@ -20,7 +20,7 @@ class HttpBasicAuth extends \Slim\Middleware {
         $this->options = array(
             "users" => array(),
             "path" => "/",
-            "real" => "Protected"
+            "realm" => "Protected"
         );
 
         if ($options) {
