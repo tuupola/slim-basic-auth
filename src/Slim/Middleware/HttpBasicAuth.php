@@ -33,7 +33,8 @@ class HttpBasicAuth extends \Slim\Middleware {
         $environment = $this->app->environment;
 
         /* If path matches what is given on initialization. */
-        if (false !== strpos($request->getPath(), $this->options["path"])) {
+        $regex = "@{$this->options["path"]}(/.*)?$@";
+        if (true === !!preg_match($regex, $request->getPath())) {
 
             $user = $environment["PHP_AUTH_USER"];
             $pass = $environment["PHP_AUTH_PW"];
