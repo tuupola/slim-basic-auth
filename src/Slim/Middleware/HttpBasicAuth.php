@@ -37,9 +37,9 @@ class HttpBasicAuth extends \Slim\Middleware {
         $regex = "@{$this->options["path"]}(/.*)?$@";
         if (true === !!preg_match($regex, $request->getPath())) {
 
-            /* If using running PHP in CGI mode. */
-            if (isset($environment["environment"])) {
-                if (preg_match("/Basic\s+(.*)$/i", $environment["environment"], $matches)) {
+            /* If using PHP in CGI mode. */
+            if (isset($environment[$this->options["environment"]])) {
+                if (preg_match("/Basic\s+(.*)$/i", $environment[$this->options["environment"]], $matches)) {
                     list($user, $pass) = explode(":", base64_decode($matches[1]));
                 }
             } else {
