@@ -93,6 +93,73 @@ class BasicAuthTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Admin", $app->response()->body());
     }
 
+    /*** CGI MODE **********************************************************/
+
+    public function testShouldReturn200WithPasswordInCGIMode() {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/foo",
+            "HTTP_AUTHORIZATION" => "Basic cm9vdDp0MDBy"
+        ));
+        $app = new \Slim\Slim();
+        $app->get("/foo/bar", function() {
+            echo "Success";
+        });
+        $app->get("/admin/foo", function() {
+            echo "Admin";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuth(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            )
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(200, $app->response()->status());
+        $this->assertEquals("Admin", $app->response()->body());
+    }
+
+    public function testShouldHonorCGIEnviromentOption() {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/foo",
+            "FOO_BAR" => "Basic cm9vdDp0MDBy"
+        ));
+        $app = new \Slim\Slim();
+        $app->get("/foo/bar", function() {
+            echo "Success";
+        });
+        $app->get("/admin/foo", function() {
+            echo "Admin";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuth(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "environment" => "FOO_BAR",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            )
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(200, $app->response()->status());
+        $this->assertEquals("Admin", $app->response()->body());
+    }
+
+    /*** OTHER *************************************************************/
+
     public function testBug2() {
         \Slim\Environment::mock(array(
             "SCRIPT_NAME" => "/index.php",
