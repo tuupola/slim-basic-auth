@@ -21,7 +21,7 @@ class HttpBasicAuth extends \Slim\Middleware {
             "users" => array(),
             "path" => "/",
             "realm" => "Protected",
-            "cgi_auth_var_name" => "HTTP_AUTHORIZATION"
+            "environment" => "HTTP_AUTHORIZATION"
         );
 
         if ($options) {
@@ -37,13 +37,14 @@ class HttpBasicAuth extends \Slim\Middleware {
         $regex = "@{$this->options["path"]}(/.*)?$@";
         if (true === !!preg_match($regex, $request->getPath())) {
 
-            $user = $environment["PHP_AUTH_USER"];
-            $pass = $environment["PHP_AUTH_PW"];
-
-            $cgi_auth_var = $_SERVER[$this->options["cgi_auth_var_name"]];
-
-            if (isset($cgi_auth_var) && preg_match('/Basic\s+(.*)$/i', $cgi_auth_var, $matches)) {
-                list($user, $pass) = explode(':', base64_decode($matches[1]));
+            /* If using running PHP in CGI mode. */
+            if (isset($environment["environment"])) {
+                if (preg_match("/Basic\s+(.*)$/i", $environment["environment"], $matches)) {
+                    list($user, $pass) = explode(":", base64_decode($matches[1]));
+                }
+            } else {
+                $user = $environment["PHP_AUTH_USER"];
+                $pass = $environment["PHP_AUTH_PW"];
             }
 
             /* Check if user and passwords matches. */
