@@ -1,5 +1,18 @@
 <?php
 
+/*
+ * HTTP Basic Authentication
+ *
+ * Copyright (c) 2013-2014 Mika Tuupola
+ *
+ * Licensed under the MIT license:
+ *   http://www.opensource.org/licenses/mit-license.php
+ *
+ * Project home:
+ *   https://github.com/tuupola/slim-basic-auth
+ *
+ */
+
 require_once dirname(__FILE__) . "/../vendor/autoload.php";
 
 class BasicAuthTest extends PHPUnit_Framework_TestCase {
