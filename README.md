@@ -44,9 +44,15 @@ $app->add(new \Slim\Middleware\HttpBasicAuth(array(
 )));
 ```
 
-There is an additional optional parameter named `cgi_auth_var_name`: in case PHP is running as CGI and since Apache doesn't pass HTTP Basic Authentication information to CGI apps, the authorization tokens should be passed as an environment variable using mod_rewrite rule, like this:
-`RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]`
-Sometimes additional `REDIRECT_` prefix may be added by the server to the variable name, so the resulting name could be something like  `REDIRECT_HTTP_AUTHORIZATION` or even `REDIRECT_REDIRECT_HTTP_AUTHORIZATION`.
+## Usage with FastCGI
+
+When using Apache with FastCGI the credentials [do not get passed to the PHP script](https://bugs.php.net/bug.php?id=35752). Workaround is to pass credentials in environment variable using mod_rewrite.
+
+```
+RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+```
+
+The above rewrite rule should work out of the box. In some cases server adds `REDIRECT_` prefix to environment name. In this case or if you want to use nonstandard environment use the parameter called `environment`.
 
 ```php
 $app = new \Slim\Slim();
@@ -58,6 +64,6 @@ $app->add(new \Slim\Middleware\HttpBasicAuth(array(
         "root" => "t00r",
         "user" => "passw0rd"
     ),
-    "cgi_auth_var_name" => "REDIRECT_HTTP_AUTHORIZATION"
+    "environment" => "REDIRECT_HTTP_AUTHORIZATION"
 )));
 ```
