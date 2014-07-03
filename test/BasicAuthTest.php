@@ -111,9 +111,11 @@ class BasicAuthTest extends PHPUnit_Framework_TestCase {
     public function testShouldReturn200WithPasswordInCGIMode() {
         \Slim\Environment::mock(array(
             "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo",
-            "HTTP_AUTHORIZATION" => "Basic cm9vdDp0MDBy"
+            "PATH_INFO" => "/admin/foo"
         ));
+
+        $_SERVER["HTTP_AUTHORIZATION"] = "Basic cm9vdDp0MDBy";
+
         $app = new \Slim\Slim();
         $app->get("/foo/bar", function() {
             echo "Success";
@@ -142,9 +144,11 @@ class BasicAuthTest extends PHPUnit_Framework_TestCase {
     public function testShouldHonorCGIEnviromentOption() {
         \Slim\Environment::mock(array(
             "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo",
-            "FOO_BAR" => "Basic cm9vdDp0MDBy"
+            "PATH_INFO" => "/admin/foo"
         ));
+
+        $_SERVER["FOO_BAR"] = "Basic cm9vdDp0MDBy";
+
         $app = new \Slim\Slim();
         $app->get("/foo/bar", function() {
             echo "Success";
