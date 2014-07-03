@@ -20,7 +20,8 @@ class HttpBasicAuth extends \Slim\Middleware {
         $this->options = array(
             "users" => array(),
             "path" => "/",
-            "realm" => "Protected"
+            "realm" => "Protected",
+            "environment" => "HTTP_AUTHORIZATION"
         );
 
         if ($options) {
@@ -36,15 +37,22 @@ class HttpBasicAuth extends \Slim\Middleware {
         $regex = "@{$this->options["path"]}(/.*)?$@";
         if (true === !!preg_match($regex, $request->getPath())) {
 
-            $user = $environment["PHP_AUTH_USER"];
-            $pass = $environment["PHP_AUTH_PW"];
+            /* If using running PHP in CGI mode. */
+            if (isset($environment["environment"])) {
+                if (preg_match("/Basic\s+(.*)$/i", $environment["environment"], $matches)) {
+                    list($user, $pass) = explode(":", base64_decode($matches[1]));
+                }
+            } else {
+                $user = $environment["PHP_AUTH_USER"];
+                $pass = $environment["PHP_AUTH_PW"];
+            }
 
             /* Check if user and passwords matches. */
             if (isset($this->options["users"][$user]) && $this->options["users"][$user] === $pass) {
                 $this->next->call();
             } else {
                 $this->app->response->status(401);
-                $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));;
+                $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
                 return;
             }
         } else {
