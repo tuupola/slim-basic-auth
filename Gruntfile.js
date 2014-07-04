@@ -27,7 +27,7 @@ module.exports = function(grunt) {
                 bin: "/usr/local/bin/phpunit",
                 //bootstrap: "test/bootstrap.php",
                 colors: true,
-                testdox: false
+                testdox: true
             }
         },
         phplint: {

@@ -108,7 +108,7 @@ class BasicAuthTest extends PHPUnit_Framework_TestCase {
 
     /*** CGI MODE **********************************************************/
 
-    public function testShouldReturn200WithPasswordInCGIMode() {
+    public function testShouldReturn200WithPasswordInCgiMode() {
         \Slim\Environment::mock(array(
             "SCRIPT_NAME" => "/index.php",
             "PATH_INFO" => "/admin/foo"
@@ -141,7 +141,7 @@ class BasicAuthTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Admin", $app->response()->body());
     }
 
-    public function testShouldHonorCGIEnviromentOption() {
+    public function testShouldHonorCgiEnviromentOption() {
         \Slim\Environment::mock(array(
             "SCRIPT_NAME" => "/index.php",
             "PATH_INFO" => "/admin/foo"
