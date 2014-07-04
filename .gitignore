@@ -1,4 +1,5 @@
 /node_modules/
 /vendor/
+/demo/vendor/
 .DS_Store
 composer.lock

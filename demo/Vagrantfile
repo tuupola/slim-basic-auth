@@ -1,0 +1,28 @@
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = "hashicorp/precise64"
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+
+  config.vm.provision :shell, inline: "apt-get update"
+  config.vm.provision :shell, inline: "apt-get -y install apache2 apache2-mpm-worker"
+  config.vm.provision :shell, inline: "apt-get -y install libapache2-mod-fastcgi php5-fpm php5 php5-cli"
+  config.vm.provision :shell, inline: "a2enmod actions fastcgi alias rewrite"
+
+  $fpm = <<FPM
+echo "
+  <IfModule mod_fastcgi.c>
+      AddHandler php5-fcgi .php
+      Action php5-fcgi /php5-fcgi
+      Alias /php5-fcgi /usr/lib/cgi-bin/php5-fcgi
+      #FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -host 127.0.0.1:9000 -pass-header Authorization
+      FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -host 127.0.0.1:9000
+  </IfModule>" > /etc/apache2/conf.d/php5-fpm
+FPM
+
+  config.vm.provision :shell, inline: $fpm
+  config.vm.provision :shell, inline: 'sed -i -e "s/\/var\/www/\/vagrant/" /etc/apache2/sites-available/default'
+  config.vm.provision :shell, inline: 'sed -i -e "s/AllowOverride None/AllowOverride All/" /etc/apache2/sites-available/default'
+
+  config.vm.provision :shell, inline: "service apache2 restart"
+end
