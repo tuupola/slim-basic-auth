@@ -1,5 +1,6 @@
 /node_modules/
 /vendor/
 /demo/vendor/
+/demo/.vagrant/
 .DS_Store
 composer.lock
