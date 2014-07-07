@@ -46,7 +46,13 @@ $app->add(new \Slim\Middleware\HttpBasicAuth(array(
 
 ## Usage with FastCGI
 
-When using Apache with FastCGI the credentials [do not get passed to the PHP script](https://bugs.php.net/bug.php?id=35752). Workaround is to pass credentials in environment variable using mod_rewrite.
+By default Apache [does not pass credentials](https://bugs.php.net/bug.php?id=35752) to FastCGI process. If you are using mod_fcgi you can configure authorization headers with:
+
+```
+FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -host 127.0.0.1:9000 -pass-header Authorization
+```
+
+If this is not possible workaround is to pass credentials in an environment variable using mod_rewrite.
 
 ```
 RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
@@ -67,3 +73,5 @@ $app->add(new \Slim\Middleware\HttpBasicAuth(array(
     "environment" => "REDIRECT_HTTP_AUTHORIZATION"
 )));
 ```
+
+
