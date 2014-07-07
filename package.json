@@ -1,6 +1,6 @@
 {
   "name": "slim-basic-auth",
-  "version": "0.0.0",
+  "version": "0.6.0",
   "repository": {
     "type": "git",
     "url": "git@github.com:taevas/slim-basic-auth.git"
