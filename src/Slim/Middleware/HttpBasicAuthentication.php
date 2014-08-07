@@ -15,6 +15,8 @@
 
 namespace Slim\Middleware;
 
+use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
+
 /**
  * HTTP Basic Authentication
  *
@@ -23,7 +25,7 @@ namespace Slim\Middleware;
  * @package    Slim
  * @author     Mika Tuupola <tuupola@appelsiini.net>
  */
-class HttpBasicAuth extends \Slim\Middleware {
+class HttpBasicAuthentication extends \Slim\Middleware {
 
     public $options;
 
@@ -34,8 +36,11 @@ class HttpBasicAuth extends \Slim\Middleware {
             "users" => array(),
             "path" => "/",
             "realm" => "Protected",
-            "environment" => "HTTP_AUTHORIZATION"
+            "environment" => "HTTP_AUTHORIZATION",
         );
+
+        /* Pass all options. Extra stuff get ignored anyway. */
+        $this->options["authenticator"] = new ArrayAuthenticator($options);
 
         if ($options) {
             $this->options = array_merge($this->options, (array)$options);
@@ -59,8 +64,8 @@ class HttpBasicAuth extends \Slim\Middleware {
                 $pass = $environment["PHP_AUTH_PW"];
             }
 
-            /* Check if user and passwords matches. */
-            if (isset($this->options["users"][$user]) && $this->options["users"][$user] === $pass) {
+            /* Check if user authenticates. */
+            if ($this->options["authenticator"]->authenticate($user, $pass)) {
                 $this->next->call();
             } else {
                 $this->app->response->status(401);
@@ -72,3 +77,6 @@ class HttpBasicAuth extends \Slim\Middleware {
         }
     }
 }
+
+/* Maintain BC for a while. */
+class_alias("Slim\Middleware\HttpBasicAuthentication", "Slim\Middleware\HttpBasicAuth");

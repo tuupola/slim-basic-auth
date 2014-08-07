@@ -21,7 +21,7 @@ Configuration options are passed as an array. Only mandatory parameter is  `user
 ```php
 $app = new \Slim\Slim();
 
-$app->add(new \Slim\Middleware\HttpBasicAuth(array(
+$app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
     "users" => array(
         "root" => "t00r",
         "user" => "passw0rd"
@@ -34,7 +34,7 @@ With optional `path` parameter can authenticate only given part of your website.
 ```php
 $app = new \Slim\Slim();
 
-$app->add(new \Slim\Middleware\HttpBasicAuth(array(
+$app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
     "path" => "/admin",
     "realm" => "Protected",
     "users" => array(
@@ -43,6 +43,33 @@ $app->add(new \Slim\Middleware\HttpBasicAuth(array(
     )
 )));
 ```
+
+## Custom authentication methods
+
+Sometimes passing users in an array is not enough. To authenticate against some other data source you can use custom authenticator. Authenticator must implement `authenticate()` method. It receives username and password. It must return boolean `true` or `false`.
+
+If you are creating an enterprise software which randomly lets people log in you could use the following.
+
+
+```php
+
+use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+
+class RandomAuthenticator implements AuthenticatorInterface {
+    public function authenticate($user, $pass) {
+        return (bool)rand(0,1);
+    }
+}
+
+$app = new \Slim\Slim();
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/admin",
+    "realm" => "Protected",
+    "authenticator" => new RandomAuthenticator();
+]));
+```
+
 
 ## Usage with FastCGI
 
@@ -63,7 +90,7 @@ The above rewrite rule should work out of the box. In some cases server adds `RE
 ```php
 $app = new \Slim\Slim();
 
-$app->add(new \Slim\Middleware\HttpBasicAuth(array(
+$app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
     "path" => "/admin",
     "realm" => "Protected",
     "users" => array(
