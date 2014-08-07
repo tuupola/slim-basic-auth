@@ -46,13 +46,12 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
 
 ## Custom authentication methods
 
-Sometimes passing users in an array is not enough. To authenticate against some other data source you can use custom authenticator. Authenticator must implement `authenticate()` method. It receives username and password. It must return boolean `true` or `false`.
+Sometimes passing users in an array is not enough. To authenticate against custom datasource you can create authenticator class. Authenticator must implement `authenticate($user, $pass)` method. It must return either `true` or `false`.
 
 If you are creating an enterprise software which randomly lets people log in you could use the following.
 
 
 ```php
-
 use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 
 class RandomAuthenticator implements AuthenticatorInterface {
@@ -66,7 +65,7 @@ $app = new \Slim\Slim();
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
-    "authenticator" => new RandomAuthenticator();
+    "authenticator" => new RandomAuthenticator()
 ]));
 ```
 
