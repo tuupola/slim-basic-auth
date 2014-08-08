@@ -48,7 +48,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
 
 Sometimes passing users in an array is not enough. To authenticate against custom datasource you can create authenticator class. Authenticator must implement `authenticate($user, $pass)` method. It must return either `true` or `false`.
 
-If you are creating an enterprise software which randomly lets people log in you could use the following.
+If you are creating an Enterprise&trade; software which randomly lets people log in you could use the following.
 
 
 ```php
