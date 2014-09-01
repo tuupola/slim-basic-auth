@@ -279,4 +279,60 @@ class HttpBasicAuthenticationTest extends PHPUnit_Framework_TestCase {
         $this->assertEquals("Status", $app->response()->body());
     }
 
+
+    public function testBug3ShouldReturn401WithoutTrailingSlash() {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin"
+        ));
+        $app = new \Slim\Slim();
+        $app->get("/admin(/?)", function() {
+            echo "Admin";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuth(array(
+            "path" => "/",
+            "realm" => "Protected",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            )
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(401, $app->response()->status());
+        $this->assertEquals("", $app->response()->body());
+    }
+
+    public function testBug3ShouldReturn401WithTrailingSlash() {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/"
+        ));
+        $app = new \Slim\Slim();
+        $app->get("/admin(/?)", function() {
+            echo "Admin";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuth(array(
+            "path" => "/",
+            "realm" => "Protected",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            )
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(401, $app->response()->status());
+        $this->assertEquals("", $app->response()->body());
+    }
+
+
 }
