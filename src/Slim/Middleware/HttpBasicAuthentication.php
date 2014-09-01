@@ -52,7 +52,8 @@ class HttpBasicAuthentication extends \Slim\Middleware {
         $environment = $this->app->environment;
 
         /* If path matches what is given on initialization. */
-        $regex = "@{$this->options["path"]}(/.*)?$@";
+        $path = rtrim($this->options["path"], "/");
+        $regex = "@{$path}(/.*)?$@";
         if (true === !!preg_match($regex, $request->getPath())) {
             /* Just in case. */
             $user = false;
