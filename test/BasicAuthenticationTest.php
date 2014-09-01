@@ -246,7 +246,7 @@ class HttpBasicAuthenticationTest extends PHPUnit_Framework_TestCase {
 
     /*** OTHER *************************************************************/
 
-    public function testBug2() {
+    public function testBug2UrlShouldMatchRegex() {
         \Slim\Environment::mock(array(
             "SCRIPT_NAME" => "/index.php",
             "PATH_INFO" => "/status/foo"
