@@ -9,7 +9,8 @@ You can install the middleware using composer.
 ```javascript
 {
     "require": {
-        "tuupola/slim-basic-auth": "dev-master",
+        "slim/slim": "2.*",
+        "tuupola/slim-basic-auth": "0.*"
     }
 }
 ```
@@ -21,12 +22,12 @@ Configuration options are passed as an array. Only mandatory parameter is  `user
 ```php
 $app = new \Slim\Slim();
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
-    "users" => array(
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "users" => [
         "root" => "t00r",
         "user" => "passw0rd"
-    )
-)));
+    ]
+]));
 ```
 
 With optional `path` parameter can authenticate only given part of your website. You can also change the displayed `realm` using the parameter with same name.
@@ -34,14 +35,14 @@ With optional `path` parameter can authenticate only given part of your website.
 ```php
 $app = new \Slim\Slim();
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
-    "users" => array(
+    "users" => [
         "root" => "t00r",
         "user" => "passw0rd"
-    )
-)));
+    ]
+]));
 ```
 
 ## Custom authentication methods
@@ -89,15 +90,15 @@ The above rewrite rule should work out of the box. In some cases server adds `RE
 ```php
 $app = new \Slim\Slim();
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
-    "users" => array(
+    "users" => [
         "root" => "t00r",
         "user" => "passw0rd"
-    ),
+    ],
     "environment" => "REDIRECT_HTTP_AUTHORIZATION"
-)));
+]));
 ```
 
 
