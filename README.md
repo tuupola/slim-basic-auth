@@ -2,7 +2,9 @@
 
 This middleware implements HTTP Basic Authentication for Slim Framework.
 
-[![Build Status](https://api.travis-ci.org/tuupola/slim-basic-auth.png?branch=master)](https://travis-ci.org/tuupola/slim-basic-auth) [![HHVM Status](http://hhvm.h4cc.de/badge/tuupola/slim-basic-auth.svg)](http://hhvm.h4cc.de/package/tuupola/slim-basic-auth)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
+[![Build Status](https://img.shields.io/travis/tuupola/slim-basic-auth/master.svg?style=flat-square)](https://travis-ci.org/tuupola/slim-basic-auth) 
+[![HHVM Status](http://hhvm.h4cc.de/badge/tuupola/slim-basic-auth.svg)](http://hhvm.h4cc.de/package/tuupola/slim-basic-auth)
 
 ## Install
 
