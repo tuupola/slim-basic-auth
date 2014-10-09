@@ -11,7 +11,7 @@ This middleware implements HTTP Basic Authentication for Slim Framework.
 You can install the middleware using composer.
 
 ```
-$ composer require tuupola/slim-basic-auth
+$ composer require tuupola/slim-basic-auth "0.*"
 ```
 
 Or add the following manually to you composer.json file.
