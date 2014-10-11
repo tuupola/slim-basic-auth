@@ -3,7 +3,7 @@
     "type": "library",
     "description": "HTTP Basic Authentication Middleware for Slim Framework",
     "keywords": ["slim", "middleware", "auth"],
-    "homepage": "https://github.com/tuupola/slim-basic-auth",
+    "homepage": "http://www.appelsiini.net/projects/slim-basic-auth",
     "license": "MIT",
     "authors": [
         {
