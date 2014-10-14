@@ -13,7 +13,6 @@
         }
     ],
     "require": {
-        "php": "~2.0",
         "slim/slim": "~2.3"
     },
     "autoload": {
