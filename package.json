@@ -12,6 +12,7 @@
     "grunt-contrib-watch": "~0.5.3",
     "grunt-phpunit": "~0.3.2",
     "grunt-phplint": "0.0.5",
-    "load-grunt-tasks": "^0.4.0"
+    "load-grunt-tasks": "^0.4.0",
+    "grunt-phpcs": "^0.2.3"
   }
 }

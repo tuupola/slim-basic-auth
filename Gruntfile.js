@@ -24,7 +24,7 @@ module.exports = function(grunt) {
                 dir: "test"
             },
             options: {
-                bin: "vendor/bin/phpunit --coverage-text --coverage-html ./report",
+                bin: "vendor/bin/phpunit --bootstrap=vendor/autoload.php --coverage-text --coverage-html ./report",
                 //bootstrap: "test/bootstrap.php",
                 colors: true,
                 testdox: true
@@ -35,13 +35,22 @@ module.exports = function(grunt) {
                 swapPath: "/tmp"
             },
             all: ["src/**/*.php", "test/*.php"]
+        },
+        phpcs: {
+            application: {
+                dir: ["src/**/*.php", "test/*.php"]
+            },
+            options: {
+                bin: "vendor/bin/phpcs",
+                standard: "PSR2"
+            }
         }
     });
 
     require("load-grunt-tasks")(grunt);
 
     grunt.registerTask("testjs", ["jshint"]);
-    grunt.registerTask("testphp", ["phplint", "phpunit"]);
+    grunt.registerTask("testphp", ["phplint", "phpcs", "phpunit"]);
 
     grunt.registerTask("default", ["testphp", "testjs"]);
 

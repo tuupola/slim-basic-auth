@@ -17,19 +17,12 @@ namespace Slim\Middleware;
 
 use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
 
-/**
- * HTTP Basic Authentication
- *
- * Provides HTTP Basic Authentication on given routes
- *
- * @package    Slim
- * @author     Mika Tuupola <tuupola@appelsiini.net>
- */
-class HttpBasicAuthentication extends \Slim\Middleware {
-
+class HttpBasicAuthentication extends \Slim\Middleware
+{
     public $options;
 
-    public function __construct($options = null) {
+    public function __construct($options = null)
+    {
 
         /* Default options. */
         $this->options = array(
@@ -47,7 +40,8 @@ class HttpBasicAuthentication extends \Slim\Middleware {
         }
     }
 
-    public function call() {
+    public function call()
+    {
         $request = $this->app->request;
         $environment = $this->app->environment;
 
@@ -82,6 +76,3 @@ class HttpBasicAuthentication extends \Slim\Middleware {
         }
     }
 }
-
-/* Maintain BC for a while. */
-class_alias("Slim\Middleware\HttpBasicAuthentication", "Slim\Middleware\HttpBasicAuth");

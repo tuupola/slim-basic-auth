@@ -15,6 +15,7 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
-interface AuthenticatorInterface {
+interface AuthenticatorInterface
+{
     public function authenticate($user, $pass);
 }

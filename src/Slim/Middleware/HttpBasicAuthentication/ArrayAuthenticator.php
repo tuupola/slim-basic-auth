@@ -15,11 +15,13 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
-class ArrayAuthenticator implements AuthenticatorInterface {
+class ArrayAuthenticator implements AuthenticatorInterface
+{
 
     public $options;
 
-    public function __construct($options = null) {
+    public function __construct($options = null)
+    {
 
         /* Default options. */
         $this->options = array(
@@ -31,8 +33,8 @@ class ArrayAuthenticator implements AuthenticatorInterface {
         }
     }
 
-    public function authenticate($user, $pass) {
+    public function authenticate($user, $pass)
+    {
         return isset($this->options["users"][$user]) && $this->options["users"][$user] === $pass;
     }
-
 }

@@ -14,7 +14,8 @@
     ],
     "require": {
         "slim/slim": "~2.3",
-        "phpunit/phpunit": "~4.3"
+        "phpunit/phpunit": "~4.3",
+        "squizlabs/php_codesniffer": "~1.5"
     },
     "autoload": {
         "psr-0": { "Slim\\Middleware\\": "src/" },
