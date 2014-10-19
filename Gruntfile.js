@@ -24,7 +24,7 @@ module.exports = function(grunt) {
                 dir: "test"
             },
             options: {
-                bin: "/usr/local/bin/phpunit",
+                bin: "vendor/bin/phpunit --coverage-text --coverage-html ./report",
                 //bootstrap: "test/bootstrap.php",
                 colors: true,
                 testdox: true
