@@ -14,7 +14,8 @@
     ],
     "require": {
         "slim/slim": "~2.3",
-        "tuupola/witchcraft": "~0.1"
+        "tuupola/witchcraft": "~0.1",
+        "ircmaxell/password-compat": "~1.0"
     },
     "autoload": {
         "psr-0": { "Slim\\Middleware\\": "src/" },
