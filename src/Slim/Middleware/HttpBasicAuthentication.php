@@ -1,7 +1,7 @@
 <?php
 
 /*
- * HTTP Basic Authentication
+ * This file is part of Slim HTTP Basic Authentication middleware
  *
  * Copyright (c) 2013-2014 Mika Tuupola
  *
