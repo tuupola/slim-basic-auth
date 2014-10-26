@@ -17,9 +17,6 @@ namespace Slim\Middleware\HttpBasicAuthentication;
 
 class PdoAuthenticator implements AuthenticatorInterface
 {
-    use \Witchcraft\MagicMethods;
-    use \Witchcraft\MagicProperties;
-
     private $options;
 
     public function __construct(array $options = array())
@@ -39,64 +36,19 @@ class PdoAuthenticator implements AuthenticatorInterface
 
     public function authenticate($username, $pass)
     {
-        $statement = $this->pdo->prepare(
+        $statement = $this->options["pdo"]->prepare(
             "SELECT *
-             FROM {$this->table}
-             WHERE {$this->username} = ?
+             FROM {$this->options['table']}
+             WHERE {$this->options['username']} = ?
              LIMIT 1"
         );
 
         $statement->execute(array($username));
 
         if ($user = $statement->fetch(\PDO::FETCH_ASSOC)) {
-            return password_verify($pass, $user[$this->hash]);
+            return password_verify($pass, $user[$this->options["hash"]]);
         }
 
         return false;
-    }
-
-    /* For magic properties */
-    public function setTable($table)
-    {
-        $this->options["table"] = $table;
-        return $this;
-    }
-
-    public function getTable()
-    {
-        return $this->options["table"];
-    }
-
-    public function setUsername($username)
-    {
-        $this->options["username"] = $username;
-        return $this;
-    }
-
-    public function getUsername()
-    {
-        return $this->options["username"];
-    }
-
-    public function setHash($hash)
-    {
-        $this->options["hash"] = $hash;
-        return $this;
-    }
-
-    public function getHash()
-    {
-        return $this->options["hash"];
-    }
-
-    public function setPdo(\PDO $pdo)
-    {
-        $this->options["pdo"] = $pdo;
-        return $this;
-    }
-
-    public function getPdo()
-    {
-        return $this->options["pdo"];
     }
 }
