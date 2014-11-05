@@ -34,7 +34,7 @@ class PdoAuthenticator implements AuthenticatorInterface
         }
     }
 
-    public function authenticate($username, $pass)
+    public function authenticate($user, $pass)
     {
         $statement = $this->options["pdo"]->prepare(
             "SELECT *
@@ -43,7 +43,7 @@ class PdoAuthenticator implements AuthenticatorInterface
              LIMIT 1"
         );
 
-        $statement->execute(array($username));
+        $statement->execute(array($user));
 
         if ($user = $statement->fetch(\PDO::FETCH_ASSOC)) {
             return password_verify($pass, $user[$this->options["hash"]]);
