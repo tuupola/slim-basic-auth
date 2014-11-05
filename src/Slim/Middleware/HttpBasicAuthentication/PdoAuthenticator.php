@@ -25,7 +25,7 @@ class PdoAuthenticator implements AuthenticatorInterface
         /* Default options. */
         $this->options = array(
             "table" => "users",
-            "username" => "username",
+            "user" => "user",
             "hash" => "hash"
         );
 
@@ -39,7 +39,7 @@ class PdoAuthenticator implements AuthenticatorInterface
         $statement = $this->options["pdo"]->prepare(
             "SELECT *
              FROM {$this->options['table']}
-             WHERE {$this->options['username']} = ?
+             WHERE {$this->options['user']} = ?
              LIMIT 1"
         );
 

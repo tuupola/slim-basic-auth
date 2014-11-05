@@ -29,16 +29,16 @@ class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
 
         $this->pdo->exec(
             "CREATE TABLE users (
-                username VARCHAR(32) NOT NULL,
+                user VARCHAR(32) NOT NULL,
                 hash VARCHAR(255) NOT NULL
             )"
         );
 
-        $username = "root";
+        $user = "root";
         $hash = password_hash("t00r", PASSWORD_DEFAULT);
 
         $status = $this->pdo->exec(
-            "INSERT INTO users (username, hash) VALUES ('{$username}', '{$hash}')"
+            "INSERT INTO users (user, hash) VALUES ('{$user}', '{$hash}')"
         );
     }
 
