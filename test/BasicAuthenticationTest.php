@@ -76,7 +76,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $app->get("/foo/bar", function () {
             echo "Success";
         });
-        $app->get("/admin", function () {
+        $app->get("/admin/foo", function () {
             echo "Admin";
         });
 
@@ -128,6 +128,38 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(200, $app->response()->status());
         $this->assertEquals("Admin", $app->response()->body());
+    }
+
+    public function testShouldReturn200WithOptions()
+    {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/foo",
+            "REQUEST_METHOD" => "OPTIONS"
+        ));
+        $app = new \Slim\Slim();
+        $app->get("/foo/bar", function () {
+            echo "Success";
+        });
+        $app->options("/admin/foo", function () {
+            echo "Allow: GET";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuth(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            )
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(200, $app->response()->status());
+        $this->assertEquals("Allow: GET", $app->response()->body());
     }
 
     /*** CGI MODE **********************************************************/

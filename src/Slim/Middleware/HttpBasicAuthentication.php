@@ -15,7 +15,8 @@
 
 namespace Slim\Middleware;
 
-use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
+ use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
+ use \Slim\Middleware\HttpBasicAuthentication\DefaultValidator;
 
 class HttpBasicAuthentication extends \Slim\Middleware
 {
@@ -29,11 +30,12 @@ class HttpBasicAuthentication extends \Slim\Middleware
             "users" => array(),
             "path" => "/",
             "realm" => "Protected",
-            "environment" => "HTTP_AUTHORIZATION",
+            "environment" => "HTTP_AUTHORIZATION"
         );
 
         /* Pass all options. Extra stuff get ignored anyway. */
         $this->options["authenticator"] = new ArrayAuthenticator($options);
+        $this->options["validator"] = new DefaultValidator($options);
 
         if ($options) {
             $this->options = array_merge($this->options, (array)$options);
@@ -42,13 +44,9 @@ class HttpBasicAuthentication extends \Slim\Middleware
 
     public function call()
     {
-        $request = $this->app->request;
         $environment = $this->app->environment;
 
-        /* If path matches what is given on initialization. */
-        $path = rtrim($this->options["path"], "/");
-        $regex = "@{$path}(/.*)?$@";
-        if (true === !!preg_match($regex, $request->getPath())) {
+        if ($this->shouldAuthenticate()) {
             /* Just in case. */
             $user = false;
             $pass = false;
@@ -74,5 +72,20 @@ class HttpBasicAuthentication extends \Slim\Middleware
         } else {
             $this->next->call();
         }
+    }
+
+    public function shouldAuthenticate()
+    {
+        $request = $this->app->request;
+
+        /* If path matches what is given on initialization. */
+        $path = rtrim($this->options["path"], "/");
+        $regex = "@{$path}(/.*)?$@";
+        $path_matches = !!preg_match($regex, $request->getPath());
+
+        /* If validator returns true should authenticate. */
+        $validator_passes = !!$this->options["validator"]->validate();
+
+        return $path_matches && $validator_passes;
     }
 }
