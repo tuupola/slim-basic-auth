@@ -72,6 +72,26 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
+## Usage with PDO
+
+For those in hurry there is a ready made PDO authenticator. It covers most of the use cases. You probably end up implementing your own though.
+
+```php
+use \Slim\Middleware\HttpBasicAuthentication\PdoAuthenticator;
+
+$pdo = new \PDO("sqlite:/tmp/users.sqlite");
+$app = new \Slim\Slim();
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/admin",
+    "realm" => "Protected",
+    "authenticator" => new PdoAuthenticator([
+        "pdo" => $pdo
+    ])
+]));
+```
+
+For better explanation see [Basic Authentication from Database](http://www.appelsiini.net/2014/slim-database-basic-authentication) blog post.
 
 ## Usage with FastCGI
 
