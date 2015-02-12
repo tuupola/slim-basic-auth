@@ -36,12 +36,24 @@ class PdoAuthenticator implements AuthenticatorInterface
 
     public function authenticate($user, $pass)
     {
-        $statement = $this->options["pdo"]->prepare(
-            "SELECT *
-             FROM {$this->options['table']}
-             WHERE {$this->options['user']} = ?
-             LIMIT 1"
+         if($this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME) === "sqlsrv"){
+    
+         $statement = $this->options["pdo"]->prepare(
+                "SELECT top 1 *
+                 FROM {$this->options['table']}
+                 WHERE {$this->options['user']} = ?"
+             );
+    
+        }else{
+            $statement = $this->options["pdo"]->prepare(
+                 "SELECT *
+                  FROM {$this->options['table']}
+                  WHERE {$this->options['user']} = ?
+                  LIMIT 1"
         );
+        	
+    }  
+
 
         $statement->execute(array($user));
 
