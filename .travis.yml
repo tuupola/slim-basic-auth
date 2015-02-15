@@ -15,6 +15,7 @@ before_script:
     - travis_retry composer install --no-interaction --dev
 
 script:
+    - vendor/bin/phpcs --standard=psr2 ./src
     - vendor/bin/phpunit --coverage-text --bootstrap vendor/autoload.php --coverage-clover=coverage.xml
 
 after_success:
