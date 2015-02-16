@@ -38,21 +38,9 @@ class PdoAuthenticator implements AuthenticatorInterface
     {
         $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
-        if ("sqlsrv" === $driver) {
-            $statement = $this->options["pdo"]->prepare(
-                "SELECT TOP 1 *
-                 FROM {$this->options['table']}
-                 WHERE {$this->options['user']} = ?"
-            );
-        } else {
-            $statement = $this->options["pdo"]->prepare(
-                "SELECT *
-                 FROM {$this->options['table']}
-                 WHERE {$this->options['user']} = ?
-                 LIMIT 1"
-            );
-        }
+        $sql = $this->sql($user, $pass);
 
+        $statement = $this->options["pdo"]->prepare($sql);
         $statement->execute(array($user));
 
         if ($user = $statement->fetch(\PDO::FETCH_ASSOC)) {
@@ -60,5 +48,30 @@ class PdoAuthenticator implements AuthenticatorInterface
         }
 
         return false;
+    }
+
+    public function sql($user, $pass)
+    {
+        $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
+        /* Workaround to test without sqlsrv with Travis */
+        if (defined("PHPUNIT_ATTR_DRIVER_NAME")) {
+            $driver = PHPUNIT_ATTR_DRIVER_NAME;
+        }
+
+        if ("sqlsrv" === $driver) {
+            $sql =
+                "SELECT TOP 1 *
+                 FROM {$this->options['table']}
+                 WHERE {$this->options['user']} = ?";
+        } else {
+            $sql =
+                "SELECT *
+                 FROM {$this->options['table']}
+                 WHERE {$this->options['user']} = ?
+                 LIMIT 1";
+        }
+
+        return preg_replace("!\s+!", " ", $sql);
     }
 }

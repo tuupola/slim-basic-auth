@@ -58,4 +58,30 @@ class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($authenticator->authenticate("root", "nosuch"));
         $this->assertFalse($authenticator->authenticate("nosuch", "nosuch"));
     }
+
+    public function testShouldUseLimit()
+    {
+        $authenticator = new PdoAuthenticator(array(
+            "pdo" => $this->pdo
+        ));
+
+        $this->assertEquals(
+            "SELECT * FROM users WHERE user = ? LIMIT 1",
+            $authenticator->sql("root", "nosuch")
+        );
+    }
+
+    public function testShouldUseTop()
+    {
+        /* Workaround to test without sqlsrv with Travis */
+        define("PHPUNIT_ATTR_DRIVER_NAME", "sqlsrv");
+
+        $authenticator = new PdoAuthenticator(array(
+            "pdo" => $this->pdo
+        ));
+        $this->assertEquals(
+            "SELECT TOP 1 * FROM users WHERE user = ?",
+            $authenticator->sql("root", "nosuch")
+        );
+    }
 }
