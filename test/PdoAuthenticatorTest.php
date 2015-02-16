@@ -74,7 +74,7 @@ class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
     public function testShouldUseTop()
     {
         /* Workaround to test without sqlsrv with Travis */
-        define("PHPUNIT_ATTR_DRIVER_NAME", "sqlsrv");
+        define("__PHPUNIT_ATTR_DRIVER_NAME__", "sqlsrv");
 
         $authenticator = new PdoAuthenticator(array(
             "pdo" => $this->pdo

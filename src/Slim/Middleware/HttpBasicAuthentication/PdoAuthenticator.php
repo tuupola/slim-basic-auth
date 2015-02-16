@@ -55,8 +55,8 @@ class PdoAuthenticator implements AuthenticatorInterface
         $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
         /* Workaround to test without sqlsrv with Travis */
-        if (defined("PHPUNIT_ATTR_DRIVER_NAME")) {
-            $driver = PHPUNIT_ATTR_DRIVER_NAME;
+        if (defined("__PHPUNIT_ATTR_DRIVER_NAME__")) {
+            $driver = __PHPUNIT_ATTR_DRIVER_NAME__;
         }
 
         if ("sqlsrv" === $driver) {
