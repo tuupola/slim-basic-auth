@@ -20,7 +20,7 @@ use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 /* @codingStandardsIgnoreStart */
 class TrueAuthenticator implements AuthenticatorInterface
 {
-    public function authenticate($user, $pass)
+    public function __invoke($user, $pass)
     {
         return true;
     }
@@ -28,7 +28,7 @@ class TrueAuthenticator implements AuthenticatorInterface
 
 class FalseAuthenticator implements AuthenticatorInterface
 {
-    public function authenticate($user, $pass)
+    public function __invoke($user, $pass)
     {
         return false;
     }

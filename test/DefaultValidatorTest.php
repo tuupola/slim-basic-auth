@@ -28,7 +28,7 @@ class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
 
         $validator = new DefaultValidator();
 
-        $this->assertFalse($validator->validate());
+        $this->assertFalse($validator());
     }
 
     public function testShouldAuthenticatePost()
@@ -39,7 +39,7 @@ class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
 
         $validator = new DefaultValidator();
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($validator());
     }
 
     public function testShouldAuthenticateGet()
@@ -50,7 +50,7 @@ class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
 
         $validator = new DefaultValidator();
 
-        $this->assertTrue($validator->validate());
+        $this->assertTrue($validator());
     }
 
     public function testShouldConfigurePassthru()
@@ -63,6 +63,6 @@ class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
             "passthru" => array("GET")
         ));
 
-        $this->assertFalse($validator->validate());
+        $this->assertFalse($validator());
     }
 }

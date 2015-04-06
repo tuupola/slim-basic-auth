@@ -34,7 +34,7 @@ class PdoAuthenticator implements AuthenticatorInterface
         }
     }
 
-    public function authenticate($user, $pass)
+    public function __invoke($user, $pass)
     {
         $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
 

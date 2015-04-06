@@ -62,7 +62,7 @@ class HttpBasicAuthentication extends \Slim\Middleware
             }
 
             /* Check if user authenticates. */
-            if ($this->options["authenticator"]->authenticate($user, $pass)) {
+            if ($this->options["authenticator"]($user, $pass)) {
                 $this->next->call();
             } else {
                 $this->app->response->status(401);
@@ -84,7 +84,7 @@ class HttpBasicAuthentication extends \Slim\Middleware
         $path_matches = !!preg_match($regex, $request->getPath());
 
         /* If validator returns true should authenticate. */
-        $validator_passes = !!$this->options["validator"]->validate();
+        $validator_passes = !!$this->options["validator"]();
 
         return $path_matches && $validator_passes;
     }

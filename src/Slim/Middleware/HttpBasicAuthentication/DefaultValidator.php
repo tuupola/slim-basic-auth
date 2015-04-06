@@ -29,7 +29,7 @@ class DefaultValidator implements ValidatorInterface
         $this->options = array_merge($this->options, $options);
     }
 
-    public function validate()
+    public function __invoke()
     {
         $environment = \Slim\Environment::getInstance();
         return !in_array($environment["REQUEST_METHOD"], $this->options["passthru"]);

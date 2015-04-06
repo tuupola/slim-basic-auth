@@ -47,7 +47,7 @@ class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $authenticator = new PdoAuthenticator(array(
             "pdo" => $this->pdo
         ));
-        $this->assertTrue($authenticator->authenticate("root", "t00r"));
+        $this->assertTrue($authenticator("root", "t00r"));
     }
 
     public function testShouldReturnFalse()
@@ -55,8 +55,8 @@ class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $authenticator = new PdoAuthenticator(array(
             "pdo" => $this->pdo
         ));
-        $this->assertFalse($authenticator->authenticate("root", "nosuch"));
-        $this->assertFalse($authenticator->authenticate("nosuch", "nosuch"));
+        $this->assertFalse($authenticator("root", "nosuch"));
+        $this->assertFalse($authenticator("nosuch", "nosuch"));
     }
 
     public function testShouldUseLimit()

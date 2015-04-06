@@ -17,5 +17,5 @@ namespace Slim\Middleware\HttpBasicAuthentication;
 
 interface ValidatorInterface
 {
-    public function validate();
+    public function __invoke();
 }
