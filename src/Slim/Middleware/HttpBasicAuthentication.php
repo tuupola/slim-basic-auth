@@ -58,7 +58,7 @@ class HttpBasicAuthentication extends \Slim\Middleware
         )));
     }
 
-    public function addRule(callable $callable)
+    public function addRule($callable)
     {
         $this->stack->push($callable);
         return $this;
