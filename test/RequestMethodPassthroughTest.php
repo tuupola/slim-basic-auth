@@ -53,7 +53,7 @@ class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($rule(new \Slim\Slim));
     }
 
-    public function testShouldConfigurepassThrough()
+    public function testShouldConfigurePassThrough()
     {
         \Slim\Environment::mock(array(
             "REQUEST_METHOD" => "GET"
