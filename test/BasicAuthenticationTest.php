@@ -16,6 +16,7 @@
 namespace Test;
 
 use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+use \Slim\Middleware\HttpBasicAuthentication\RuleInterface;
 
 /* @codingStandardsIgnoreStart */
 class TrueAuthenticator implements AuthenticatorInterface
@@ -29,6 +30,22 @@ class TrueAuthenticator implements AuthenticatorInterface
 class FalseAuthenticator implements AuthenticatorInterface
 {
     public function __invoke($user, $pass)
+    {
+        return false;
+    }
+}
+
+class TrueRule implements RuleInterface
+{
+    public function __invoke(\Slim\Slim $app)
+    {
+        return true;
+    }
+}
+
+class FalseRule implements RuleInterface
+{
+    public function __invoke(\Slim\Slim $app)
     {
         return false;
     }
@@ -160,6 +177,42 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(200, $app->response()->status());
         $this->assertEquals("Allow: GET", $app->response()->body());
+    }
+
+    public function testShouldReturn200WithoutPasswordWithAnonymousFunction()
+    {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/foo"
+        ));
+        $app = new \Slim\Slim();
+        $app->get("/foo/bar", function () {
+            echo "Success";
+        });
+        $app->get("/admin/foo", function () {
+            echo "Admin";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuth(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            )
+        ));
+
+        /* Disable authentication by returning false from a rule */
+        $auth->addrule(function (\Slim\Slim $app) {
+            return false;
+        });
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(200, $app->response()->status());
+        $this->assertEquals("Admin", $app->response()->body());
     }
 
     /*** CGI MODE **********************************************************/
