@@ -98,7 +98,7 @@ class HttpBasicAuthentication extends \Slim\Middleware
         foreach ($data as $key => $value) {
             $method = "set" . ucfirst($key);
             if (method_exists($this, $method)) {
-                call_user_func([$this, $method], $value);
+                call_user_func(array($this, $method), $value);
             }
         }
     }
