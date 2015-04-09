@@ -15,8 +15,9 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
-class DefaultValidator implements ValidatorInterface
+class RequestMethodPassthrough implements RuleInterface
 {
+    protected $options;
 
     public function __construct($options = array())
     {
@@ -29,7 +30,7 @@ class DefaultValidator implements ValidatorInterface
         $this->options = array_merge($this->options, $options);
     }
 
-    public function __invoke()
+    public function __invoke(\Slim\Slim $app)
     {
         $environment = \Slim\Environment::getInstance();
         return !in_array($environment["REQUEST_METHOD"], $this->options["passthru"]);

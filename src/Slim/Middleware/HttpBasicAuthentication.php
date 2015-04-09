@@ -16,11 +16,13 @@
 namespace Slim\Middleware;
 
  use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
- use \Slim\Middleware\HttpBasicAuthentication\DefaultValidator;
+ use \Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough;
+ use \Slim\Middleware\HttpBasicAuthentication\PathShouldMatch;
 
 class HttpBasicAuthentication extends \Slim\Middleware
 {
     public $options;
+    protected $stack;
 
     public function __construct($options = null)
     {
@@ -30,16 +32,36 @@ class HttpBasicAuthentication extends \Slim\Middleware
             "users" => array(),
             "path" => "/",
             "realm" => "Protected",
-            "environment" => "HTTP_AUTHORIZATION"
+            "environment" => "HTTP_AUTHORIZATION",
+            "rules" => null
         );
 
         /* Pass all options. Extra stuff get ignored anyway. */
         $this->options["authenticator"] = new ArrayAuthenticator($options);
-        $this->options["validator"] = new DefaultValidator($options);
 
         if ($options) {
             $this->options = array_merge($this->options, (array)$options);
         }
+
+        /* Setup stack for rules */
+        $this->stack = new \SplStack;
+
+        /* Add default rule if nothing was passed in options. */
+        /* Pass empty array to disable all rules except path matching. */
+        if (null === $this->options["rules"]) {
+            $this->addRule(new RequestMethodPassthrough);
+        }
+
+        /* Path match rule is always added */
+        $this->addRule(new PathShouldMatch(array(
+            "path" => $this->options["path"]
+        )));
+    }
+
+    public function addRule(callable $callable)
+    {
+        $this->stack->push($callable);
+        return $this;
     }
 
     public function call()
@@ -76,16 +98,12 @@ class HttpBasicAuthentication extends \Slim\Middleware
 
     public function shouldAuthenticate()
     {
-        $request = $this->app->request;
-
-        /* If path matches what is given on initialization. */
-        $path = rtrim($this->options["path"], "/");
-        $regex = "@{$path}(/.*)?$@";
-        $path_matches = !!preg_match($regex, $request->getPath());
-
-        /* If validator returns true should authenticate. */
-        $validator_passes = !!$this->options["validator"]();
-
-        return $path_matches && $validator_passes;
+        /* If any of the rules in stack return false will not authenticate */
+        foreach ($this->stack as $rule) {
+            if (false === $rule($this->app)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

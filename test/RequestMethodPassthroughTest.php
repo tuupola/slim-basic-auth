@@ -15,9 +15,9 @@
 
 namespace Test;
 
-use \Slim\Middleware\HttpBasicAuthentication\DefaultValidator;
+use \Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough;
 
-class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
+class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testShouldNotAuthenticateOptions()
@@ -26,9 +26,9 @@ class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
             "REQUEST_METHOD" => "OPTIONS"
         ));
 
-        $validator = new DefaultValidator();
+        $rule = new RequestMethodPassthrough();
 
-        $this->assertFalse($validator());
+        $this->assertFalse($rule(new \Slim\Slim()));
     }
 
     public function testShouldAuthenticatePost()
@@ -37,9 +37,9 @@ class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
             "REQUEST_METHOD" => "POST"
         ));
 
-        $validator = new DefaultValidator();
+        $rule = new RequestMethodPassthrough();
 
-        $this->assertTrue($validator());
+        $this->assertTrue($rule(new \Slim\Slim()));
     }
 
     public function testShouldAuthenticateGet()
@@ -48,9 +48,9 @@ class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
             "REQUEST_METHOD" => "GET"
         ));
 
-        $validator = new DefaultValidator();
+        $rule = new RequestMethodPassthrough();
 
-        $this->assertTrue($validator());
+        $this->assertTrue($rule(new \Slim\Slim()));
     }
 
     public function testShouldConfigurePassthru()
@@ -59,10 +59,10 @@ class DefaultValidatorTest extends \PHPUnit_Framework_TestCase
             "REQUEST_METHOD" => "GET"
         ));
 
-        $validator = new DefaultValidator(array(
+        $rule = new RequestMethodPassthrough(array(
             "passthru" => array("GET")
         ));
 
-        $this->assertFalse($validator());
+        $this->assertFalse($rule(new \Slim\Slim()));
     }
 }

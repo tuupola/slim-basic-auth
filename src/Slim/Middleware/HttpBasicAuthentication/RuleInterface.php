@@ -15,7 +15,7 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
-interface ValidatorInterface
+interface RuleInterface
 {
-    public function __invoke();
+    public function __invoke(\Slim\Slim $app);
 }
