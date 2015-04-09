@@ -28,7 +28,7 @@ class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
 
         $rule = new RequestMethodPassthrough();
 
-        $this->assertFalse($rule(new \Slim\Slim()));
+        $this->assertFalse($rule(new \Slim\Slim));
     }
 
     public function testShouldAuthenticatePost()
@@ -39,7 +39,7 @@ class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
 
         $rule = new RequestMethodPassthrough();
 
-        $this->assertTrue($rule(new \Slim\Slim()));
+        $this->assertTrue($rule(new \Slim\Slim));
     }
 
     public function testShouldAuthenticateGet()
@@ -50,19 +50,19 @@ class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
 
         $rule = new RequestMethodPassthrough();
 
-        $this->assertTrue($rule(new \Slim\Slim()));
+        $this->assertTrue($rule(new \Slim\Slim));
     }
 
-    public function testShouldConfigurePassthru()
+    public function testShouldConfigurepassThrough()
     {
         \Slim\Environment::mock(array(
             "REQUEST_METHOD" => "GET"
         ));
 
         $rule = new RequestMethodPassthrough(array(
-            "passthru" => array("GET")
+            "passthrough" => array("GET")
         ));
 
-        $this->assertFalse($rule(new \Slim\Slim()));
+        $this->assertFalse($rule(new \Slim\Slim));
     }
 }

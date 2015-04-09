@@ -24,7 +24,7 @@ class RequestMethodPassthrough implements RuleInterface
 
         /* Default options. */
         $this->options = array(
-            "passthru" => array("OPTIONS")
+            "passthrough" => array("OPTIONS")
         );
 
         $this->options = array_merge($this->options, $options);
@@ -33,6 +33,6 @@ class RequestMethodPassthrough implements RuleInterface
     public function __invoke(\Slim\Slim $app)
     {
         $environment = \Slim\Environment::getInstance();
-        return !in_array($environment["REQUEST_METHOD"], $this->options["passthru"]);
+        return !in_array($environment["REQUEST_METHOD"], $this->options["passthrough"]);
     }
 }
