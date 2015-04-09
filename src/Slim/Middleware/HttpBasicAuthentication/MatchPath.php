@@ -15,7 +15,7 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
-class PathShouldMatch implements RuleInterface
+class MatchPath implements RuleInterface
 {
     protected $options;
 

@@ -15,9 +15,9 @@
 
 namespace Test;
 
-use \Slim\Middleware\HttpBasicAuthentication\PathShouldMatch;
+use \Slim\Middleware\HttpBasicAuthentication\MatchPath;
 
-class PathShouldMatchTest extends \PHPUnit_Framework_TestCase
+class MatchPathTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testShouldAuthenticateEverything()
@@ -27,7 +27,7 @@ class PathShouldMatchTest extends \PHPUnit_Framework_TestCase
             "PATH_INFO" => "/"
         ));
 
-        $rule = new PathShouldMatch(array("path" => "/"));
+        $rule = new MatchPath(array("path" => "/"));
         $this->assertTrue($rule(new \Slim\Slim));
 
         \Slim\Environment::mock(array(
@@ -44,7 +44,7 @@ class PathShouldMatchTest extends \PHPUnit_Framework_TestCase
             "PATH_INFO" => "/"
         ));
 
-        $rule = new PathShouldMatch(array("path" => "/admin"));
+        $rule = new MatchPath(array("path" => "/admin"));
         $this->assertFalse($rule(new \Slim\Slim));
 
         \Slim\Environment::mock(array(

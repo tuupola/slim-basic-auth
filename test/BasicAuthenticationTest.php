@@ -18,6 +18,10 @@ namespace Test;
 use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use \Slim\Middleware\HttpBasicAuthentication\RuleInterface;
 
+use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
+use \Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough;
+use \Slim\Middleware\HttpBasicAuthentication\MatchPath;
+
 /* @codingStandardsIgnoreStart */
 class TrueAuthenticator implements AuthenticatorInterface
 {
@@ -54,6 +58,109 @@ class FalseRule implements RuleInterface
 
 class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 {
+
+    public function testShouldBeCreatedInEasyMode()
+    {
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Mordor",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            )
+        ));
+
+        $users = $auth->getUsers();
+        $rules = $auth->getRules();
+
+        $this->assertEquals("t00r", $users["root"]);
+        $this->assertEquals("/admin", $auth->getPath());
+        $this->assertEquals("Mordor", $auth->getRealm());
+        $this->assertEquals("HTTP_AUTHORIZATION", $auth->getEnvironment());
+        $this->assertInstanceOf(
+            "\Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator",
+            $auth->getAuthenticator()
+        );
+        $this->assertInstanceOf(
+            "\Slim\Middleware\HttpBasicAuthentication\MatchPath",
+            $rules->pop()
+        );
+        $this->assertInstanceOf(
+            "\Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough",
+            $rules->pop()
+        );
+    }
+
+    public function testShouldBeCreatedInNormalMode()
+    {
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "realm" => "Mordor",
+            "authenticator" => new ArrayAuthenticator(array(
+                "users" => array(
+                    "root" => "t00r",
+                    "user" => "passw0rd"
+                )
+            )),
+            "rules" => array(
+                new TrueRule,
+                new FalseRule,
+                new RequestMethodPassthrough(array("passthrough" => array("OPTIONS")))
+            )
+        ));
+
+        //$users = $auth->getUsers();
+        $rules = $auth->getRules();
+
+        //$this->assertEquals("t00r", $users["root"]);
+        //$this->assertEquals("/admin", $auth->getPath());
+        $this->assertEquals("Mordor", $auth->getRealm());
+        $this->assertEquals("HTTP_AUTHORIZATION", $auth->getEnvironment());
+        $this->assertInstanceOf(
+            "\Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator",
+            $auth->getAuthenticator()
+        );
+        $this->assertInstanceOf(
+            "\Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough",
+            $rules->pop()
+        );
+        $this->assertInstanceOf(
+            "\Test\FalseRule",
+            $rules->pop()
+        );
+        $this->assertInstanceOf(
+            "\Test\TrueRule",
+            $rules->pop()
+        );
+    }
+
+    public function testShouldFailWithoutAuthenticator()
+    {
+        $this->setExpectedException("RuntimeException");
+        $auth = new \Slim\Middleware\HttpBasicAuthentication();
+    }
+
+    public function testSettersShouldBeChainable()
+    {
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "authenticator" => new FalseAuthenticator,
+            "rules" => array(
+                new FalseRule
+            )
+        ));
+
+        $this->assertInstanceOf("\Test\FalseAuthenticator", $auth->getAuthenticator());
+        $this->assertInstanceOf("\Test\FalseRule", $auth->getRules()->pop());
+
+        $auth
+            ->setAuthenticator(new TrueAuthenticator)
+            ->setRules(array(new TrueRule))
+            ->addRule(new FalseRule);
+
+        $this->assertInstanceOf("\Test\TrueAuthenticator", $auth->getAuthenticator());
+        $this->assertInstanceOf("\Test\FalseRule", $auth->getRules()->pop());
+        $this->assertInstanceOf("\Test\TrueRule", $auth->getRules()->pop());
+
+    }
 
     public function testShouldReturn200WithoutPassword()
     {

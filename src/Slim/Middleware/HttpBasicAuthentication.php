@@ -15,53 +15,50 @@
 
 namespace Slim\Middleware;
 
- use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
- use \Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough;
- use \Slim\Middleware\HttpBasicAuthentication\PathShouldMatch;
+use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
+use \Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough;
+use \Slim\Middleware\HttpBasicAuthentication\MatchPath;
 
 class HttpBasicAuthentication extends \Slim\Middleware
 {
-    public $options;
-    protected $stack;
+    private $rules;
+    private $options = array(
+        "users" => null,
+        "path" => "/",
+        "realm" => "Protected",
+        "environment" => "HTTP_AUTHORIZATION",
+        "authenticator" => null
+    );
 
-    public function __construct($options = null)
+    public function __construct($options = array())
     {
-
-        /* Default options. */
-        $this->options = array(
-            "users" => array(),
-            "path" => "/",
-            "realm" => "Protected",
-            "environment" => "HTTP_AUTHORIZATION",
-            "rules" => null
-        );
-
-        /* Pass all options. Extra stuff get ignored anyway. */
-        $this->options["authenticator"] = new ArrayAuthenticator($options);
-
-        if ($options) {
-            $this->options = array_merge($this->options, (array)$options);
-        }
-
         /* Setup stack for rules */
-        $this->stack = new \SplStack;
+        $this->rules = new \SplStack;
 
-        /* Add default rule if nothing was passed in options. */
-        /* Pass empty array to disable all rules except path matching. */
-        if (null === $this->options["rules"]) {
-            $this->addRule(new RequestMethodPassthrough);
+        /* Store passed in options overwriting any defaults */
+        $this->hydrate($options);
+
+        /* If array of users was passed in options create an authenticator */
+        if (is_array($this->options["users"])) {
+            $this->options["authenticator"] = new ArrayAuthenticator(array(
+                "users" => $this->options["users"]
+            ));
         }
 
-        /* Path match rule is always added */
-        $this->addRule(new PathShouldMatch(array(
-            "path" => $this->options["path"]
-        )));
-    }
+        /* If nothing was passed in options add default rules. */
+        if (!isset($options["rules"])) {
+            $this->addRule(new RequestMethodPassthrough);
+            $this->addRule(new MatchPath(array(
+                "path" => $this->options["path"]
+            )));
+        }
 
-    public function addRule($callable)
-    {
-        $this->stack->push($callable);
-        return $this;
+        /* There must be an authenticator either passed via options */
+        /* or added because $this->options["users"] was an array. */
+        if (null === $this->options["authenticator"]) {
+            throw new \RuntimeException("Authenticator or users array must be given");
+        }
     }
 
     public function call()
@@ -96,14 +93,105 @@ class HttpBasicAuthentication extends \Slim\Middleware
         }
     }
 
-    public function shouldAuthenticate()
+    private function hydrate($data = array())
+    {
+        foreach ($data as $key => $value) {
+            $method = "set" . ucfirst($key);
+            if (method_exists($this, $method)) {
+                call_user_func([$this, $method], $value);
+            }
+        }
+    }
+
+    private function shouldAuthenticate()
     {
         /* If any of the rules in stack return false will not authenticate */
-        foreach ($this->stack as $rule) {
-            if (false === $rule($this->app)) {
+        foreach ($this->rules as $callable) {
+            if (false === $callable($this->app)) {
                 return false;
             }
         }
         return true;
+    }
+
+    public function getAuthenticator()
+    {
+        return $this->options["authenticator"];
+    }
+
+    public function setAuthenticator($authenticator)
+    {
+        $this->options["authenticator"] = $authenticator;
+        return $this;
+    }
+
+    public function getUsers()
+    {
+        return $this->options["users"];
+    }
+
+    /* Do not mess with users right now */
+    private function setUsers($users)
+    {
+        $this->options["users"] = $users;
+        return $this;
+    }
+
+    public function getPath()
+    {
+        return $this->options["path"];
+    }
+
+    /* Do not mess with path right now */
+    private function setPath($path)
+    {
+        $this->options["path"] = $path;
+        return $this;
+    }
+
+    public function getRealm()
+    {
+        return $this->options["realm"];
+    }
+
+    public function setRealm($realm)
+    {
+        $this->options["realm"] = $realm;
+        return $this;
+    }
+
+    public function getEnvironment()
+    {
+        return $this->options["environment"];
+    }
+
+    public function setEnvironment($environment)
+    {
+        $this->options["environment"] = $environment;
+        return $this;
+    }
+
+    public function getRules()
+    {
+        return $this->rules;
+    }
+
+    public function setRules(array $rules)
+    {
+        /* Clear the stack */
+        unset($this->rules);
+        $this->rules = new \SplStack;
+
+        /* Add the rules */
+        foreach ($rules as $callable) {
+            $this->addRule($callable);
+        }
+        return $this;
+    }
+
+    public function addRule($callable)
+    {
+        $this->rules->push($callable);
+        return $this;
     }
 }
