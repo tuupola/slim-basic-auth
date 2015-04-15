@@ -4,7 +4,7 @@ require "vendor/autoload.php";
 
 $app = new \Slim\Slim();
 
-$app->add(new \Slim\Middleware\HttpBasicAuth(array(
+$app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
     "path" => "/admin",
     "realm" => "Here be dragons.",
     "environment" => "REDIRECT_HTTP_AUTHORIZATION",
