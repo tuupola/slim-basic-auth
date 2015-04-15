@@ -17,22 +17,28 @@ namespace Slim\Middleware\HttpBasicAuthentication;
 
 class RequestPathRule implements RuleInterface
 {
-    protected $options;
+    protected $options = array(
+        "path" => "/",
+        "passthrough" => array()
+    );
 
     public function __construct($options = array())
     {
-        /* Default options. */
-        $this->options = array(
-            "path" => "/"
-        );
-
         $this->options = array_merge($this->options, $options);
     }
 
     public function __invoke(\Slim\Slim $app)
     {
+        /* If request path is matches passthrough should not authenticate. */
+        foreach ($this->options["passthrough"] as $passthrough) {
+            $passthrough = rtrim($passthrough, "/");
+            if (!!preg_match("@{$passthrough}(/.*)?$@", $app->request->getPath())) {
+                return false;
+            }
+        }
+
+        /* Otherwise check if path matches and we should authenticate. */
         $path = rtrim($this->options["path"], "/");
-        $regex = "@{$path}(/.*)?$@";
-        return !!preg_match($regex, $app->request->getPath());
+        return !!preg_match("@{$path}(/.*)?$@", $app->request->getPath());
     }
 }

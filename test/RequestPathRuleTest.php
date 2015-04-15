@@ -53,4 +53,24 @@ class MatchPathTest extends \PHPUnit_Framework_TestCase
         ));
         $this->assertTrue($rule(new \Slim\Slim));
     }
+
+    public function testShouldPassthroughLogin()
+    {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/protected"
+        ));
+
+        $rule = new RequestPathRule(array(
+            "path" => "/admin",
+            "passthrough" => array("/admin/login")
+        ));
+        $this->assertTrue($rule(new \Slim\Slim));
+
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/login"
+        ));
+        $this->assertFalse($rule(new \Slim\Slim));
+    }
 }
