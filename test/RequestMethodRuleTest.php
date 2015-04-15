@@ -15,7 +15,7 @@
 
 namespace Test;
 
-use \Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough;
+use \Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
 
 class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,7 +26,7 @@ class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
             "REQUEST_METHOD" => "OPTIONS"
         ));
 
-        $rule = new RequestMethodPassthrough();
+        $rule = new RequestMethodRule();
 
         $this->assertFalse($rule(new \Slim\Slim));
     }
@@ -37,7 +37,7 @@ class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
             "REQUEST_METHOD" => "POST"
         ));
 
-        $rule = new RequestMethodPassthrough();
+        $rule = new RequestMethodRule();
 
         $this->assertTrue($rule(new \Slim\Slim));
     }
@@ -48,7 +48,7 @@ class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
             "REQUEST_METHOD" => "GET"
         ));
 
-        $rule = new RequestMethodPassthrough();
+        $rule = new RequestMethodRule();
 
         $this->assertTrue($rule(new \Slim\Slim));
     }
@@ -59,7 +59,7 @@ class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
             "REQUEST_METHOD" => "GET"
         ));
 
-        $rule = new RequestMethodPassthrough(array(
+        $rule = new RequestMethodRule(array(
             "passthrough" => array("GET")
         ));
 

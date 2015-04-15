@@ -15,7 +15,7 @@
 
 namespace Test;
 
-use \Slim\Middleware\HttpBasicAuthentication\MatchPath;
+use \Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
 
 class MatchPathTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,7 +27,7 @@ class MatchPathTest extends \PHPUnit_Framework_TestCase
             "PATH_INFO" => "/"
         ));
 
-        $rule = new MatchPath(array("path" => "/"));
+        $rule = new RequestPathRule(array("path" => "/"));
         $this->assertTrue($rule(new \Slim\Slim));
 
         \Slim\Environment::mock(array(
@@ -44,7 +44,7 @@ class MatchPathTest extends \PHPUnit_Framework_TestCase
             "PATH_INFO" => "/"
         ));
 
-        $rule = new MatchPath(array("path" => "/admin"));
+        $rule = new RequestPathRule(array("path" => "/admin"));
         $this->assertFalse($rule(new \Slim\Slim));
 
         \Slim\Environment::mock(array(

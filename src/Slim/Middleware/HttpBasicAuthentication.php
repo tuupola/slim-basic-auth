@@ -17,8 +17,8 @@ namespace Slim\Middleware;
 
 use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use \Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough;
-use \Slim\Middleware\HttpBasicAuthentication\MatchPath;
+use \Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
+use \Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
 
 class HttpBasicAuthentication extends \Slim\Middleware
 {
@@ -48,8 +48,8 @@ class HttpBasicAuthentication extends \Slim\Middleware
 
         /* If nothing was passed in options add default rules. */
         if (!isset($options["rules"])) {
-            $this->addRule(new RequestMethodPassthrough);
-            $this->addRule(new MatchPath(array(
+            $this->addRule(new RequestMethodRule);
+            $this->addRule(new RequestPathRule(array(
                 "path" => $this->options["path"]
             )));
         }

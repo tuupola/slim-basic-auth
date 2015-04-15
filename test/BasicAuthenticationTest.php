@@ -19,8 +19,8 @@ use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use \Slim\Middleware\HttpBasicAuthentication\RuleInterface;
 
 use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use \Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough;
-use \Slim\Middleware\HttpBasicAuthentication\MatchPath;
+use \Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
+use \Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
 
 /* @codingStandardsIgnoreStart */
 class TrueAuthenticator implements AuthenticatorInterface
@@ -82,11 +82,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             $auth->getAuthenticator()
         );
         $this->assertInstanceOf(
-            "\Slim\Middleware\HttpBasicAuthentication\MatchPath",
+            "\Slim\Middleware\HttpBasicAuthentication\RequestPathRule",
             $rules->pop()
         );
         $this->assertInstanceOf(
-            "\Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough",
+            "\Slim\Middleware\HttpBasicAuthentication\RequestMethodRule",
             $rules->pop()
         );
     }
@@ -104,7 +104,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             "rules" => array(
                 new TrueRule,
                 new FalseRule,
-                new RequestMethodPassthrough(array("passthrough" => array("OPTIONS")))
+                new RequestMethodRule(array("passthrough" => array("OPTIONS")))
             )
         ));
 
@@ -120,7 +120,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             $auth->getAuthenticator()
         );
         $this->assertInstanceOf(
-            "\Slim\Middleware\HttpBasicAuthentication\RequestMethodPassthrough",
+            "\Slim\Middleware\HttpBasicAuthentication\RequestMethodRule",
             $rules->pop()
         );
         $this->assertInstanceOf(

@@ -15,16 +15,15 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
-class RequestMethodPassthrough implements RuleInterface
+class RequestPathRule implements RuleInterface
 {
     protected $options;
 
     public function __construct($options = array())
     {
-
         /* Default options. */
         $this->options = array(
-            "passthrough" => array("OPTIONS")
+            "path" => "/"
         );
 
         $this->options = array_merge($this->options, $options);
@@ -32,7 +31,8 @@ class RequestMethodPassthrough implements RuleInterface
 
     public function __invoke(\Slim\Slim $app)
     {
-        $environment = \Slim\Environment::getInstance();
-        return !in_array($environment["REQUEST_METHOD"], $this->options["passthrough"]);
+        $path = rtrim($this->options["path"], "/");
+        $regex = "@{$path}(/.*)?$@";
+        return !!preg_match($regex, $app->request->getPath());
     }
 }
