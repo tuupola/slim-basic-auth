@@ -25,7 +25,7 @@ class HttpBasicAuthentication extends \Slim\Middleware
     private $rules;
     private $options = array(
         "users" => null,
-        "path" => "/",
+        "path" => null,
         "realm" => "Protected",
         "environment" => "HTTP_AUTHORIZATION",
         "authenticator" => null
@@ -48,7 +48,13 @@ class HttpBasicAuthentication extends \Slim\Middleware
 
         /* If nothing was passed in options add default rules. */
         if (!isset($options["rules"])) {
-            $this->addRule(new RequestMethodRule);
+            $this->addRule(new RequestMethodRule(array(
+                "passthrough" => array("OPTIONS")
+            )));
+        }
+
+        /* If path was given in easy mode add rule for it. */
+        if (null !== ($this->options["path"])) {
             $this->addRule(new RequestPathRule(array(
                 "path" => $this->options["path"]
             )));
