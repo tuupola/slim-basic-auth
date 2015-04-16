@@ -69,34 +69,38 @@ class HttpBasicAuthentication extends \Slim\Middleware
 
     public function call()
     {
+
+        /* If rules say we should not authenticate call next and return. */
+        if (false === $this->shouldAuthenticate()) {
+            $this->next->call();
+            return;
+        }
+
         $environment = $this->app->environment;
 
-        if ($this->shouldAuthenticate()) {
-            /* Just in case. */
-            $user = false;
-            $pass = false;
+        /* Just in case. */
+        $user = false;
+        $pass = false;
 
-            /* If using PHP in CGI mode. */
-            if (isset($_SERVER[$this->options["environment"]])) {
-                if (preg_match("/Basic\s+(.*)$/i", $_SERVER[$this->options["environment"]], $matches)) {
-                    list($user, $pass) = explode(":", base64_decode($matches[1]));
-                }
-            } else {
-                $user = $environment["PHP_AUTH_USER"];
-                $pass = $environment["PHP_AUTH_PW"];
-            }
-
-            /* Check if user authenticates. */
-            if ($this->options["authenticator"]($user, $pass)) {
-                $this->next->call();
-            } else {
-                $this->app->response->status(401);
-                $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
-                return;
+        /* If using PHP in CGI mode. */
+        if (isset($_SERVER[$this->options["environment"]])) {
+            if (preg_match("/Basic\s+(.*)$/i", $_SERVER[$this->options["environment"]], $matches)) {
+                list($user, $pass) = explode(":", base64_decode($matches[1]));
             }
         } else {
-            $this->next->call();
+            $user = $environment["PHP_AUTH_USER"];
+            $pass = $environment["PHP_AUTH_PW"];
         }
+
+        /* Check if user authenticates. */
+        if (false === $this->options["authenticator"]($user, $pass)) {
+            $this->app->response->status(401);
+            $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
+            return;
+        }
+
+        /* Everything ok, call next middleware. */
+        $this->next->call();
     }
 
     private function hydrate($data = array())
