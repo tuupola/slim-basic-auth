@@ -510,8 +510,108 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("", $app->response()->body());
     }
 
+    public function testShouldNotAllowInsecure()
+    {
+        $this->setExpectedException("RuntimeException");
+
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/public/foo",
+            "SERVER_NAME" => "dev.example.com",
+            "slim.url_scheme" => "http"
+        ));
+        $app = new \Slim\Slim();
+
+        $app->get("/public/foo", function () {
+            echo "Success";
+        });
+
+        $app->get("/api/foo", function () {
+            echo "Foo";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/api",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            )
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+    }
+
+    public function testShouldRelaxInsecureInLocalhost()
+    {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/public/foo",
+            "SERVER_NAME" => "localhost",
+            "slim.url_scheme" => "http"
+        ));
+
+        $app = new \Slim\Slim();
+
+        $app->get("/public/foo", function () {
+            echo "Success";
+        });
+
+        $app->get("/api/foo", function () {
+            echo "Foo";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "secure" => true,
+            "path" => "/api",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            )
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(200, $app->response()->status());
+        $this->assertEquals("Success", $app->response()->body());
+    }
+
+
 
     /*** OTHER *************************************************************/
+
+    public function testShouldGetAndSetSecure()
+    {
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "authenticator" => function ($user, $pass) {
+                return true;
+            }
+        ));
+        $this->assertTrue($auth->getSecure());
+        $auth->setSecure(false);
+        $this->assertFalse($auth->getSecure());
+    }
+
+    public function testShouldGetAndSetRelaxed()
+    {
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "authenticator" => function ($user, $pass) {
+                return true;
+            }
+        ));
+        $relaxed = array("localhost", "dev.example.com");
+        $auth->setRelaxed($relaxed);
+        $this->assertEquals($relaxed, $auth->getRelaxed());
+    }
+
+    /*** BUGS *************************************************************/
 
     public function testBug2UrlShouldMatchRegex()
     {
