@@ -29,7 +29,7 @@ class RequestPathRule implements RuleInterface
 
     public function __invoke(\Slim\Slim $app)
     {
-        /* If request path is matches passthrough should not authenticate. */
+        /* If request path matches passthrough should not authenticate. */
         foreach ($this->options["passthrough"] as $passthrough) {
             $passthrough = rtrim($passthrough, "/");
             if (!!preg_match("@^{$passthrough}(/.*)?$@", $app->request->getResourceUri())) {

@@ -24,11 +24,14 @@ class HttpBasicAuthentication extends \Slim\Middleware
 {
     private $rules;
     private $options = array(
+        "secure" => true,
+        "relaxed" => array("localhost", "127.0.0.1"),
         "users" => null,
-        "path" => "/",
+        "path" => null,
         "realm" => "Protected",
         "environment" => "HTTP_AUTHORIZATION",
-        "authenticator" => null
+        "authenticator" => null,
+        "callback" => null
     );
 
     public function __construct($options = array())
@@ -48,7 +51,13 @@ class HttpBasicAuthentication extends \Slim\Middleware
 
         /* If nothing was passed in options add default rules. */
         if (!isset($options["rules"])) {
-            $this->addRule(new RequestMethodRule);
+            $this->addRule(new RequestMethodRule(array(
+                "passthrough" => array("OPTIONS")
+            )));
+        }
+
+        /* If path was given in easy mode add rule for it. */
+        if (null !== ($this->options["path"])) {
             $this->addRule(new RequestPathRule(array(
                 "path" => $this->options["path"]
             )));
@@ -64,33 +73,58 @@ class HttpBasicAuthentication extends \Slim\Middleware
     public function call()
     {
         $environment = $this->app->environment;
-
-        if ($this->shouldAuthenticate()) {
-            /* Just in case. */
-            $user = false;
-            $pass = false;
-
-            /* If using PHP in CGI mode. */
-            if (isset($_SERVER[$this->options["environment"]])) {
-                if (preg_match("/Basic\s+(.*)$/i", $_SERVER[$this->options["environment"]], $matches)) {
-                    list($user, $pass) = explode(":", base64_decode($matches[1]));
-                }
-            } else {
-                $user = $environment["PHP_AUTH_USER"];
-                $pass = $environment["PHP_AUTH_PW"];
+        $scheme = $environment["slim.url_scheme"];
+        /* HTTP allowed only if secure is false or server is in relaxed array. */
+        if ("https" !== $scheme && true === $this->options["secure"]) {
+            if (!in_array($environment["SERVER_NAME"], $this->options["relaxed"])) {
+                $message = sprintf(
+                    "Insecure use of middleware over %s denied by configuration.",
+                    strtoupper($scheme)
+                );
+                throw new \RuntimeException($message);
             }
+        }
 
-            /* Check if user authenticates. */
-            if ($this->options["authenticator"]($user, $pass)) {
-                $this->next->call();
-            } else {
+        /* If rules say we should not authenticate call next and return. */
+        if (false === $this->shouldAuthenticate()) {
+            $this->next->call();
+            return;
+        }
+
+        /* Just in case. */
+        $user = false;
+        $pass = false;
+
+        /* If using PHP in CGI mode. */
+        if (isset($_SERVER[$this->options["environment"]])) {
+            if (preg_match("/Basic\s+(.*)$/i", $_SERVER[$this->options["environment"]], $matches)) {
+                list($user, $pass) = explode(":", base64_decode($matches[1]));
+            }
+        } else {
+            $user = $environment["PHP_AUTH_USER"];
+            $pass = $environment["PHP_AUTH_PW"];
+        }
+
+        /* Check if user authenticates. */
+        if (false === $this->options["authenticator"]($user, $pass)) {
+            $this->app->response->status(401);
+            $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
+            return;
+        }
+
+        /* If callback returns false return with 401 Unauthorized. */
+        if (is_callable($this->options["callback"])) {
+            $params = array("user" => $user, "pass" => $pass);
+            if (false === $this->options["callback"]($params)) {
                 $this->app->response->status(401);
                 $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
                 return;
             }
-        } else {
-            $this->next->call();
         }
+
+
+        /* Everything ok, call next middleware. */
+        $this->next->call();
     }
 
     private function hydrate($data = array())
@@ -168,6 +202,69 @@ class HttpBasicAuthentication extends \Slim\Middleware
     public function setEnvironment($environment)
     {
         $this->options["environment"] = $environment;
+        return $this;
+    }
+
+    /**
+     * Get the secure flag
+     *
+     * @return boolean
+     */
+    public function getSecure()
+    {
+        return $this->options["secure"];
+    }
+
+    /**
+     * Set the secure flag
+     *
+     * @return self
+     */
+    public function setSecure($secure)
+    {
+        $this->options["secure"] = !!$secure;
+        return $this;
+    }
+
+    /**
+     * Get hosts where secure rule is relaxed
+     *
+     * @return string
+     */
+    public function getRelaxed()
+    {
+        return $this->options["relaxed"];
+    }
+
+    /**
+     * Set hosts where secure rule is relaxed
+     *
+     * @return self
+     */
+    public function setRelaxed(array $relaxed)
+    {
+        $this->options["relaxed"] = $relaxed;
+        return $this;
+    }
+
+    /**
+     * Get the callback
+     *
+     * @return string
+     */
+    public function getCallback()
+    {
+        return $this->options["callback"];
+    }
+
+    /**
+     * Set the callback
+     *
+     * @return self
+     */
+    public function setCallback($callback)
+    {
+        $this->options["callback"] = $callback;
         return $this;
     }
 
