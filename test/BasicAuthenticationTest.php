@@ -322,6 +322,42 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Admin", $app->response()->body());
     }
 
+    public function testShouldReturn401WithFalseFromCallback()
+    {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/foo",
+            "PHP_AUTH_USER" => "root",
+            "PHP_AUTH_PW" => "t00r",
+        ));
+        $app = new \Slim\Slim();
+        $app->get("/foo/bar", function () {
+            echo "Success";
+        });
+        $app->get("/admin/foo", function () {
+            echo "Admin";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ),
+            "callback" => function ($arguments) use ($app) {
+                return false;
+            }
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(401, $app->response()->status());
+        $this->assertEquals("", $app->response()->body());
+    }
+
     /*** CGI MODE **********************************************************/
 
     public function testShouldReturn200WithPasswordInCgiMode()

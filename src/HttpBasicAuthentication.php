@@ -30,7 +30,8 @@ class HttpBasicAuthentication extends \Slim\Middleware
         "path" => null,
         "realm" => "Protected",
         "environment" => "HTTP_AUTHORIZATION",
-        "authenticator" => null
+        "authenticator" => null,
+        "callback" => null
     );
 
     public function __construct($options = array())
@@ -110,6 +111,17 @@ class HttpBasicAuthentication extends \Slim\Middleware
             $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
             return;
         }
+
+        /* If callback returns false return with 401 Unauthorized. */
+        if (is_callable($this->options["callback"])) {
+            $params = array("user" => $user, "pass" => $pass);
+            if (false === $this->options["callback"]($params)) {
+                $this->app->response->status(401);
+                $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
+                return;
+            }
+        }
+
 
         /* Everything ok, call next middleware. */
         $this->next->call();
@@ -232,6 +244,27 @@ class HttpBasicAuthentication extends \Slim\Middleware
     public function setRelaxed(array $relaxed)
     {
         $this->options["relaxed"] = $relaxed;
+        return $this;
+    }
+
+    /**
+     * Get the callback
+     *
+     * @return string
+     */
+    public function getCallback()
+    {
+        return $this->options["callback"];
+    }
+
+    /**
+     * Set the callback
+     *
+     * @return self
+     */
+    public function setCallback($callback)
+    {
+        $this->options["callback"] = $callback;
         return $this;
     }
 
