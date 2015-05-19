@@ -32,7 +32,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
-With optional `path` parameter can authenticate only given part of your website. You can also change the displayed `realm` using the parameter with same name.
+With optional `path` parameter can authenticate only given part of your website. You can also change the displayed `realm` using the parameter with same name. Optional callback which is called if authentication succeeds can be added. If callback returns boolean `false` authentication is forced to be failed.
 
 ```php
 $app = new \Slim\Slim();
@@ -43,7 +43,10 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "users" => [
         "root" => "t00r",
         "user" => "passw0rd"
-    ]
+    ],
+    "callback" => function ($arguments) use ($app) {
+        print_r($arguments);
+    }
 ]));
 ```
 
