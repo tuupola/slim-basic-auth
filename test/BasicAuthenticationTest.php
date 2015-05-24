@@ -697,6 +697,22 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($error, $auth->getError());
     }
 
+    public function testShouldGetAndSetCallback()
+    {
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "authenticator" => function ($user, $pass) {
+                return true;
+            }
+        ));
+        $callback = function () {
+            return "It's got Electrolytes.";
+        };
+        $auth->setCallback($callback);
+        $this->assertEquals($callback, $auth->getCallback());
+    }
+
     /*** BUGS *************************************************************/
 
     public function testBug2UrlShouldMatchRegex()
