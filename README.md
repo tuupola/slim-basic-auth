@@ -50,6 +50,39 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
+## Security
+
+Browsers send passwords over the wire basically as cleartext. You should always use HTTPS. If the middleware detects insecure usage over HTTP it will throw `RuntimeException`. This rule is relaxed for localhost. To allow insecure usage you must enable it manually by setting `secure` to `false`.
+
+``` php
+$app = new \Slim\Slim();
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/admin",
+    "secure" => false,
+    "users" => [
+        "root" => "t00r",
+        "user" => "passw0rd"
+    ]
+]));
+```
+
+Alternatively you can list your development host to have relaxed security.
+
+``` php
+$app = new \Slim\Slim();
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/admin",
+    "secure" => true,
+    "relaxed" => ["localhost", "dev.example.com"],
+    "users" => [
+        "root" => "t00r",
+        "user" => "passw0rd"
+    ]
+]));
+```
+
 ## Custom authentication methods
 
 Sometimes passing users in an array is not enough. To authenticate against custom datasource you can pass a callable as `authenticator` parameter. This can be either a class which implements AuthenticatorInterface or anonymous function. In both cases authenticator must return either `true` or `false`.
