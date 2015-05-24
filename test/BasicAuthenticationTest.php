@@ -22,40 +22,6 @@ use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
 use \Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use \Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
 
-/* @codingStandardsIgnoreStart */
-class TrueAuthenticator implements AuthenticatorInterface
-{
-    public function __invoke($user, $pass)
-    {
-        return true;
-    }
-}
-
-class FalseAuthenticator implements AuthenticatorInterface
-{
-    public function __invoke($user, $pass)
-    {
-        return false;
-    }
-}
-
-class TrueRule implements RuleInterface
-{
-    public function __invoke(\Slim\Slim $app)
-    {
-        return true;
-    }
-}
-
-class FalseRule implements RuleInterface
-{
-    public function __invoke(\Slim\Slim $app)
-    {
-        return false;
-    }
-}
-/* @codingStandardsIgnoreEnd */
-
 class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 {
 
