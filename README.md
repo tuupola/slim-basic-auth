@@ -89,6 +89,28 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
+## Setting response body when authentication fails
+
+By default plugin returns an empty response body with 401 response. You can return custom body using by providing an error handler. This is useful for example when you need additional information why authentication failed.
+
+```php
+$app = new \Slim\Slim();
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/api",
+    "realm" => "Protected",
+    "users" => [
+        "root" => "t00r",
+        "user" => "passw0rd"
+    ],
+    "error" => function ($arguments) use ($app) {
+        $response["status"] = "error";
+        $response["message"] = $arguments["message"];
+        $app->response->write(json_encode($response, JSON_UNESCAPED_SLASHES));
+    }
+]));
+```
+
 ## Usage with PDO
 
 For those in hurry there is a ready made PDO authenticator. It covers most of the use cases. You probably end up implementing your own though.
