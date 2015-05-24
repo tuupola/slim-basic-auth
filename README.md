@@ -195,4 +195,32 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
+## Testing
+
+You can run tests either manually...
+
+``` bash
+$ vendor/bin/phpunit
+$ vendor/bin/phpcs --standard=PSR2 src/ -p
+```
+
+... or automatically on every code change.
+
+``` bash
+$ npm install
+$ grunt watch
+```
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Security
+
+If you discover any security related issues, please email tuupola@appelsiini.net instead of using the issue tracker.
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+
 
