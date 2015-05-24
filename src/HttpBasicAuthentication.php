@@ -31,7 +31,8 @@ class HttpBasicAuthentication extends \Slim\Middleware
         "realm" => "Protected",
         "environment" => "HTTP_AUTHORIZATION",
         "authenticator" => null,
-        "callback" => null
+        "callback" => null,
+        "error" => null
     );
 
     public function __construct($options = array())
@@ -109,6 +110,9 @@ class HttpBasicAuthentication extends \Slim\Middleware
         if (false === $this->options["authenticator"]($user, $pass)) {
             $this->app->response->status(401);
             $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
+            $this->error(array(
+                "message" => "Authentication failed"
+            ));
             return;
         }
 
@@ -118,6 +122,9 @@ class HttpBasicAuthentication extends \Slim\Middleware
             if (false === $this->options["callback"]($params)) {
                 $this->app->response->status(401);
                 $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
+                $this->error(array(
+                    "message" => "Callback returned false"
+                ));
                 return;
             }
         }
@@ -146,6 +153,18 @@ class HttpBasicAuthentication extends \Slim\Middleware
             }
         }
         return true;
+    }
+
+    /**
+     * Call the error handler if it exists
+     *
+     * @return void
+     */
+    public function error($params)
+    {
+        if (is_callable($this->options["error"])) {
+            $this->options["error"]($params);
+        }
     }
 
     public function getAuthenticator()
@@ -265,6 +284,27 @@ class HttpBasicAuthentication extends \Slim\Middleware
     public function setCallback($callback)
     {
         $this->options["callback"] = $callback;
+        return $this;
+    }
+
+    /**
+     * Get the error handler
+     *
+     * @return string
+     */
+    public function getError()
+    {
+        return $this->options["error"];
+    }
+
+    /**
+     * Set the error handler
+     *
+     * @return self
+     */
+    public function setError($error)
+    {
+        $this->options["error"] = $error;
         return $this;
     }
 
