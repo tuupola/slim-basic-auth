@@ -32,7 +32,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
-With optional `path` parameter can authenticate only given part of your website. You can also change the displayed `realm` using the parameter with same name. Optional callback which is called if authentication succeeds can be added. If callback returns boolean `false` authentication is forced to be failed.
+With optional `path` parameter can authenticate only given part of your website. You can also change the displayed `realm` using the parameter with same name. Optional callback which is called if authentication succeeds can be added. Callback receives an array containing `user` and `password` as argument. If callback returns boolean `false` authentication is forced to be failed.
 
 ```php
 $app = new \Slim\Slim();
@@ -85,7 +85,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 
 ## Custom authentication methods
 
-Sometimes passing users in an array is not enough. To authenticate against custom datasource you can pass a callable as `authenticator` parameter. This can be either a class which implements AuthenticatorInterface or anonymous function. In both cases authenticator must return either `true` or `false`.
+Sometimes passing users in an array is not enough. To authenticate against custom datasource you can pass a callable as `authenticator` parameter. This can be either a class which implements AuthenticatorInterface or anonymous function. Callable receives an array containing `user` and `password` as argument. In both cases authenticator must return either `true` or `false`.
 
 If you are creating an Enterprise&trade; software which randomly lets people log in you could use the following.
 
@@ -94,7 +94,7 @@ If you are creating an Enterprise&trade; software which randomly lets people log
 use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 
 class RandomAuthenticator implements AuthenticatorInterface {
-    public function __invoke($user, $pass) {
+    public function __invoke($arguments) {
         return (bool)rand(0,1);
     }
 }
@@ -116,7 +116,7 @@ $app = new \Slim\Slim();
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
-    "authenticator" => function ($user, $pass) {
+    "authenticator" => function ($arguments) use ($app) {
         return (bool)rand(0,1);
     }
 ]));
