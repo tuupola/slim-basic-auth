@@ -34,23 +34,26 @@ class PdoAuthenticator implements AuthenticatorInterface
         }
     }
 
-    public function __invoke($user, $pass)
+    public function __invoke(array $arguments)
     {
+        $user = $arguments["user"];
+        $password = $arguments["password"];
+
         $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
-        $sql = $this->sql($user, $pass);
+        $sql = $this->sql();
 
         $statement = $this->options["pdo"]->prepare($sql);
         $statement->execute(array($user));
 
         if ($user = $statement->fetch(\PDO::FETCH_ASSOC)) {
-            return password_verify($pass, $user[$this->options["hash"]]);
+            return password_verify($password, $user[$this->options["hash"]]);
         }
 
         return false;
     }
 
-    public function sql($user, $pass)
+    public function sql()
     {
         $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
 

@@ -13,9 +13,14 @@
  *
  */
 
-namespace Slim\Middleware\HttpBasicAuthentication;
+namespace Test;
 
-interface AuthenticatorInterface
+use \Slim\Middleware\HttpBasicAuthentication\RuleInterface;
+
+class FalseRule implements RuleInterface
 {
-    public function __invoke(array $arguments);
+    public function __invoke(\Slim\Slim $app)
+    {
+        return false;
+    }
 }

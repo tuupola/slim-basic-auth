@@ -21,8 +21,13 @@
             "Slim\\Middleware\\": "src"
         }
     },
+    "autoload-dev": {
+            "psr-4": {
+                "Test\\": "test/lib"
+            }
+    },
     "require-dev": {
         "phpunit/phpunit": "~4.3",
-        "squizlabs/php_codesniffer": "1.5.5"
+        "squizlabs/php_codesniffer": "^2.3"
     }
 }

@@ -13,9 +13,14 @@
  *
  */
 
-namespace Slim\Middleware\HttpBasicAuthentication;
+namespace Test;
 
-interface AuthenticatorInterface
+use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+
+class TrueAuthenticator implements AuthenticatorInterface
 {
-    public function __invoke(array $arguments);
+    public function __invoke(array $arguments)
+    {
+        return true;
+    }
 }

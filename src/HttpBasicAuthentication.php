@@ -31,7 +31,8 @@ class HttpBasicAuthentication extends \Slim\Middleware
         "realm" => "Protected",
         "environment" => "HTTP_AUTHORIZATION",
         "authenticator" => null,
-        "callback" => null
+        "callback" => null,
+        "error" => null
     );
 
     public function __construct($options = array())
@@ -93,31 +94,38 @@ class HttpBasicAuthentication extends \Slim\Middleware
 
         /* Just in case. */
         $user = false;
-        $pass = false;
+        $password = false;
 
         /* If using PHP in CGI mode. */
         if (isset($_SERVER[$this->options["environment"]])) {
             if (preg_match("/Basic\s+(.*)$/i", $_SERVER[$this->options["environment"]], $matches)) {
-                list($user, $pass) = explode(":", base64_decode($matches[1]));
+                list($user, $password) = explode(":", base64_decode($matches[1]));
             }
         } else {
             $user = $environment["PHP_AUTH_USER"];
-            $pass = $environment["PHP_AUTH_PW"];
+            $password = $environment["PHP_AUTH_PW"];
         }
 
+        $params = array("user" => $user, "password" => $password);
+
         /* Check if user authenticates. */
-        if (false === $this->options["authenticator"]($user, $pass)) {
+        if (false === $this->options["authenticator"]($params)) {
             $this->app->response->status(401);
             $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
+            $this->error(array(
+                "message" => "Authentication failed"
+            ));
             return;
         }
 
         /* If callback returns false return with 401 Unauthorized. */
         if (is_callable($this->options["callback"])) {
-            $params = array("user" => $user, "pass" => $pass);
             if (false === $this->options["callback"]($params)) {
                 $this->app->response->status(401);
                 $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
+                $this->error(array(
+                    "message" => "Callback returned false"
+                ));
                 return;
             }
         }
@@ -146,6 +154,18 @@ class HttpBasicAuthentication extends \Slim\Middleware
             }
         }
         return true;
+    }
+
+    /**
+     * Call the error handler if it exists
+     *
+     * @return void
+     */
+    public function error($params)
+    {
+        if (is_callable($this->options["error"])) {
+            $this->options["error"]($params);
+        }
     }
 
     public function getAuthenticator()
@@ -265,6 +285,27 @@ class HttpBasicAuthentication extends \Slim\Middleware
     public function setCallback($callback)
     {
         $this->options["callback"] = $callback;
+        return $this;
+    }
+
+    /**
+     * Get the error handler
+     *
+     * @return string
+     */
+    public function getError()
+    {
+        return $this->options["error"];
+    }
+
+    /**
+     * Set the error handler
+     *
+     * @return self
+     */
+    public function setError($error)
+    {
+        $this->options["error"] = $error;
         return $this;
     }
 

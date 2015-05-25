@@ -32,7 +32,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
-With optional `path` parameter can authenticate only given part of your website. You can also change the displayed `realm` using the parameter with same name.
+With optional `path` parameter can authenticate only given part of your website. You can also change the displayed `realm` using the parameter with same name. Optional callback which is called if authentication succeeds can be added. Callback receives an array containing `user` and `password` as argument. If callback returns boolean `false` authentication is forced to be failed.
 
 ```php
 $app = new \Slim\Slim();
@@ -43,13 +43,49 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "users" => [
         "root" => "t00r",
         "user" => "passw0rd"
+    ],
+    "callback" => function ($arguments) use ($app) {
+        print_r($arguments);
+    }
+]));
+```
+
+## Security
+
+Browsers send passwords over the wire basically as cleartext. You should always use HTTPS. If the middleware detects insecure usage over HTTP it will throw `RuntimeException`. This rule is relaxed for localhost. To allow insecure usage you must enable it manually by setting `secure` to `false`.
+
+``` php
+$app = new \Slim\Slim();
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/admin",
+    "secure" => false,
+    "users" => [
+        "root" => "t00r",
+        "user" => "passw0rd"
+    ]
+]));
+```
+
+Alternatively you can list your development host to have relaxed security.
+
+``` php
+$app = new \Slim\Slim();
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/admin",
+    "secure" => true,
+    "relaxed" => ["localhost", "dev.example.com"],
+    "users" => [
+        "root" => "t00r",
+        "user" => "passw0rd"
     ]
 ]));
 ```
 
 ## Custom authentication methods
 
-Sometimes passing users in an array is not enough. To authenticate against custom datasource you can pass a callable as `authenticator` parameter. This can be either a class which implements AuthenticatorInterface or anonymous function. In both cases authenticator must return either `true` or `false`.
+Sometimes passing users in an array is not enough. To authenticate against custom datasource you can pass a callable as `authenticator` parameter. This can be either a class which implements AuthenticatorInterface or anonymous function. Callable receives an array containing `user` and `password` as argument. In both cases authenticator must return either `true` or `false`.
 
 If you are creating an Enterprise&trade; software which randomly lets people log in you could use the following.
 
@@ -58,7 +94,7 @@ If you are creating an Enterprise&trade; software which randomly lets people log
 use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 
 class RandomAuthenticator implements AuthenticatorInterface {
-    public function __invoke($user, $pass) {
+    public function __invoke($arguments) {
         return (bool)rand(0,1);
     }
 }
@@ -80,8 +116,30 @@ $app = new \Slim\Slim();
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
-    "authenticator" => function ($user, $pass) {
+    "authenticator" => function ($arguments) use ($app) {
         return (bool)rand(0,1);
+    }
+]));
+```
+
+## Setting response body when authentication fails
+
+By default plugin returns an empty response body with 401 response. You can return custom body using by providing an error handler. This is useful for example when you need additional information why authentication failed.
+
+```php
+$app = new \Slim\Slim();
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/api",
+    "realm" => "Protected",
+    "users" => [
+        "root" => "t00r",
+        "user" => "passw0rd"
+    ],
+    "error" => function ($arguments) use ($app) {
+        $response["status"] = "error";
+        $response["message"] = $arguments["message"];
+        $app->response->write(json_encode($response, JSON_UNESCAPED_SLASHES));
     }
 ]));
 ```
@@ -136,5 +194,33 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "environment" => "REDIRECT_HTTP_AUTHORIZATION"
 ]));
 ```
+
+## Testing
+
+You can run tests either manually...
+
+``` bash
+$ vendor/bin/phpunit
+$ vendor/bin/phpcs --standard=PSR2 src/ -p
+```
+
+... or automatically on every code change.
+
+``` bash
+$ npm install
+$ grunt watch
+```
+
+## Contributing
+
+Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+
+## Security
+
+If you discover any security related issues, please email tuupola@appelsiini.net instead of using the issue tracker.
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
 

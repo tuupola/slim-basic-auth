@@ -22,40 +22,6 @@ use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
 use \Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use \Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
 
-/* @codingStandardsIgnoreStart */
-class TrueAuthenticator implements AuthenticatorInterface
-{
-    public function __invoke($user, $pass)
-    {
-        return true;
-    }
-}
-
-class FalseAuthenticator implements AuthenticatorInterface
-{
-    public function __invoke($user, $pass)
-    {
-        return false;
-    }
-}
-
-class TrueRule implements RuleInterface
-{
-    public function __invoke(\Slim\Slim $app)
-    {
-        return true;
-    }
-}
-
-class FalseRule implements RuleInterface
-{
-    public function __invoke(\Slim\Slim $app)
-    {
-        return false;
-    }
-}
-/* @codingStandardsIgnoreEnd */
-
 class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -358,6 +324,40 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("", $app->response()->body());
     }
 
+    public function testShouldCallErrorHandlerWith401()
+    {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/foo"
+        ));
+        $app = new \Slim\Slim();
+        $app->get("/foo/bar", function () {
+            echo "Success";
+        });
+        $app->get("/admin/foo", function () {
+            echo "Admin";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ),
+            "error" => function ($arguments) use ($app) {
+                $app->response->write("ERROR: " . $arguments["message"]);
+            }
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(401, $app->response()->status());
+        $this->assertEquals("ERROR: Authentication failed", $app->response()->body());
+    }
+
     /*** CGI MODE **********************************************************/
 
     public function testShouldReturn200WithPasswordInCgiMode()
@@ -503,7 +503,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
-            "authenticator" => function ($user, $pass) {
+            "authenticator" => function ($arguments) {
                 return true;
             }
         ));
@@ -533,7 +533,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
-            "authenticator" => function ($user, $pass) {
+            "authenticator" => function ($arguments) {
                 return false;
             }
         ));
@@ -645,6 +645,38 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $relaxed = array("localhost", "dev.example.com");
         $auth->setRelaxed($relaxed);
         $this->assertEquals($relaxed, $auth->getRelaxed());
+    }
+
+    public function testShouldGetAndSetErrorHandler()
+    {
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "authenticator" => function ($user, $pass) {
+                return true;
+            }
+        ));
+        $error = function () {
+            return "ERROR";
+        };
+        $auth->setError($error);
+        $this->assertEquals($error, $auth->getError());
+    }
+
+    public function testShouldGetAndSetCallback()
+    {
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "authenticator" => function ($user, $pass) {
+                return true;
+            }
+        ));
+        $callback = function () {
+            return "It's got Electrolytes.";
+        };
+        $auth->setCallback($callback);
+        $this->assertEquals($callback, $auth->getCallback());
     }
 
     /*** BUGS *************************************************************/
