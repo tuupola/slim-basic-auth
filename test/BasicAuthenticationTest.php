@@ -503,7 +503,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
-            "authenticator" => function ($user, $pass) {
+            "authenticator" => function ($arguments) {
                 return true;
             }
         ));
@@ -533,7 +533,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
-            "authenticator" => function ($user, $pass) {
+            "authenticator" => function ($arguments) {
                 return false;
             }
         ));

@@ -17,5 +17,5 @@ namespace Slim\Middleware\HttpBasicAuthentication;
 
 interface AuthenticatorInterface
 {
-    public function __invoke($user, $pass);
+    public function __invoke(array $arguments);
 }

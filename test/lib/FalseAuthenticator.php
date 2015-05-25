@@ -19,7 +19,7 @@ use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 
 class FalseAuthenticator implements AuthenticatorInterface
 {
-    public function __invoke($user, $pass)
+    public function __invoke(array $arguments)
     {
         return false;
     }

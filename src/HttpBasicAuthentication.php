@@ -94,20 +94,22 @@ class HttpBasicAuthentication extends \Slim\Middleware
 
         /* Just in case. */
         $user = false;
-        $pass = false;
+        $password = false;
 
         /* If using PHP in CGI mode. */
         if (isset($_SERVER[$this->options["environment"]])) {
             if (preg_match("/Basic\s+(.*)$/i", $_SERVER[$this->options["environment"]], $matches)) {
-                list($user, $pass) = explode(":", base64_decode($matches[1]));
+                list($user, $password) = explode(":", base64_decode($matches[1]));
             }
         } else {
             $user = $environment["PHP_AUTH_USER"];
-            $pass = $environment["PHP_AUTH_PW"];
+            $password = $environment["PHP_AUTH_PW"];
         }
 
+        $params = array("user" => $user, "password" => $password);
+
         /* Check if user authenticates. */
-        if (false === $this->options["authenticator"]($user, $pass)) {
+        if (false === $this->options["authenticator"]($params)) {
             $this->app->response->status(401);
             $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
             $this->error(array(
@@ -118,7 +120,6 @@ class HttpBasicAuthentication extends \Slim\Middleware
 
         /* If callback returns false return with 401 Unauthorized. */
         if (is_callable($this->options["callback"])) {
-            $params = array("user" => $user, "pass" => $pass);
             if (false === $this->options["callback"]($params)) {
                 $this->app->response->status(401);
                 $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));

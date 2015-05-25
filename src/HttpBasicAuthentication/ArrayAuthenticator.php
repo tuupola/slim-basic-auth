@@ -33,8 +33,10 @@ class ArrayAuthenticator implements AuthenticatorInterface
         }
     }
 
-    public function __invoke($user, $pass)
+    public function __invoke(array $arguments)
     {
-        return isset($this->options["users"][$user]) && $this->options["users"][$user] === $pass;
+        $user = $arguments["user"];
+        $password = $arguments["password"];
+        return isset($this->options["users"][$user]) && $this->options["users"][$user] === $password;
     }
 }
