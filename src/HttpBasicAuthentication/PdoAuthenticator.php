@@ -41,7 +41,7 @@ class PdoAuthenticator implements AuthenticatorInterface
 
         $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
-        $sql = $this->sql($user, $password);
+        $sql = $this->sql();
 
         $statement = $this->options["pdo"]->prepare($sql);
         $statement->execute(array($user));
@@ -53,7 +53,7 @@ class PdoAuthenticator implements AuthenticatorInterface
         return false;
     }
 
-    public function sql($user, $password)
+    public function sql()
     {
         $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
