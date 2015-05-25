@@ -2,7 +2,7 @@
 
 require "vendor/autoload.php";
 
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication(array(
     "path" => "/admin",

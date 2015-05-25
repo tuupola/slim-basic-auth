@@ -15,24 +15,21 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
+use \Psr\Http\Message\RequestInterface;
+
 class RequestMethodRule implements RuleInterface
 {
-    protected $options;
+    protected $options = [
+        "passthrough" => ["OPTIONS"]
+    ];
 
-    public function __construct($options = array())
+    public function __construct(array $options = [])
     {
-
-        /* Default options. */
-        $this->options = array(
-            "passthrough" => array("OPTIONS")
-        );
-
         $this->options = array_merge($this->options, $options);
     }
 
-    public function __invoke(\Slim\Slim $app)
+    public function __invoke(RequestInterface $request)
     {
-        $environment = \Slim\Environment::getInstance();
-        return !in_array($environment["REQUEST_METHOD"], $this->options["passthrough"]);
+        return !in_array($request->getMethod(), $this->options["passthrough"]);
     }
 }

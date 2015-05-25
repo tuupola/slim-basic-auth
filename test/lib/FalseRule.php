@@ -15,11 +15,12 @@
 
 namespace Test;
 
-use \Slim\Middleware\HttpBasicAuthentication\RuleInterface;
+use Slim\Middleware\HttpBasicAuthentication\RuleInterface;
+use Psr\Http\Message\RequestInterface;
 
 class FalseRule implements RuleInterface
 {
-    public function __invoke(\Slim\Slim $app)
+    public function __invoke(RequestInterface $request)
     {
         return false;
     }
