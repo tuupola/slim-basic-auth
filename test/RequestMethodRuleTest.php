@@ -17,7 +17,7 @@ namespace Test;
 
 use \Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
 
-class RequestMethodPassthroughTest extends \PHPUnit_Framework_TestCase
+class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testShouldNotAuthenticateOptions()

@@ -17,7 +17,7 @@ namespace Test;
 
 use \Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
 
-class MatchPathTest extends \PHPUnit_Framework_TestCase
+class RequestPathRuleTest extends \PHPUnit_Framework_TestCase
 {
     public function testShouldAcceptArrayAndStringAsPath()
     {
