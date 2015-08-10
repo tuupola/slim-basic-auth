@@ -801,5 +801,8 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $auth->setApplication($app);
         $auth->setNextMiddleware($app);
         $auth->call();
+
+        $this->assertEquals(200, $app->response()->status());
+        $this->assertEquals("Success", $app->response()->body());
     }
 }
