@@ -177,7 +177,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $response = new Response();
 
         $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
-            "path" => "/admin",
+            "path" => ["/admin"],
             "realm" => "Protected",
             "users" => array(
                 "root" => "t00r",
