@@ -528,7 +528,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException("RuntimeException");
 
-        $uri = Uri::createFromString("http://example.com/admin/item");
+        $uri = Uri::createFromString("http://example.com/api/item");
         $headers = new Headers();
         $cookies = [];
         $server = ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"];
@@ -723,5 +723,34 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertEquals("", $response->getBody());
+    }
+
+    public function testBug9ShouldAllowUnauthenticatedHttp()
+    {
+        $uri = Uri::createFromString("http://example.com/public/foo");
+        $headers = new Headers();
+        $cookies = [];
+        $server = [];
+        $body = new Body(fopen("php://temp", "r+"));
+        $request = new Request("GET", $uri, $headers, $cookies, $server, $body);
+        $response = new Response();
+
+        $auth = new \Slim\Middleware\HttpBasicAuthentication([
+            "path" => ["/api", "/bar"],
+            "realm" => "Protected",
+            "users" => [
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ]
+        ]);
+
+        $next = function (Request $request, Response $response) {
+            return $response->write("Success");
+        };
+
+        $response = $auth($request, $response, $next);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Success", $response->getBody());
     }
 }
