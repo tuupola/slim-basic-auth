@@ -16,10 +16,11 @@
 namespace Test;
 
 use \Slim\Middleware\HttpBasicAuthentication\RuleInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class TrueRule implements RuleInterface
 {
-    public function __invoke(\Slim\Slim $app)
+    public function __invoke(ServerRequestInterface $app)
     {
         return true;
     }

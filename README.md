@@ -1,6 +1,6 @@
 # Basic Auth Middleware for Slim
 
-This middleware implements HTTP Basic Authentication for Slim Framework.
+This middleware implements HTTP Basic Authentication for Slim Framework 3.
 
 [![Latest Version](https://img.shields.io/packagist/v/tuupola/slim-basic-auth.svg?style=flat-square)](https://github.com/tuupola/slim-basic-auth/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
@@ -22,7 +22,7 @@ $ composer require tuupola/slim-basic-auth
 Configuration options are passed as an array. Only mandatory parameter is  `users`. This is an array where you pass one or more `"username" => "password"` combinations. Username is the key and password is the value.
 
 ```php
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "users" => [
@@ -35,7 +35,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 With optional `path` parameter can authenticate only given part of your website.  It can be either a string or an array of strings. You can also change the displayed `realm` using the parameter with same name. Optional callback which is called if authentication succeeds can be added. Callback receives an array containing `user` and `password` as argument. Callback is called only if authentication succeeds. If callback returns boolean `false` authentication is forced to be failed.
 
 ```php
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin", /* or ["/admin", "/api"] */
@@ -55,7 +55,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 Browsers send passwords over the wire basically as cleartext. You should always use HTTPS. If the middleware detects insecure usage over HTTP it will throw `RuntimeException`. This rule is relaxed for localhost. To allow insecure usage you must enable it manually by setting `secure` to `false`.
 
 ``` php
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
@@ -70,7 +70,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 Alternatively you can list your development host to have relaxed security.
 
 ``` php
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
@@ -99,7 +99,7 @@ class RandomAuthenticator implements AuthenticatorInterface {
     }
 }
 
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
@@ -111,7 +111,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 Same thing can also be accomplished with anonymous function.
 
 ```php
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
@@ -127,7 +127,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 By default plugin returns an empty response body with 401 response. You can return custom body using by providing an error handler. This is useful for example when you need additional information why authentication failed.
 
 ```php
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/api",
@@ -152,7 +152,7 @@ For those in hurry there is a ready made PDO authenticator. It covers most of th
 use \Slim\Middleware\HttpBasicAuthentication\PdoAuthenticator;
 
 $pdo = new \PDO("sqlite:/tmp/users.sqlite");
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
@@ -182,7 +182,7 @@ RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 The above rewrite rule should work out of the box. In some cases server adds `REDIRECT_` prefix to environment name. In this case or if you want to use nonstandard environment use the parameter called `environment`.
 
 ```php
-$app = new \Slim\Slim();
+$app = new \Slim\App();
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",

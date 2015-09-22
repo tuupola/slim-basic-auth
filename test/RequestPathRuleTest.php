@@ -21,56 +21,66 @@ class RequestPathRuleTest extends \PHPUnit_Framework_TestCase
 {
     public function testShouldAcceptArrayAndStringAsPath()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/protected"
-        ));
+        $request = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/admin/protected"
+            ))
+        );
 
         $rule = new RequestPathRule(array(
             "path" => "/admin",
         ));
-        $this->assertTrue($rule(new \Slim\Slim));
+        $this->assertTrue($rule($request));
 
         $rule = new RequestPathRule(array(
             "path" => array("/admin"),
         ));
 
-        $this->assertTrue($rule(new \Slim\Slim));
+        $this->assertTrue($rule($request));
     }
 
     public function testShouldAuthenticateEverything()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/"
-        ));
+        $request = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/"
+            ))
+        );
 
         $rule = new RequestPathRule(array("path" => "/"));
-        $this->assertTrue($rule(new \Slim\Slim));
+        $this->assertTrue($rule($request));
 
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/"
-        ));
-        $this->assertTrue($rule(new \Slim\Slim));
+        $adminRequest = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/admin/"
+            ))
+        );
+        $this->assertTrue($rule($adminRequest));
     }
 
 
     public function testShouldAuthenticateOnlyAdmin()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/"
-        ));
+        $request = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/"
+            ))
+        );
 
         $rule = new RequestPathRule(array("path" => "/admin"));
-        $this->assertFalse($rule(new \Slim\Slim));
+        $this->assertFalse($rule($request));
 
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/"
-        ));
-        $this->assertTrue($rule(new \Slim\Slim));
+        $adminRequest = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/admin/"
+            ))
+        );
+        $this->assertTrue($rule($adminRequest));
     }
 
     public function testShouldAuthenticateCreateAndList()
@@ -81,51 +91,63 @@ class RequestPathRuleTest extends \PHPUnit_Framework_TestCase
         )));
 
         /* Should not authenticate */
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/api"
-        ));
-        $this->assertFalse($rule(new \Slim\Slim));
+        $apiRequest = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/api"
+            ))
+        );
+        $this->assertFalse($rule($apiRequest));
 
         /* Should authenticate */
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/api/create"
-        ));
-        $this->assertTrue($rule(new \Slim\Slim));
+        $createRequest = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/api/create"
+            ))
+        );
+        $this->assertTrue($rule($createRequest));
 
         /* Should authenticate */
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/api/list"
-        ));
-        $this->assertTrue($rule(new \Slim\Slim));
+        $listRequest = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/api/list"
+            ))
+        );
+        $this->assertTrue($rule($listRequest));
 
         /* Should not authenticate */
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/api/ping"
-        ));
-        $this->assertFalse($rule(new \Slim\Slim));
+        $pingRequest = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/api/ping"
+            ))
+        );
+        $this->assertFalse($rule($pingRequest));
     }
 
     public function testShouldPassthroughLogin()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/protected"
-        ));
+        $protectedRequest = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/admin/protected"
+            ))
+        );
 
         $rule = new RequestPathRule(array(
             "path" => "/admin",
             "passthrough" => array("/admin/login")
         ));
-        $this->assertTrue($rule(new \Slim\Slim));
+        $this->assertTrue($rule($protectedRequest));
 
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/login"
-        ));
-        $this->assertFalse($rule(new \Slim\Slim));
+        $loginRequest = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "SCRIPT_NAME" => "/index.php",
+                "REQUEST_URI" => "/admin/login"
+            ))
+        );
+        $this->assertFalse($rule($loginRequest));
     }
 }
