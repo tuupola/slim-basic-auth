@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "slim/slim": "~3.0@dev",
+        "slim/slim": "~3.0@rc",
         "ircmaxell/password-compat": "^1.0"
     },
     "autoload": {
