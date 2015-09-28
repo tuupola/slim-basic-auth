@@ -15,7 +15,9 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
+use \Psr\Http\Message\ServerRequestInterface;
+
 interface RuleInterface
 {
-    public function __invoke(\Slim\Slim $app);
+    public function __invoke(ServerRequestInterface $request);
 }

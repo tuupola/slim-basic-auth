@@ -15,6 +15,8 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
+use \Psr\Http\Message\ServerRequestInterface;
+
 class RequestPathRule implements RuleInterface
 {
     protected $options = array(
@@ -27,9 +29,9 @@ class RequestPathRule implements RuleInterface
         $this->options = array_merge($this->options, $options);
     }
 
-    public function __invoke(\Slim\Slim $app)
+    public function __invoke(ServerRequestInterface $request)
     {
-        $uri = $app->request->getResourceUri();
+        $uri = $request->getRequestTarget();
 
         /* If request path is matches passthrough should not authenticate. */
         foreach ((array)$this->options["passthrough"] as $passthrough) {

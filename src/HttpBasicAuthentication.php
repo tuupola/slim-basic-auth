@@ -19,8 +19,10 @@ use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use \Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
 use \Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use \Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
+use \Psr\Http\Message\ServerRequestInterface;
+use \Psr\Http\Message\ResponseInterface;
 
-class HttpBasicAuthentication extends \Slim\Middleware
+class HttpBasicAuthentication
 {
     private $rules;
     private $options = array(
@@ -71,20 +73,23 @@ class HttpBasicAuthentication extends \Slim\Middleware
         }
     }
 
-    public function call()
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        $environment = $this->app->environment;
-        $scheme = $environment["slim.url_scheme"];
+        $scheme = $request->getUri()->getScheme();
+        $serverParams = $request->getServerParams() + array(
+            'PHP_AUTH_USER' => null,
+            'PHP_AUTH_PW' => null,
+            'SERVER_NAME' => null,
+        );
 
         /* If rules say we should not authenticate call next and return. */
-        if (false === $this->shouldAuthenticate()) {
-            $this->next->call();
-            return;
+        if (false === $this->shouldAuthenticate($request)) {
+            return $next($request, $response);
         }
 
         /* HTTP allowed only if secure is false or server is in relaxed array. */
         if ("https" !== $scheme && true === $this->options["secure"]) {
-            if (!in_array($environment["SERVER_NAME"], $this->options["relaxed"])) {
+            if (!in_array($serverParams["SERVER_NAME"], $this->options["relaxed"])) {
                 $message = sprintf(
                     "Insecure use of middleware over %s denied by configuration.",
                     strtoupper($scheme)
@@ -103,37 +108,41 @@ class HttpBasicAuthentication extends \Slim\Middleware
                 list($user, $password) = explode(":", base64_decode($matches[1]));
             }
         } else {
-            $user = $environment["PHP_AUTH_USER"];
-            $password = $environment["PHP_AUTH_PW"];
+            $user = $serverParams["PHP_AUTH_USER"];
+            $password = $serverParams["PHP_AUTH_PW"];
         }
 
         $params = array("user" => $user, "password" => $password);
 
         /* Check if user authenticates. */
         if (false === $this->options["authenticator"]($params)) {
-            $this->app->response->status(401);
-            $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
             $this->error(array(
                 "message" => "Authentication failed"
             ));
-            return;
+
+            return $response
+                ->withStatus(401)
+                ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]))
+            ;
         }
 
         /* If callback returns false return with 401 Unauthorized. */
         if (is_callable($this->options["callback"])) {
             if (false === $this->options["callback"]($params)) {
-                $this->app->response->status(401);
-                $this->app->response->header("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
                 $this->error(array(
                     "message" => "Callback returned false"
                 ));
-                return;
+
+                return $response
+                    ->withStatus(401)
+                    ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]))
+                ;
             }
         }
 
 
         /* Everything ok, call next middleware. */
-        $this->next->call();
+        return $next($request, $response);
     }
 
     private function hydrate($data = array())
@@ -146,11 +155,11 @@ class HttpBasicAuthentication extends \Slim\Middleware
         }
     }
 
-    private function shouldAuthenticate()
+    private function shouldAuthenticate(ServerRequestInterface $request)
     {
         /* If any of the rules in stack return false will not authenticate */
         foreach ($this->rules as $callable) {
-            if (false === $callable($this->app)) {
+            if (false === $callable($request)) {
                 return false;
             }
         }

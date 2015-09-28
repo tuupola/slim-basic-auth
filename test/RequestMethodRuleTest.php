@@ -22,47 +22,53 @@ class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldNotAuthenticateOptions()
     {
-        \Slim\Environment::mock(array(
-            "REQUEST_METHOD" => "OPTIONS"
-        ));
 
         $rule = new RequestMethodRule();
+        $request = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "REQUEST_METHOD" => "OPTIONS"
+            )
+        ));
 
-        $this->assertFalse($rule(new \Slim\Slim));
+        $this->assertFalse($rule($request));
     }
 
     public function testShouldAuthenticatePost()
     {
-        \Slim\Environment::mock(array(
-            "REQUEST_METHOD" => "POST"
-        ));
-
         $rule = new RequestMethodRule();
+        $request = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "REQUEST_METHOD" => "POST"
+            ))
+        );
 
-        $this->assertTrue($rule(new \Slim\Slim));
+        $this->assertTrue($rule($request));
     }
 
     public function testShouldAuthenticateGet()
     {
-        \Slim\Environment::mock(array(
-            "REQUEST_METHOD" => "GET"
-        ));
-
         $rule = new RequestMethodRule();
+        $request = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "REQUEST_METHOD" => "GET"
+            ))
+        );
 
-        $this->assertTrue($rule(new \Slim\Slim));
+        $this->assertTrue($rule($request));
     }
 
     public function testShouldConfigurePassThrough()
     {
-        \Slim\Environment::mock(array(
-            "REQUEST_METHOD" => "GET"
-        ));
+        $request = \Slim\Http\Request::createFromEnvironment(
+            \Slim\Http\Environment::mock(array(
+                "REQUEST_METHOD" => "GET"
+            ))
+        );
 
         $rule = new RequestMethodRule(array(
             "passthrough" => array("GET")
         ));
 
-        $this->assertFalse($rule(new \Slim\Slim));
+        $this->assertFalse($rule($request));
     }
 }

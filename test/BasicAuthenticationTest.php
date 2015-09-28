@@ -24,6 +24,26 @@ use \Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
 
 class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * Create a Slim app with a request.
+     *
+     * @param string[] $env environment to give to \Slim\Http\Environment.
+     * SCRIPT_NAME will default to /index.php.
+     *
+     * @return \Slim\App;
+     */
+    private function createApp(array $env)
+    {
+        $request = \Slim\Http\Request::createFromEnvironment(
+                \Slim\Http\Environment::mock($env + array(
+                "SCRIPT_NAME" => "/index.php"
+            ))
+        );
+
+        return new \Slim\App(
+            new \Slim\Container(compact("request"))
+        );
+    }
 
     public function testShouldBeCreatedInEasyMode()
     {
@@ -130,11 +150,9 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithoutPassword()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/foo/bar"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/foo/bar"
         ));
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -148,21 +166,16 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Success", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Success", $response->getBody());
     }
 
     public function testShouldReturn401WithoutPassword()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo"
-        ));
-        $app = new \Slim\Slim();
+        $app = $this->createApp(["REQUEST_URI" => "/admin/foo"]);
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -179,23 +192,21 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(401, $app->response()->status());
-        $this->assertEquals("", $app->response()->body());
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $response->getBody());
     }
 
     public function testShouldReturn200WithPassword()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo",
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo",
             "PHP_AUTH_USER" => "root",
-            "PHP_AUTH_PW" => "t00r",
+            "PHP_AUTH_PW" => "t00r"
         ));
-        $app = new \Slim\Slim();
+
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -212,22 +223,19 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Admin", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Admin", $response->getBody());
     }
 
     public function testShouldReturn200WithOptions()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo",
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo",
             "REQUEST_METHOD" => "OPTIONS"
         ));
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -244,21 +252,18 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Allow: GET", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Allow: GET", $response->getBody());
     }
 
     public function testShouldReturn200WithoutPasswordWithAnonymousFunction()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo"
         ));
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -276,27 +281,25 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         ));
 
         /* Disable authentication by returning false from a rule */
-        $auth->addrule(function (\Slim\Slim $app) {
+        $auth->addrule(function (\Psr\Http\Message\ServerRequestInterface $request) {
+
             return false;
         });
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Admin", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Admin", $response->getBody());
     }
 
     public function testShouldReturn401WithFalseFromCallback()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo",
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo",
             "PHP_AUTH_USER" => "root",
             "PHP_AUTH_PW" => "t00r",
         ));
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -316,21 +319,18 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(401, $app->response()->status());
-        $this->assertEquals("", $app->response()->body());
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $response->getBody());
     }
 
     public function testShouldCallErrorHandlerWith401()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo"
         ));
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -350,26 +350,23 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(401, $app->response()->status());
-        $this->assertEquals("ERROR: Authentication failed", $app->response()->body());
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("ERROR: Authentication failed", $response->getBody());
     }
 
     /*** CGI MODE **********************************************************/
 
     public function testShouldReturn200WithPasswordInCgiMode()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo"
         ));
 
         $_SERVER["HTTP_AUTHORIZATION"] = "Basic cm9vdDp0MDBy";
 
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -386,24 +383,21 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Admin", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Admin", $response->getBody());
     }
 
     public function testShouldHonorCgiEnviromentOption()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo"
         ));
 
         $_SERVER["FOO_BAR"] = "Basic cm9vdDp0MDBy";
 
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -421,22 +415,19 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Admin", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Admin", $response->getBody());
     }
 
 
     public function testShouldReturn200WithTrueAuthenticator()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo"
         ));
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -450,21 +441,18 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             "authenticator" => new TrueAuthenticator()
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Admin", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Admin", $response->getBody());
     }
 
     public function testShouldReturn401WithFalseAuthenticator()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo"
         ));
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -478,21 +466,18 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             "authenticator" => new FalseAuthenticator()
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(401, $app->response()->status());
-        $this->assertEquals("", $app->response()->body());
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $response->getBody());
     }
 
     public function testShouldReturn200WithAnonymousFunction()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo"
         ));
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -508,21 +493,18 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Admin", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Admin", $response->getBody());
     }
 
     public function testShouldReturn401WithAnonymousFunction()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/foo"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/foo"
         ));
-        $app = new \Slim\Slim();
         $app->get("/foo/bar", function () {
             echo "Success";
         });
@@ -538,25 +520,20 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(401, $app->response()->status());
-        $this->assertEquals("", $app->response()->body());
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $response->getBody());
     }
 
     public function testShouldNotAllowInsecure()
     {
-        $this->setExpectedException("RuntimeException");
-
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/api/foo",
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/api/foo",
             "SERVER_NAME" => "dev.example.com",
-            "slim.url_scheme" => "http"
+            "HTTPS" => false,
         ));
-        $app = new \Slim\Slim();
 
         $app->get("/public/foo", function () {
             echo "Success";
@@ -571,24 +548,24 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             "users" => array(
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
+            ),
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
+
+        $this->assertEquals(500, $response->getStatusCode());
+        $this->assertTrue(strpos($response->getBody(), 'RuntimeException') !== false);
     }
 
     public function testShouldRelaxInsecureInLocalhost()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/public/foo",
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/public/foo",
             "SERVER_NAME" => "localhost",
             "slim.url_scheme" => "http"
         ));
 
-        $app = new \Slim\Slim();
 
         $app->get("/public/foo", function () {
             echo "Success";
@@ -607,12 +584,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Success", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Success", $response->getBody());
     }
 
 
@@ -683,11 +659,9 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug2UrlShouldMatchRegex()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/status/foo"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/status/foo"
         ));
-        $app = new \Slim\Slim();
         $app->get("/status/foo", function () {
             echo "Status";
         });
@@ -707,22 +681,19 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Status", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Status", $response->getBody());
     }
 
 
     public function testBug3ShouldReturn401WithoutTrailingSlash()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin"
         ));
-        $app = new \Slim\Slim();
         $app->get("/admin(/?)", function () {
             echo "Admin";
         });
@@ -736,21 +707,18 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(401, $app->response()->status());
-        $this->assertEquals("", $app->response()->body());
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $response->getBody());
     }
 
     public function testBug3ShouldReturn401WithTrailingSlash()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/admin/"
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/admin/"
         ));
-        $app = new \Slim\Slim();
         $app->get("/admin(/?)", function () {
             echo "Admin";
         });
@@ -764,23 +732,20 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(401, $app->response()->status());
-        $this->assertEquals("", $app->response()->body());
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $response->getBody());
     }
 
     public function testBug9ShouldAllowUnauthenticatedHttp()
     {
-        \Slim\Environment::mock(array(
-            "SCRIPT_NAME" => "/index.php",
-            "PATH_INFO" => "/public/foo",
+        $app = $this->createApp(array(
+            "REQUEST_URI" => "/public/foo",
             "SERVER_NAME" => "dev.example.com",
             "slim.url_scheme" => "http"
         ));
-        $app = new \Slim\Slim();
 
         $app->get("/public/foo", function () {
             echo "Success";
@@ -798,11 +763,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             )
         ));
 
-        $auth->setApplication($app);
-        $auth->setNextMiddleware($app);
-        $auth->call();
+        $app->add($auth);
+        $response = $app->run(true);
 
-        $this->assertEquals(200, $app->response()->status());
-        $this->assertEquals("Success", $app->response()->body());
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Success", $response->getBody());
     }
 }
