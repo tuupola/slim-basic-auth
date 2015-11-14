@@ -94,7 +94,7 @@ If you are creating an Enterprise&trade; software which randomly lets people log
 use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 
 class RandomAuthenticator implements AuthenticatorInterface {
-    public function __invoke($arguments) {
+    public function __invoke(array $arguments) {
         return (bool)rand(0,1);
     }
 }
