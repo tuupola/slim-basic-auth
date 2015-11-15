@@ -47,7 +47,7 @@ class PdoAuthenticator implements AuthenticatorInterface
         $statement->execute(array($user));
 
         if ($user = $statement->fetch(\PDO::FETCH_ASSOC)) {
-            return authenticate($password, $user);
+            return $this->authenticate($password, $user);
         }
 
         return false;
