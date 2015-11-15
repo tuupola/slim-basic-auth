@@ -137,9 +137,10 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
         "user" => "passw0rd"
     ],
     "error" => function ($request, $response, $arguments) use ($app) {
-        $response["status"] = "error";
-        $response["message"] = $arguments["message"];
-        return $response->write(json_encode($response, JSON_UNESCAPED_SLASHES));
+        $res = array();
+        $res["status"] = "error";
+        $res["message"] = $arguments["message"];
+        return $response->write(json_encode($res, JSON_UNESCAPED_SLASHES));
     }
 ]));
 ```
