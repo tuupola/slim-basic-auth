@@ -78,7 +78,8 @@ class PdoAuthenticator implements AuthenticatorInterface
         return preg_replace("!\s+!", " ", $sql);
     }
     
-    public function authenticate($password, $user) {
+    public function authenticate($password, $user)
+    {
         return password_verify($password, $user[$this->options["hash"]]);
     }
 }
