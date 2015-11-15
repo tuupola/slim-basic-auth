@@ -17,7 +17,7 @@ namespace Slim\Middleware\HttpBasicAuthentication;
 
 class PdoAuthenticator implements AuthenticatorInterface
 {
-    private $options;
+    protected $options;
 
     public function __construct(array $options = array())
     {
@@ -47,7 +47,7 @@ class PdoAuthenticator implements AuthenticatorInterface
         $statement->execute(array($user));
 
         if ($user = $statement->fetch(\PDO::FETCH_ASSOC)) {
-            return password_verify($password, $user[$this->options["hash"]]);
+            return $this->authenticate($password, $user);
         }
 
         return false;
@@ -76,5 +76,10 @@ class PdoAuthenticator implements AuthenticatorInterface
         }
 
         return preg_replace("!\s+!", " ", $sql);
+    }
+    
+    public function authenticate($password, $user)
+    {
+        return password_verify($password, $user[$this->options["hash"]]);
     }
 }
