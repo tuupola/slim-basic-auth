@@ -11,7 +11,7 @@ This middleware implements HTTP Basic Authentication for Slim Framework v3.
 
 ## Install
 
-You can install latest version using [composer](https://getcomposer.org/).
+Install Slim 3 version using [composer](https://getcomposer.org/).
 
 ```
 $ composer require tuupola/slim-basic-auth
