@@ -1,6 +1,6 @@
 # Basic Auth Middleware for Slim
 
-This middleware implements HTTP Basic Authentication for Slim Framework.
+This middleware implements HTTP Basic Authentication for Slim 2. For Slim 3 version see [2.x branch](https://github.com/tuupola/slim-basic-auth/tree/2.x).
 
 [![Latest Version](https://img.shields.io/packagist/v/tuupola/slim-basic-auth.svg?style=flat-square)](https://github.com/tuupola/slim-basic-auth/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
@@ -11,10 +11,10 @@ This middleware implements HTTP Basic Authentication for Slim Framework.
 
 ## Install
 
-You can install latest version using [composer](https://getcomposer.org/).
+You can install Slim 2 version using [composer](https://getcomposer.org/).
 
 ```
-$ composer require tuupola/slim-basic-auth
+$ composer require tuupola/slim-basic-auth:^1.0
 ```
 
 ## Usage
