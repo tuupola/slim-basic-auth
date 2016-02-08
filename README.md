@@ -1,6 +1,6 @@
 # Basic Auth Middleware for Slim
 
-This middleware implements HTTP Basic Authentication for Slim Framework v3.
+This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication) for Slim Framework v3.
 
 [![Latest Version](https://img.shields.io/packagist/v/tuupola/slim-basic-auth.svg?style=flat-square)](https://github.com/tuupola/slim-basic-auth/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
