@@ -118,7 +118,6 @@ class HttpBasicAuthentication
 
         /* Check if user authenticates. */
         if (false === $this->options["authenticator"]($params)) {
-
             /* Set response headers before giving it to error callback */
             $response = $response
                 ->withStatus(401)
@@ -132,7 +131,6 @@ class HttpBasicAuthentication
         /* If callback returns false return with 401 Unauthorized. */
         if (is_callable($this->options["callback"])) {
             if (false === $this->options["callback"]($request, $response, $params)) {
-
                 /* Set response headers before giving it to error callback */
                 $response = $response
                     ->withStatus(401)
