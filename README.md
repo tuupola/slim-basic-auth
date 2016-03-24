@@ -44,7 +44,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
         "root" => "t00r",
         "user" => "passw0rd"
     ],
-    "callback" => function ($request, $response, $arguments) use ($app) {
+    "callback" => function ($request, $response, $arguments) {
         print_r($arguments);
     }
 ]));
@@ -116,7 +116,7 @@ $app = new \Slim\App;
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
-    "authenticator" => function ($arguments) use ($app) {
+    "authenticator" => function ($arguments) {
         return (bool)rand(0,1);
     }
 ]));
@@ -136,7 +136,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
         "root" => "t00r",
         "user" => "passw0rd"
     ],
-    "error" => function ($request, $response, $arguments) use ($app) {
+    "error" => function ($request, $response, $arguments) {
         $data = [];
         $data["status"] = "error";
         $data["message"] = $arguments["message"];
