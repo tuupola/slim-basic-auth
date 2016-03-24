@@ -352,6 +352,38 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("ERROR: Authentication failed", $response->getBody());
     }
 
+    public function testErrorHandlerShouldAlterHeaders()
+    {
+
+        $uri = Uri::createFromString("https://example.com/admin/item");
+        $headers = new Headers();
+        $cookies = [];
+        $server = [];
+        $body = new Body(fopen("php://temp", "r+"));
+        $request = new Request("GET", $uri, $headers, $cookies, $server, $body);
+        $response = new Response();
+
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => array(
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ),
+            "error" => function ($request, $response, $arguments) {
+                return $response->withRedirect("/foo/bar");
+            }
+        ));
+
+        $next = function (Request $request, Response $response) {
+            return $response->write("Success");
+        };
+
+        $response = $auth($request, $response, $next);
+
+        $this->assertEquals(302, $response->getStatusCode());
+    }
+
     /*** CGI MODE **********************************************************/
 
     public function testShouldReturn200WithPasswordInCgiMode()
