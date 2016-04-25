@@ -1,6 +1,7 @@
-# Basic Auth Middleware for Slim
+# PSR-7 Basic Auth Middleware
 
-This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication) for Slim Framework v3.
+This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication). It was originally developed for Slim but can be with frameworks using PSR-7 style middlewares. It has been tested  with [Slim Framework](http://www.slimframework.com/) and [Zend Expressive](https://zendframework.github.io/zend-expressive/).
+
 
 [![Latest Version](https://img.shields.io/packagist/v/tuupola/slim-basic-auth.svg?style=flat-square)](https://packagist.org/packages/tuupola/slim-basic-auth)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
@@ -11,7 +12,7 @@ This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/
 
 ## Install
 
-Install Slim 3 version using [composer](https://getcomposer.org/).
+Install latest version using [composer](https://getcomposer.org/).
 
 ```
 $ composer require tuupola/slim-basic-auth
@@ -19,7 +20,7 @@ $ composer require tuupola/slim-basic-auth
 
 ## Usage
 
-Configuration options are passed as an array. Only mandatory parameter is  `users`. This is an array where you pass one or more `"username" => "password"` combinations. Username is the key and password is the value.
+Configuration options are passed as an array. Only mandatory parameter is  `users`. This is an array where you pass one or more `"username" => "password"` combinations. Username is the key and password is the value. Examples assume you are using Slim Framework.
 
 ```php
 $app = new \Slim\App;
@@ -53,6 +54,8 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ## Security
 
 Browsers send passwords over the wire basically as cleartext. You should always use HTTPS. If the middleware detects insecure usage over HTTP it will throw `RuntimeException`. This rule is relaxed for localhost. To allow insecure usage you must enable it manually by setting `secure` to `false`.
+
+Also it is not a good idea to commit credentials into GitHub. You should store them somewhere else instead.
 
 ``` php
 $app = new \Slim\App;
