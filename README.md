@@ -140,7 +140,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
         $data = [];
         $data["status"] = "error";
         $data["message"] = $arguments["message"];
-        return $response->write(json_encode($response, JSON_UNESCAPED_SLASHES));
+        return $response->write(json_encode($data, JSON_UNESCAPED_SLASHES));
     }
 ]));
 ```
