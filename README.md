@@ -1,6 +1,6 @@
 # PSR-7 Basic Auth Middleware
 
-This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication). It was originally developed for Slim but can be with frameworks using PSR-7 style middlewares. It has been tested  with [Slim Framework](http://www.slimframework.com/) and [Zend Expressive](https://zendframework.github.io/zend-expressive/).
+This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication). It was originally developed for Slim but can be used with all frameworks using PSR-7 style middlewares. It has been tested  with [Slim Framework](http://www.slimframework.com/) and [Zend Expressive](https://zendframework.github.io/zend-expressive/).
 
 
 [![Latest Version](https://img.shields.io/packagist/v/tuupola/slim-basic-auth.svg?style=flat-square)](https://packagist.org/packages/tuupola/slim-basic-auth)
