@@ -17,66 +17,58 @@ namespace Test;
 
 use \Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
 
-use Slim\Http\Request;
-use Slim\Http\Response;
-use Slim\Http\Uri;
-use Slim\Http\Headers;
-use Slim\Http\Body;
-use Slim\Http\Collection;
+use Zend\Diactoros\Request;
+use Zend\Diactoros\ServerRequestFactory;
+use Zend\Diactoros\Response;
+use Zend\Diactoros\Uri;
 
 class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testShouldNotAuthenticateOptions()
     {
-        $uri = Uri::createFromString("https://example.com/api");
-        $headers = new Headers();
-        $cookies = [];
-        $server = [];
-        $body = new Body(fopen("php://temp", "r+"));
-        $request = new Request("OPTIONS", $uri, $headers, $cookies, $server, $body);
+        $request = (new Request())
+            ->withUri(new Uri("https://example.com/api"))
+            ->withMethod("OPTIONS");
 
-        $rule = new RequestMethodRule();
+        $response = new Response;
+        $rule = new RequestMethodRule;
 
         $this->assertFalse($rule($request));
     }
 
     public function testShouldAuthenticatePost()
     {
-        $uri = Uri::createFromString("https://example.com/api");
-        $headers = new Headers();
-        $cookies = [];
-        $server = [];
-        $body = new Body(fopen("php://temp", "r+"));
-        $request = new Request("POST", $uri, $headers, $cookies, $server, $body);
+        $request = (new Request())
+            ->withUri(new Uri("https://example.com/api"))
+            ->withMethod("POST");
 
-        $rule = new RequestMethodRule();
+        $response = new Response;
+        $rule = new RequestMethodRule;
 
         $this->assertTrue($rule($request));
     }
 
     public function testShouldAuthenticateGet()
     {
-        $uri = Uri::createFromString("https://example.com/api");
-        $headers = new Headers();
-        $cookies = [];
-        $server = [];
-        $body = new Body(fopen("php://temp", "r+"));
-        $request = new Request("GET", $uri, $headers, $cookies, $server, $body);
+        $request = (new Request())
+            ->withUri(new Uri("https://example.com/api"))
+            ->withMethod("GET");
 
-        $rule = new RequestMethodRule();
+        $response = new Response;
+        $rule = new RequestMethodRule;
 
         $this->assertTrue($rule($request));
     }
 
     public function testShouldConfigurePassThrough()
     {
-        $uri = Uri::createFromString("https://example.com/api");
-        $headers = new Headers();
-        $cookies = [];
-        $server = [];
-        $body = new Body(fopen("php://temp", "r+"));
-        $request = new Request("GET", $uri, $headers, $cookies, $server, $body);
+        $request = (new Request())
+            ->withUri(new Uri("https://example.com/api"))
+            ->withMethod("GET");
+
+        $response = new Response;
+        $rule = new RequestMethodRule;
 
         $rule = new RequestMethodRule([
             "passthrough" => ["GET"]
