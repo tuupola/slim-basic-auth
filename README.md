@@ -28,7 +28,7 @@ $app = new \Slim\App;
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "users" => [
         "root" => "t00r",
-        "user" => "passw0rd"
+        "somebody" => "passw0rd"
     ]
 ]));
 ```
@@ -43,7 +43,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "realm" => "Protected",
     "users" => [
         "root" => "t00r",
-        "user" => "passw0rd"
+        "somebody" => "passw0rd"
     ],
     "callback" => function ($request, $response, $arguments) {
         print_r($arguments);
@@ -65,7 +65,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "secure" => false,
     "users" => [
         "root" => "t00r",
-        "user" => "passw0rd"
+        "somebody" => "passw0rd"
     ]
 ]));
 ```
@@ -81,7 +81,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "relaxed" => ["localhost", "dev.example.com"],
     "users" => [
         "root" => "t00r",
-        "user" => "passw0rd"
+        "somebody" => "passw0rd"
     ]
 ]));
 ```
@@ -137,7 +137,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "realm" => "Protected",
     "users" => [
         "root" => "t00r",
-        "user" => "passw0rd"
+        "somebody" => "passw0rd"
     ],
     "error" => function ($request, $response, $arguments) {
         $data = [];
@@ -193,7 +193,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     "realm" => "Protected",
     "users" => [
         "root" => "t00r",
-        "user" => "passw0rd"
+        "somebody" => "passw0rd"
     ],
     "environment" => "REDIRECT_HTTP_AUTHORIZATION"
 ]));
