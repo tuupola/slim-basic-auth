@@ -2,7 +2,7 @@
     "name": "tuupola/slim-basic-auth",
     "type": "library",
     "description": "PSR-7 HTTP Basic Authentication Middleware",
-    "keywords": ["slim", "middleware", "auth", "psr-7"],
+    "keywords": ["middleware", "auth", "psr-7"],
     "homepage": "http://www.appelsiini.net/projects/slim-basic-auth",
     "license": "MIT",
     "authors": [
