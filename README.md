@@ -33,13 +33,51 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
-With optional `path` parameter can authenticate only given part of your website.  It can be either a string or an array of strings. You can also change the displayed `realm` using the parameter with same name. Optional callback which is called if authentication succeeds can be added. Callback receives an array containing `user` and `password` as argument. Callback is called only if authentication succeeds. If callback returns boolean `false` authentication is forced to be failed.
+## Optional parameters
+### Path
+
+The optional `path` parameter allows you to specify the protected part of your website. It can be either a string or an array. You do not need to specify each URL. Instead think of `path` setting as a folder. In the example below everything starting with `/api` will be authenticated.
+
+``` php
+$app = new \Slim\App;
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/api", /* or ["/admin", "/api"] */
+    "realm" => "Protected",
+    "users" => [
+        "root" => "t00r",
+        "somebody" => "passw0rd"
+    ]
+]));
+```
+
+### Passthrough
+
+With optional `passthrough` parameter you can make exceptions to `path` parameter. In the example below everything starting with `/api` and `/admin`  will be authenticated with the exception of `/api/token` and `/admin/ping` which will not be authenticated.
+
+``` php
+$app = new \Slim\App;
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => ["/api", "/admin"],
+    "passthrough" => ["/api/token", "/admin/ping"],
+    "realm" => "Protected",
+    "users" => [
+        "root" => "t00r",
+        "somebody" => "passw0rd"
+    ]
+]));
+```
+
+### Callback
+
+Callback is called only when authentication succeeds. It receives an array containing `user` and `password` as argument. If callback returns boolean `false` authentication is forced to be failed.
 
 ```php
 $app = new \Slim\App;
 
 $app->add(new \Slim\Middleware\HttpBasicAuthentication([
-    "path" => "/admin", /* or ["/admin", "/api"] */
+    "path" => "/admin",
     "realm" => "Protected",
     "users" => [
         "root" => "t00r",
