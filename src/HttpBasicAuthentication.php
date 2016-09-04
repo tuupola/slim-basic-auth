@@ -31,6 +31,7 @@ class HttpBasicAuthentication
         "relaxed" => array("localhost", "127.0.0.1"),
         "users" => null,
         "path" => null,
+        "passthrough" => null,
         "realm" => "Protected",
         "environment" => "HTTP_AUTHORIZATION",
         "authenticator" => null,
@@ -61,10 +62,11 @@ class HttpBasicAuthentication
         }
 
         /* If path was given in easy mode add rule for it. */
-        if (null !== ($this->options["path"])) {
-            $this->addRule(new RequestPathRule(array(
-                "path" => $this->options["path"]
-            )));
+        if (null !== $this->options["path"]) {
+            $this->addRule(new RequestPathRule([
+                "path" => $this->options["path"],
+                "passthrough" => $this->options["passthrough"]
+            ]));
         }
 
         /* There must be an authenticator either passed via options */
@@ -216,6 +218,17 @@ class HttpBasicAuthentication
     private function setPath($path)
     {
         $this->options["path"] = $path;
+        return $this;
+    }
+
+    public function getPassthrough()
+    {
+        return $this->options["passthrough"];
+    }
+
+    private function setPassthrough($passthrough)
+    {
+        $this->options["passthrough"] = $passthrough;
         return $this;
     }
 

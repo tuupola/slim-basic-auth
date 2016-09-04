@@ -37,6 +37,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
     {
         $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
             "path" => "/admin",
+            "passthrough" => "/admin/ping",
             "realm" => "Mordor",
             "users" => array(
                 "root" => "t00r",
@@ -49,6 +50,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("t00r", $users["root"]);
         $this->assertEquals("/admin", $auth->getPath());
+        $this->assertEquals("/admin/ping", $auth->getPassthrough());
         $this->assertEquals("Mordor", $auth->getRealm());
         $this->assertEquals("HTTP_AUTHORIZATION", $auth->getEnvironment());
         $this->assertInstanceOf(
