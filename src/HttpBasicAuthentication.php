@@ -61,19 +61,12 @@ class HttpBasicAuthentication
             )));
         }
 
-        /* If path or passthrough was given in easy mode add rule for it. */
-        $pathRules = array();
-
-        if (null !== ($this->options["path"])) {
-            $pathRules["path"] = $this->options["path"];
-        }
-
-        if (null !== ($this->options["passthrough"])) {
-            $pathRules["passthrough"] = $this->options["passthrough"];
-        }
-
-        if (!empty($pathRules)) {
-            $this->addRule(new RequestPathRule($pathRules));
+        /* If path was given in easy mode add rule for it. */
+        if (null !== $this->options["path"]) {
+            $this->addRule(new RequestPathRule([
+                "path" => $this->options["path"],
+                "passthrough" => $this->options["passthrough"]
+            ]));
         }
 
         /* There must be an authenticator either passed via options */
@@ -233,9 +226,9 @@ class HttpBasicAuthentication
         return $this->options["passthrough"];
     }
 
-    private function setPassthrough($path)
+    private function setPassthrough($passthrough)
     {
-        $this->options["passthrough"] = $path;
+        $this->options["passthrough"] = $passthrough;
         return $this;
     }
 
