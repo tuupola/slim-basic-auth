@@ -33,6 +33,38 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
+Cleartext passwords are only good for quick testing. You probably want to use hashed passwords. Hashed password can be generated with `htpasswd` command line tool or (password_hash)[http://php.net/manual/en/function.password-hash.php] PHP function
+
+```
+$ htpasswd -nbBC 10 root t00r
+root:$2y$10$1lwCIlqktFZwEBIppL4ak.I1AHxjoKy9stLnbedwVMrt92aGz82.O
+$ htpasswd -nbBC 10 somebody passw0rd
+somebody:$2y$10$6/vGXuMUoRlJUeDN.bUWduge4GhQbgPkm6pfyGxwgEWT0vEkHKBUW
+```
+
+```php
+$app = new \Slim\App;
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "users" => [
+        "root" => '$2y$10$1lwCIlqktFZwEBIppL4ak.I1AHxjoKy9stLnbedwVMrt92aGz82.O',
+        "somebody" => '$2y$10$6/vGXuMUoRlJUeDN.bUWduge4GhQbgPkm6pfyGxwgEWT0vEkHKBUW'
+    ]
+]));
+```
+
+Even if you are using hashed passwords it is not the best idea to store credentials in the code. Instead you could store them in environment or external file which is not committed to GitHub.
+
+```php
+$app = new \Slim\App;
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "users" => [
+        "admin" => getenv("ADMIN_PASSWORD")
+    ]
+]));
+```
+
 ## Optional parameters
 ### Path
 
@@ -93,7 +125,6 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 
 Browsers send passwords over the wire basically as cleartext. You should always use HTTPS. If the middleware detects insecure usage over HTTP it will throw `RuntimeException`. This rule is relaxed for localhost. To allow insecure usage you must enable it manually by setting `secure` to `false`.
 
-Also it is not a good idea to commit credentials into GitHub. You should store them somewhere else instead.
 
 ``` php
 $app = new \Slim\App;
