@@ -47,5 +47,11 @@ class ArrayAuthenticatorTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertFalse($authenticator(["user" => "root", "password" => "nosuch"]));
         $this->assertFalse($authenticator(["user" => "nosuch", "password" => "nosuch"]));
+
+        /* Should handle as hash and not cleartext */
+        $this->assertFalse($authenticator([
+            "user" => "luser",
+            "password" => '$2y$10$Tm03qGT4FLqobzbZcfLDcOVIwZEpg20QZYffleeA2jfcClLpufYpy'
+        ]));
     }
 }
