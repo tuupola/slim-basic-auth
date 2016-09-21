@@ -33,7 +33,7 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
-Cleartext passwords are only good for quick testing. You probably want to use hashed passwords. Hashed password can be generated with `htpasswd` command line tool or (password_hash)[http://php.net/manual/en/function.password-hash.php] PHP function
+Cleartext passwords are only good for quick testing. You probably want to use hashed passwords. Hashed password can be generated with `htpasswd` command line tool or [password_hash()](http://php.net/manual/en/function.password-hash.php) PHP function
 
 ```
 $ htpasswd -nbBC 10 root t00r
