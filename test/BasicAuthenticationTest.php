@@ -135,7 +135,6 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf("\Test\TrueAuthenticator", $auth->getAuthenticator());
         $this->assertInstanceOf("\Test\FalseRule", $auth->getRules()->pop());
         $this->assertInstanceOf("\Test\TrueRule", $auth->getRules()->pop());
-
     }
 
     public function testShouldReturn200WithoutPassword()
