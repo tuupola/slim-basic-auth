@@ -37,6 +37,23 @@ class ArrayAuthenticator implements AuthenticatorInterface
     {
         $user = $arguments["user"];
         $password = $arguments["password"];
-        return isset($this->options["users"][$user]) && $this->options["users"][$user] === $password;
+
+        /* Unknown user. */
+        if (!isset($this->options["users"][$user])) {
+            return false;
+        }
+
+        if (self::isHash($this->options["users"][$user])) {
+            /* Hashed password. */
+            return password_verify($password, $this->options["users"][$user]);
+        } else {
+            /* Cleartext password. */
+            return $this->options["users"][$user] === $password;
+        }
+    }
+
+    public static function isHash($password)
+    {
+        return preg_match('/^\$(2|2a|2y)\$\d{2}\$.*/', $password) && (strlen($password) >= 60);
     }
 }
