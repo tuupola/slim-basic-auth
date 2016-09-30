@@ -1,6 +1,0 @@
-{
-    "require": {
-        "slim/slim": "~3.0@rc",
-        "tuupola/slim-basic-auth": "2.x@dev"
-    }
-}
