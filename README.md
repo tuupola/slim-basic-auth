@@ -20,7 +20,7 @@ $ composer require tuupola/slim-basic-auth
 
 ## Usage
 
-Configuration options are passed as an array. Only mandatory parameter is  `users`. This is an array where you pass one or more `"username" => "password"` combinations. Username is the key and password is the value. Examples assume you are using Slim Framework.
+Configuration options are passed as an array. Only mandatory parameter is  `users`. This is an array where you pass one or more `"username" => "password"` combinations. Username is the key and password is the value.
 
 ```php
 $app = new \Slim\App;
@@ -32,6 +32,21 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
     ]
 ]));
 ```
+
+Same with Zend Expressive.
+
+```php
+$app = Zend\Expressive\AppFactory::create();
+
+$app->pipe(new \Slim\Middleware\HttpBasicAuthentication([
+    "users" => [
+        "root" => "t00r",
+        "user" => "passw0rd"
+    ]
+]));
+```
+
+Rest of the examples assume you are using Slim Framework.
 
 Cleartext passwords are only good for quick testing. You probably want to use hashed passwords. Hashed password can be generated with `htpasswd` command line tool or [password_hash()](http://php.net/manual/en/function.password-hash.php) PHP function
 
