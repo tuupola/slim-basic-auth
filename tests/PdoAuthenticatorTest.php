@@ -42,26 +42,26 @@ class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturnTrue()
     {
-        $authenticator = new PdoAuthenticator(array(
+        $authenticator = new PdoAuthenticator([
             "pdo" => $this->pdo
-        ));
-        $this->assertTrue($authenticator(array("user" => "root", "password" => "t00r")));
+        ]);
+        $this->assertTrue($authenticator(["user" => "root", "password" => "t00r"]));
     }
 
     public function testShouldReturnFalse()
     {
-        $authenticator = new PdoAuthenticator(array(
+        $authenticator = new PdoAuthenticator([
             "pdo" => $this->pdo
-        ));
-        $this->assertFalse($authenticator(array("user" => "root", "password" => "nosuch")));
-        $this->assertFalse($authenticator(array("user" => "nosuch", "password" => "nosuch")));
+        ]);
+        $this->assertFalse($authenticator(["user" => "root", "password" => "nosuch"]));
+        $this->assertFalse($authenticator(["user" => "nosuch", "password" => "nosuch"]));
     }
 
     public function testShouldUseLimit()
     {
-        $authenticator = new PdoAuthenticator(array(
+        $authenticator = new PdoAuthenticator([
             "pdo" => $this->pdo
-        ));
+        ]);
 
         $this->assertEquals(
             "SELECT * FROM users WHERE user = ? LIMIT 1",
@@ -74,9 +74,9 @@ class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
         /* Workaround to test without sqlsrv with Travis */
         define("__PHPUNIT_ATTR_DRIVER_NAME__", "sqlsrv");
 
-        $authenticator = new PdoAuthenticator(array(
+        $authenticator = new PdoAuthenticator([
             "pdo" => $this->pdo
-        ));
+        ]);
         $this->assertEquals(
             "SELECT TOP 1 * FROM users WHERE user = ?",
             $authenticator->sql("root", "nosuch")

@@ -30,15 +30,15 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldBeCreatedInEasyMode()
     {
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "passthrough" => "/admin/ping",
             "realm" => "Mordor",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $users = $auth->getUsers();
         $rules = $auth->getRules();
@@ -64,20 +64,20 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldBeCreatedInNormalMode()
     {
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "realm" => "Mordor",
-            "authenticator" => new ArrayAuthenticator(array(
-                "users" => array(
+            "authenticator" => new ArrayAuthenticator([
+                "users" => [
                     "root" => "t00r",
                     "user" => "passw0rd"
-                )
-            )),
-            "rules" => array(
+                ]
+            ]),
+            "rules" => [
                 new \Test\TrueRule,
                 new \Test\FalseRule,
-                new RequestMethodRule(array("passthrough" => array("OPTIONS")))
-            )
-        ));
+                new RequestMethodRule(["passthrough" => ["OPTIONS"]])
+            ]
+        ]);
 
         //$users = $auth->getUsers();
         $rules = $auth->getRules();
@@ -112,19 +112,19 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testSettersShouldBeChainable()
     {
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "authenticator" => new \Test\FalseAuthenticator,
-            "rules" => array(
+            "rules" => [
                 new \Test\FalseRule
-            )
-        ));
+            ]
+        ]);
 
         $this->assertInstanceOf("\Test\FalseAuthenticator", $auth->getAuthenticator());
         $this->assertInstanceOf("\Test\FalseRule", $auth->getRules()->pop());
 
         $auth
             ->setAuthenticator(new \Test\TrueAuthenticator)
-            ->setRules(array(new \Test\TrueRule))
+            ->setRules([new \Test\TrueRule])
             ->addRule(new \Test\FalseRule);
 
         $this->assertInstanceOf("\Test\TrueAuthenticator", $auth->getAuthenticator());
@@ -140,14 +140,14 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -168,14 +168,14 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => ["/admin"],
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -199,14 +199,14 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -227,14 +227,14 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -255,14 +255,14 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $auth->addrule(function ($request) {
             return false;
@@ -290,17 +290,17 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            ),
+            ],
             "callback" => function ($request, $response, $arguments) {
                 return false;
             }
-        ));
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -321,18 +321,18 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            ),
+            ],
             "error" => function ($request, $response, $arguments) {
                 $response->getBody()->write("ERROR: " . $arguments["message"]);
                 return $response;
             }
-        ));
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -354,19 +354,19 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            ),
+            ],
             "error" => function ($request, $response, $arguments) {
                 return $response
                     ->withStatus(302)
                     ->withHeader("Location", "/foo/bar");
             }
-        ));
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -391,14 +391,14 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -422,15 +422,15 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
             "environment" => "FOO_BAR",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -453,11 +453,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => new \Test\TrueAuthenticator()
-        ));
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -481,11 +481,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => new \Test\FalseAuthenticator()
-        ));
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -506,13 +506,13 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($arguments) {
                 return true;
             }
-        ));
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -536,13 +536,13 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($arguments) {
                 return false;
             }
-        ));
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -565,13 +565,13 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/api",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -592,13 +592,13 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/api",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -610,13 +610,13 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGetAndSetSecure()
     {
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($user, $pass) {
                 return true;
             }
-        ));
+        ]);
         $this->assertTrue($auth->getSecure());
         $auth->setSecure(false);
         $this->assertFalse($auth->getSecure());
@@ -624,27 +624,27 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGetAndSetRelaxed()
     {
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($user, $pass) {
                 return true;
             }
-        ));
-        $relaxed = array("localhost", "dev.example.com");
+        ]);
+        $relaxed = ["localhost", "dev.example.com"];
         $auth->setRelaxed($relaxed);
         $this->assertEquals($relaxed, $auth->getRelaxed());
     }
 
     public function testShouldGetAndSetErrorHandler()
     {
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($user, $pass) {
                 return true;
             }
-        ));
+        ]);
         $error = function () {
             return "ERROR";
         };
@@ -654,13 +654,13 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGetAndSetCallback()
     {
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($user, $pass) {
                 return true;
             }
-        ));
+        ]);
         $callback = function () {
             return "It's got Electrolytes.";
         };
@@ -678,14 +678,14 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/stat",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -706,14 +706,14 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");
@@ -734,14 +734,14 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication([
             "path" => "/",
             "realm" => "Protected",
-            "users" => array(
+            "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
-            )
-        ));
+            ]
+        ]);
 
         $next = function (Request $request, Response $response) {
             $response->getBody()->write("Success");

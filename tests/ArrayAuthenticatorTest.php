@@ -18,6 +18,7 @@ namespace Slim\Middleware\HttpBasicAuthentication;
 class ArrayAuthenticatorTest extends \PHPUnit_Framework_TestCase
 {
 
+
     public function testShouldReturnTrue()
     {
         $authenticator = new ArrayAuthenticator([

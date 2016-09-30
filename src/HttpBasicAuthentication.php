@@ -26,9 +26,9 @@ use Psr\Http\Message\ResponseInterface;
 class HttpBasicAuthentication
 {
     private $rules;
-    private $options = array(
+    private $options = [
         "secure" => true,
-        "relaxed" => array("localhost", "127.0.0.1"),
+        "relaxed" => ["localhost", "127.0.0.1"],
         "users" => null,
         "path" => null,
         "passthrough" => null,
@@ -37,9 +37,9 @@ class HttpBasicAuthentication
         "authenticator" => null,
         "callback" => null,
         "error" => null
-    );
+    ];
 
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         /* Setup stack for rules */
         $this->rules = new \SplStack;
@@ -49,16 +49,16 @@ class HttpBasicAuthentication
 
         /* If array of users was passed in options create an authenticator */
         if (is_array($this->options["users"])) {
-            $this->options["authenticator"] = new ArrayAuthenticator(array(
+            $this->options["authenticator"] = new ArrayAuthenticator([
                 "users" => $this->options["users"]
-            ));
+            ]);
         }
 
         /* If nothing was passed in options add default rules. */
         if (!isset($options["rules"])) {
-            $this->addRule(new RequestMethodRule(array(
-                "passthrough" => array("OPTIONS")
-            )));
+            $this->addRule(new RequestMethodRule([
+                "passthrough" => ["OPTIONS"]
+            ]));
         }
 
         /* If path was given in easy mode add rule for it. */
@@ -116,7 +116,7 @@ class HttpBasicAuthentication
             }
         }
 
-        $params = array("user" => $user, "password" => $password);
+        $params = ["user" => $user, "password" => $password];
 
         /* Check if user authenticates. */
         if (false === $this->options["authenticator"]($params)) {
@@ -149,12 +149,12 @@ class HttpBasicAuthentication
         return $next($request, $response);
     }
 
-    private function hydrate($data = array())
+    private function hydrate($data = [])
     {
         foreach ($data as $key => $value) {
             $method = "set" . ucfirst($key);
             if (method_exists($this, $method)) {
-                call_user_func(array($this, $method), $value);
+                call_user_func([$this, $method], $value);
             }
         }
     }

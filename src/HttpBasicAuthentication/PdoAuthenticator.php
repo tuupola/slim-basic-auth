@@ -19,15 +19,15 @@ class PdoAuthenticator implements AuthenticatorInterface
 {
     private $options;
 
-    public function __construct(array $options = array())
+    public function __construct(array $options = [])
     {
 
         /* Default options. */
-        $this->options = array(
+        $this->options = [
             "table" => "users",
             "user" => "user",
             "hash" => "hash"
-        );
+        ];
 
         if ($options) {
             $this->options = array_merge($this->options, $options);
@@ -44,7 +44,7 @@ class PdoAuthenticator implements AuthenticatorInterface
         $sql = $this->sql();
 
         $statement = $this->options["pdo"]->prepare($sql);
-        $statement->execute(array($user));
+        $statement->execute([$user]);
 
         if ($user = $statement->fetch(\PDO::FETCH_ASSOC)) {
             return password_verify($password, $user[$this->options["hash"]]);

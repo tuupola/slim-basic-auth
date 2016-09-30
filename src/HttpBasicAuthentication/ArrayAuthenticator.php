@@ -24,9 +24,9 @@ class ArrayAuthenticator implements AuthenticatorInterface
     {
 
         /* Default options. */
-        $this->options = array(
-            "users" => array()
-        );
+        $this->options = [
+            "users" => []
+        ];
 
         if ($options) {
             $this->options = array_merge($this->options, (array)$options);
