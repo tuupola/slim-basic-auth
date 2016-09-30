@@ -13,9 +13,7 @@
  *
  */
 
-namespace Test;
-
-use \Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
+namespace Slim\Middleware\HttpBasicAuthentication;
 
 use Zend\Diactoros\Request;
 use Zend\Diactoros\ServerRequestFactory;

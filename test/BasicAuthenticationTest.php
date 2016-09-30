@@ -13,14 +13,9 @@
  *
  */
 
-namespace Test;
+namespace Slim\Middleware\HttpBasicAuthentication;
 
 use Slim\Middleware\HttpBasicAuthentication;
-use Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
-use Slim\Middleware\HttpBasicAuthentication\RuleInterface;
-use Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
-use Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -35,7 +30,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldBeCreatedInEasyMode()
     {
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "passthrough" => "/admin/ping",
             "realm" => "Mordor",
@@ -69,7 +64,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldBeCreatedInNormalMode()
     {
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "realm" => "Mordor",
             "authenticator" => new ArrayAuthenticator(array(
                 "users" => array(
@@ -78,8 +73,8 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 )
             )),
             "rules" => array(
-                new TrueRule,
-                new FalseRule,
+                new \Test\TrueRule,
+                new \Test\FalseRule,
                 new RequestMethodRule(array("passthrough" => array("OPTIONS")))
             )
         ));
@@ -112,15 +107,15 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
     public function testShouldFailWithoutAuthenticator()
     {
         $this->setExpectedException("RuntimeException");
-        $auth = new \Slim\Middleware\HttpBasicAuthentication();
+        $auth = new HttpBasicAuthentication();
     }
 
     public function testSettersShouldBeChainable()
     {
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
-            "authenticator" => new FalseAuthenticator,
+        $auth = new HttpBasicAuthentication(array(
+            "authenticator" => new \Test\FalseAuthenticator,
             "rules" => array(
-                new FalseRule
+                new \Test\FalseRule
             )
         ));
 
@@ -128,9 +123,9 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf("\Test\FalseRule", $auth->getRules()->pop());
 
         $auth
-            ->setAuthenticator(new TrueAuthenticator)
-            ->setRules(array(new TrueRule))
-            ->addRule(new FalseRule);
+            ->setAuthenticator(new \Test\TrueAuthenticator)
+            ->setRules(array(new \Test\TrueRule))
+            ->addRule(new \Test\FalseRule);
 
         $this->assertInstanceOf("\Test\TrueAuthenticator", $auth->getAuthenticator());
         $this->assertInstanceOf("\Test\FalseRule", $auth->getRules()->pop());
@@ -145,7 +140,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "users" => array(
@@ -173,7 +168,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => ["/admin"],
             "realm" => "Protected",
             "users" => array(
@@ -204,7 +199,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "users" => array(
@@ -232,7 +227,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "users" => array(
@@ -260,7 +255,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "users" => array(
@@ -295,7 +290,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "users" => array(
@@ -326,7 +321,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "users" => array(
@@ -359,7 +354,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "users" => array(
@@ -396,7 +391,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "users" => array(
@@ -427,7 +422,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "environment" => "FOO_BAR",
@@ -458,10 +453,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
-            "authenticator" => new TrueAuthenticator()
+            "authenticator" => new \Test\TrueAuthenticator()
         ));
 
         $next = function (Request $request, Response $response) {
@@ -486,10 +481,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
-            "authenticator" => new FalseAuthenticator()
+            "authenticator" => new \Test\FalseAuthenticator()
         ));
 
         $next = function (Request $request, Response $response) {
@@ -511,7 +506,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($arguments) {
@@ -541,7 +536,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($arguments) {
@@ -570,7 +565,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/api",
             "users" => array(
                 "root" => "t00r",
@@ -597,7 +592,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/api",
             "users" => array(
                 "root" => "t00r",
@@ -615,7 +610,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGetAndSetSecure()
     {
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($user, $pass) {
@@ -629,7 +624,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGetAndSetRelaxed()
     {
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($user, $pass) {
@@ -643,7 +638,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGetAndSetErrorHandler()
     {
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($user, $pass) {
@@ -659,7 +654,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldGetAndSetCallback()
     {
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/admin",
             "realm" => "Protected",
             "authenticator" => function ($user, $pass) {
@@ -683,7 +678,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/stat",
             "realm" => "Protected",
             "users" => array(
@@ -711,7 +706,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/",
             "realm" => "Protected",
             "users" => array(
@@ -739,7 +734,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+        $auth = new HttpBasicAuthentication(array(
             "path" => "/",
             "realm" => "Protected",
             "users" => array(
@@ -767,7 +762,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $response = new Response;
 
-        $auth = new \Slim\Middleware\HttpBasicAuthentication([
+        $auth = new HttpBasicAuthentication([
             "path" => ["/api", "/bar"],
             "realm" => "Protected",
             "users" => [

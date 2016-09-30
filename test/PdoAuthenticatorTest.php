@@ -13,9 +13,7 @@
  *
  */
 
-namespace Test;
-
-use \Slim\Middleware\HttpBasicAuthentication\PdoAuthenticator;
+namespace Slim\Middleware\HttpBasicAuthentication;
 
 class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
 {
