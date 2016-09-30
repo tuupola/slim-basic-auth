@@ -7,3 +7,5 @@
 /package.json export-ignore
 /phpunit.xml export-ignore
 /README.md export-ignore
+/CONTRIBUTING.md export-ignore
+/codecov.yml export-ignore
