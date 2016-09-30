@@ -23,8 +23,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Slim\\Middleware\\HttpBasicAuthentication\\": "test",
-            "Test\\": "test/lib"
+            "Slim\\Middleware\\HttpBasicAuthentication\\": "tests",
+            "Test\\": "tests/lib"
         }
     },
     "require-dev": {

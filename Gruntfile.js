@@ -9,7 +9,7 @@ module.exports = function(grunt) {
                 tasks: ["testjs"]
             },
             php: {
-                files: ["src/**/*.php", "test/*.php"],
+                files: ["src/**/*.php", "tests/**/*.php"],
                 tasks: ["testphp"]
             }
         },
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
         },
         phpunit: {
             unit: {
-                dir: "test"
+                dir: "tests"
             },
             options: {
                 bin: "vendor/bin/phpunit --bootstrap=vendor/autoload.php --coverage-text --coverage-html ./report",
