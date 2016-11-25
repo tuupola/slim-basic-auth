@@ -18,12 +18,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Slim\\Middleware\\": "src"
+            "Tuupola\\Middleware\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Slim\\Middleware\\HttpBasicAuthentication\\": "tests",
+            "Tuupola\\Middleware\\HttpBasicAuthentication\\": "tests",
             "Test\\": "tests/lib"
         }
     },

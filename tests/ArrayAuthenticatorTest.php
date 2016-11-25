@@ -13,7 +13,7 @@
  *
  */
 
-namespace Slim\Middleware\HttpBasicAuthentication;
+namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 class ArrayAuthenticatorTest extends \PHPUnit_Framework_TestCase
 {

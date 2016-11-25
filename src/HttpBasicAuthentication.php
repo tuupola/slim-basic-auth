@@ -13,12 +13,12 @@
  *
  */
 
-namespace Slim\Middleware;
+namespace Tuupola\Middleware;
 
-use Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
-use Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use Slim\Middleware\HttpBasicAuthentication\RequestMethodRule;
-use Slim\Middleware\HttpBasicAuthentication\RequestPathRule;
+use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
+use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
+use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;

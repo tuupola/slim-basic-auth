@@ -25,7 +25,7 @@ Configuration options are passed as an array. Only mandatory parameter is  `user
 ```php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "users" => [
         "root" => "t00r",
         "somebody" => "passw0rd"
@@ -38,7 +38,7 @@ Same with Zend Expressive.
 ```php
 $app = Zend\Expressive\AppFactory::create();
 
-$app->pipe(new \Slim\Middleware\HttpBasicAuthentication([
+$app->pipe(new \Tuupola\Middleware\HttpBasicAuthentication([
     "users" => [
         "root" => "t00r",
         "user" => "passw0rd"
@@ -60,7 +60,7 @@ somebody:$2y$10$6/vGXuMUoRlJUeDN.bUWduge4GhQbgPkm6pfyGxwgEWT0vEkHKBUW
 ```php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "users" => [
         "root" => '$2y$10$1lwCIlqktFZwEBIppL4ak.I1AHxjoKy9stLnbedwVMrt92aGz82.O',
         "somebody" => '$2y$10$6/vGXuMUoRlJUeDN.bUWduge4GhQbgPkm6pfyGxwgEWT0vEkHKBUW'
@@ -73,7 +73,7 @@ Even if you are using hashed passwords it is not the best idea to store credenti
 ```php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "users" => [
         "admin" => getenv("ADMIN_PASSWORD")
     ]
@@ -88,7 +88,7 @@ The optional `path` parameter allows you to specify the protected part of your w
 ``` php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/api", /* or ["/admin", "/api"] */
     "realm" => "Protected",
     "users" => [
@@ -105,7 +105,7 @@ With optional `passthrough` parameter you can make exceptions to `path` paramete
 ``` php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => ["/api", "/admin"],
     "passthrough" => ["/api/token", "/admin/ping"],
     "realm" => "Protected",
@@ -123,7 +123,7 @@ Callback is called only when authentication succeeds. It receives an array conta
 ```php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "users" => [
@@ -144,7 +144,7 @@ Browsers send passwords over the wire basically as cleartext. You should always 
 ``` php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "secure" => false,
     "users" => [
@@ -159,7 +159,7 @@ Alternatively you can list your development host to have relaxed security.
 ``` php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "secure" => true,
     "relaxed" => ["localhost", "dev.example.com"],
@@ -178,7 +178,7 @@ If you are creating an Enterprise&trade; software which randomly lets people log
 
 
 ```php
-use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+use \Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 
 class RandomAuthenticator implements AuthenticatorInterface {
     public function __invoke(array $arguments) {
@@ -188,7 +188,7 @@ class RandomAuthenticator implements AuthenticatorInterface {
 
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "authenticator" => new RandomAuthenticator()
@@ -200,7 +200,7 @@ Same thing can also be accomplished with anonymous function.
 ```php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "authenticator" => function ($arguments) {
@@ -216,7 +216,7 @@ By default plugin returns an empty response body with 401 response. You can retu
 ```php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/api",
     "realm" => "Protected",
     "users" => [
@@ -237,12 +237,12 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 For those in hurry there is a ready made PDO authenticator. It covers most of the use cases. You probably end up implementing your own though.
 
 ```php
-use \Slim\Middleware\HttpBasicAuthentication\PdoAuthenticator;
+use \Tuupola\Middleware\HttpBasicAuthentication\PdoAuthenticator;
 
 $pdo = new \PDO("sqlite:/tmp/users.sqlite");
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "authenticator" => new PdoAuthenticator([
@@ -272,7 +272,7 @@ The above rewrite rule should work out of the box. In some cases server adds `RE
 ```php
 $app = new \Slim\App;
 
-$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "users" => [

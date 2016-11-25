@@ -15,7 +15,7 @@
 
 namespace Test;
 
-use Slim\Middleware\HttpBasicAuthentication\RuleInterface;
+use Tuupola\Middleware\HttpBasicAuthentication\RuleInterface;
 use Psr\Http\Message\RequestInterface;
 
 class FalseRule implements RuleInterface

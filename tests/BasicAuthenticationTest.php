@@ -13,9 +13,9 @@
  *
  */
 
-namespace Slim\Middleware\HttpBasicAuthentication;
+namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-use Slim\Middleware\HttpBasicAuthentication;
+use Tuupola\Middleware\HttpBasicAuthentication;
 
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -49,15 +49,15 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Mordor", $auth->getRealm());
         $this->assertEquals("HTTP_AUTHORIZATION", $auth->getEnvironment());
         $this->assertInstanceOf(
-            "\Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator",
+            "\Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator",
             $auth->getAuthenticator()
         );
         $this->assertInstanceOf(
-            "\Slim\Middleware\HttpBasicAuthentication\RequestPathRule",
+            "\Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule",
             $rules->pop()
         );
         $this->assertInstanceOf(
-            "\Slim\Middleware\HttpBasicAuthentication\RequestMethodRule",
+            "\Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule",
             $rules->pop()
         );
     }
@@ -87,11 +87,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Mordor", $auth->getRealm());
         $this->assertEquals("HTTP_AUTHORIZATION", $auth->getEnvironment());
         $this->assertInstanceOf(
-            "\Slim\Middleware\HttpBasicAuthentication\ArrayAuthenticator",
+            "\Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator",
             $auth->getAuthenticator()
         );
         $this->assertInstanceOf(
-            "\Slim\Middleware\HttpBasicAuthentication\RequestMethodRule",
+            "\Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule",
             $rules->pop()
         );
         $this->assertInstanceOf(

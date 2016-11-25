@@ -15,7 +15,7 @@
 
 namespace Test;
 
-use \Slim\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 
 class TrueAuthenticator implements AuthenticatorInterface
 {

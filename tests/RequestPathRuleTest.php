@@ -13,7 +13,7 @@
  *
  */
 
-namespace Slim\Middleware\HttpBasicAuthentication;
+namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 use Zend\Diactoros\Request;
 use Zend\Diactoros\ServerRequestFactory;

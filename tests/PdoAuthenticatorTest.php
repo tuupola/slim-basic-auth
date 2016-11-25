@@ -13,7 +13,7 @@
  *
  */
 
-namespace Slim\Middleware\HttpBasicAuthentication;
+namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
 {
