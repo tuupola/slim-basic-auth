@@ -6,3 +6,4 @@
 .DS_Store
 composer.lock
 phpunit.xml
+/tests/_output/
