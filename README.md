@@ -288,15 +288,14 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 You can run tests either manually...
 
 ``` bash
-$ vendor/bin/phpunit
-$ vendor/bin/phpcs --standard=PSR2 src/ -p
+$ composer test
 ```
 
-... or automatically on every code change.
+... or automatically on every code change. You will need [entr](http://entrproject.org/) for this to work.
 
 ``` bash
-$ npm install
-$ grunt watch
+$ brew install entr
+$ composer watch
 ```
 
 ## Contributing
