@@ -28,7 +28,7 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.3",
+        "phpunit/phpunit": "^4.3",
         "squizlabs/php_codesniffer": "^2.3",
         "zendframework/zend-diactoros": "^1.3"
     }
