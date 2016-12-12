@@ -105,7 +105,7 @@ class HttpBasicAuthentication
         /* If using PHP in CGI mode. */
         if (isset($server_params[$this->options["environment"]])) {
             if (preg_match("/Basic\s+(.*)$/i", $server_params[$this->options["environment"]], $matches)) {
-                list($user, $password) = explode(":", base64_decode($matches[1]));
+                list($user, $password) = explode(":", base64_decode($matches[1]), 2);
             }
         } else {
             if (isset($server_params["PHP_AUTH_USER"])) {
