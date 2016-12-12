@@ -781,4 +781,35 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals("Success", $response->getBody());
     }
+
+    public function testBug31ShouldAllowColonInPassword()
+    {
+        $request = ServerRequestFactory::fromGlobals(
+            ["HTTP_AUTHORIZATION" => "Basic Zm9vOmJhcjpwb3A="]
+        );
+
+        $request = $request
+            ->withUri(new Uri("https://example.com/api/foo"))
+            ->withMethod("GET");
+
+        $response = new Response;
+
+        $auth = new HttpBasicAuthentication([
+            "path" => ["/api", "/bar"],
+            "realm" => "Protected",
+            "users" => [
+                "foo" => "bar:pop"
+            ]
+        ]);
+
+        $next = function (Request $request, Response $response) {
+            $response->getBody()->write("Success");
+            return $response;
+        };
+
+        $response = $auth($request, $response, $next);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Success", $response->getBody());
+    }
 }
