@@ -805,4 +805,37 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(200, $app->response()->status());
         $this->assertEquals("Success", $app->response()->body());
     }
+
+    public function testBug31ShouldAllowColonInPassword()
+    {
+        \Slim\Environment::mock(array(
+            "SCRIPT_NAME" => "/index.php",
+            "PATH_INFO" => "/admin/foo"
+        ));
+
+        $_SERVER["HTTP_AUTHORIZATION"] = "Basic Zm9vOmJhcjpwb3A=";
+
+        $app = new \Slim\Slim();
+        $app->get("/foo/bar", function () {
+            echo "Success";
+        });
+        $app->get("/admin/foo", function () {
+            echo "Admin";
+        });
+
+        $auth = new \Slim\Middleware\HttpBasicAuthentication(array(
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => array(
+                "foo" => "bar:pop"
+            )
+        ));
+
+        $auth->setApplication($app);
+        $auth->setNextMiddleware($app);
+        $auth->call();
+
+        $this->assertEquals(200, $app->response()->status());
+        $this->assertEquals("Admin", $app->response()->body());
+    }
 }

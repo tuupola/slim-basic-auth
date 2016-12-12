@@ -100,7 +100,7 @@ class HttpBasicAuthentication extends \Slim\Middleware
         /* If using PHP in CGI mode. */
         if (isset($_SERVER[$this->options["environment"]])) {
             if (preg_match("/Basic\s+(.*)$/i", $_SERVER[$this->options["environment"]], $matches)) {
-                list($user, $password) = explode(":", base64_decode($matches[1]));
+                list($user, $password) = explode(":", base64_decode($matches[1]), 2);
             }
         } else {
             $user = $environment["PHP_AUTH_USER"];
