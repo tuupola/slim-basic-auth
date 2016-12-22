@@ -24,6 +24,7 @@ use Zend\Diactoros\ServerRequest as Request;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
+use Zend\Diactoros\Stream;
 
 class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 {
@@ -279,7 +280,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Success", $response->getBody());
     }
 
-    public function testShouldReturn401WithFalseFromCallback()
+    public function testShouldReturn401WithFromAfter()
     {
         $request = ServerRequestFactory::fromGlobals(
             ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
@@ -297,8 +298,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "root" => "t00r",
                 "user" => "passw0rd"
             ],
-            "callback" => function ($request, $response, $arguments) {
-                return false;
+            "after.middleware" => function ($request, $response, $arguments) {
+                return $response
+                    ->withBody(new Stream("php://memory"))
+                    ->withStatus(401)
+                    ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $arguments["options"]["realm"]));
             }
         ]);
 
@@ -310,7 +314,41 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $response = $auth($request, $response, $next);
 
         $this->assertEquals(401, $response->getStatusCode());
-        $this->assertEquals("", $response->getBody());
+        $this->assertEquals("", (string) $response->getBody());
+    }
+
+    public function testShouldAlterResponseWithAfter()
+    {
+        $request = ServerRequestFactory::fromGlobals(
+            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
+        );
+        $request = $request
+            ->withUri(new Uri("https://example.com/admin/item"))
+            ->withMethod("GET");
+
+        $response = new Response;
+
+        $auth = new HttpBasicAuthentication([
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => [
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ],
+            "after.middleware" => function ($request, $response, $arguments) {
+                return $response->withHeader("X-Brawndo", "plants crave");
+            }
+        ]);
+
+        $next = function (Request $request, Response $response) {
+            $response->getBody()->write("Success");
+            return $response;
+        };
+
+        $response = $auth($request, $response, $next);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("plants crave", (string) $response->getHeaderLine("X-Brawndo"));
     }
 
     public function testShouldCallErrorHandlerWith401()
@@ -555,6 +593,41 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("", $response->getBody());
     }
 
+    public function testShouldModifyRequestUsingBefore()
+    {
+        $request = ServerRequestFactory::fromGlobals(
+            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
+        );
+        $request = $request
+            ->withUri(new Uri("https://example.com/admin/item"))
+            ->withMethod("GET");
+
+        $response = new Response;
+
+        $auth = new HttpBasicAuthentication([
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => [
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ],
+            "before.middleware" => function ($request, $response, $arguments) {
+                return $request->withAttribute("smoke", "tarryltons");
+            }
+        ]);
+
+        $next = function (Request $request, Response $response) {
+            $smoke = $request->getAttribute("smoke");
+            $response->getBody()->write($smoke);
+            return $response;
+        };
+
+        $response = $auth($request, $response, $next);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("tarryltons", (string) $response->getBody());
+    }
+
     public function testShouldNotAllowInsecure()
     {
         $this->setExpectedException("RuntimeException");
@@ -652,7 +725,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($error, $auth->getError());
     }
 
-    public function testShouldGetAndSetCallback()
+    public function testShouldGetAndSetBefore()
     {
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -661,12 +734,29 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 return true;
             }
         ]);
-        $callback = function () {
+        $before = function () {
             return "It's got Electrolytes.";
         };
-        $auth->setCallback($callback);
-        $this->assertEquals($callback, $auth->getCallback());
+        $auth->setBeforeMiddleware($before);
+        $this->assertEquals($before, $auth->getBeforeMiddleware());
     }
+
+    public function testShouldGetAndSetAfter()
+    {
+        $auth = new HttpBasicAuthentication([
+            "path" => "/admin",
+            "realm" => "Protected",
+            "authenticator" => function ($user, $pass) {
+                return true;
+            }
+        ]);
+        $after = function () {
+            return "That is what plants crave.";
+        };
+        $auth->setAfterMiddleware($after);
+        $this->assertEquals($after, $auth->getAfterMiddleware());
+    }
+
 
     /*** BUGS *************************************************************/
 

@@ -35,7 +35,8 @@ class HttpBasicAuthentication
         "realm" => "Protected",
         "environment" => "HTTP_AUTHORIZATION",
         "authenticator" => null,
-        "callback" => null,
+        "before.middleware" => null,
+        "after.middleware" => null,
         "error" => null
     ];
 
@@ -116,7 +117,7 @@ class HttpBasicAuthentication
             }
         }
 
-        $params = ["user" => $user, "password" => $password];
+        $params = ["user" => $user, "password" => $password, "options" => $this->options];
 
         /* Check if user authenticates. */
         if (false === $this->options["authenticator"]($params)) {
@@ -130,31 +131,41 @@ class HttpBasicAuthentication
             ]);
         }
 
-        /* If callback returns false return with 401 Unauthorized. */
-        if (is_callable($this->options["callback"])) {
-            if (false === $this->options["callback"]($request, $response, $params)) {
-                /* Set response headers before giving it to error callback */
-                $response = $response
-                    ->withStatus(401)
-                    ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
-
-                return $this->error($request, $response, [
-                    "message" => "Callback returned false"
-                ]);
+        /* Modify $request before calling next middleware. */
+        if (is_callable($this->options["before.middleware"])) {
+            $before_request = $this->options["before.middleware"]($request, $response, $params);
+            if ($before_request instanceof \Psr\Http\Message\RequestInterface) {
+                $request = $before_request;
             }
         }
 
-
         /* Everything ok, call next middleware. */
-        return $next($request, $response);
+        $response = $next($request, $response);
+
+        /* Modify $response before returning. */
+        if (is_callable($this->options["after.middleware"])) {
+            $after_response = $this->options["after.middleware"]($request, $response, $params);
+            if ($after_response instanceof \Psr\Http\Message\ResponseInterface) {
+                return $after_response;
+            }
+        }
+
+        return $response;
     }
 
-    private function hydrate($data = [])
+    public function hydrate($data = [])
     {
         foreach ($data as $key => $value) {
-            $method = "set" . ucfirst($key);
+            /* https://github.com/facebook/hhvm/issues/6368 */
+            $key = str_replace(".", " ", $key);
+            $method = "set" . ucwords($key);
+            $method = str_replace(" ", "", $method);
             if (method_exists($this, $method)) {
+                /* Try to use setter */
                 call_user_func([$this, $method], $value);
+            } else {
+                /* Or fallback to setting property directly */
+                $this->$key = $value;
             }
         }
     }
@@ -297,23 +308,44 @@ class HttpBasicAuthentication
     }
 
     /**
-     * Get the callback
+     * Get the before handler
      *
      * @return string
      */
-    public function getCallback()
+    public function getBeforeMiddleware()
     {
-        return $this->options["callback"];
+        return $this->options["before.middleware"];
     }
 
     /**
-     * Set the callback
+     * Set the before handler
      *
      * @return self
      */
-    public function setCallback($callback)
+    public function setBeforeMiddleware($before)
     {
-        $this->options["callback"] = $callback;
+        $this->options["before.middleware"] = $before;
+        return $this;
+    }
+
+    /**
+     * Get the after handler
+     *
+     * @return string
+     */
+    public function getAfterMiddleware()
+    {
+        return $this->options["after.middleware"];
+    }
+
+    /**
+     * Set the after handler
+     *
+     * @return self
+     */
+    public function setAfterMiddleware($after)
+    {
+        $this->options["after.middleware"] = $after;
         return $this;
     }
 

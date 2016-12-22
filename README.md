@@ -116,9 +116,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
-### Callback
+### Before middleware
 
-Callback is called only when authentication succeeds. It receives an array containing `user` and `password` as argument. If callback returns boolean `false` authentication is forced to be failed.
+Before middleware funcion is called only when authentication succeeds but before the next incoming middleware is called. You can use this to alter the request before passing it to the next incoming middleware in the stack. If it returns anything else than `\Psr\Http\Message\RequestInterface` the return value will be ignored.
 
 ```php
 $app = new \Slim\App;
@@ -130,8 +130,28 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
         "root" => "t00r",
         "somebody" => "passw0rd"
     ],
-    "callback" => function ($request, $response, $arguments) {
-        print_r($arguments);
+    "before.middleware" => function ($request, $response, $arguments) {
+        return $request->withAttribute("smoke", "tarryltons");
+    }
+]));
+```
+
+### After middleware
+
+After middleware function is called only when authentication succeeds and after the incoming middleware stack has been called. You can use this to alter the response before passing it next outgoing middleware in the stack. If it returns anything else than `\Psr\Http\Message\RequestInterface` the return value will be ignored.
+
+```php
+$app = new \Slim\App;
+
+$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+    "path" => "/admin",
+    "realm" => "Protected",
+    "users" => [
+        "root" => "t00r",
+        "somebody" => "passw0rd"
+    ],
+    "after.middleware" => function ($request, $response, $arguments) {
+        return $response->withHeader("X-Brawndo", "plants crave");
     }
 ]));
 ```
@@ -191,7 +211,7 @@ $app = new \Slim\App;
 $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
-    "authenticator" => new RandomAuthenticator()
+    "authenticator" => new RandomAuthenticator
 ]));
 ```
 
