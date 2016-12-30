@@ -117,7 +117,7 @@ class HttpBasicAuthentication
             }
         }
 
-        $params = ["user" => $user, "password" => $password, "options" => $this->options];
+        $params = ["user" => $user, "password" => $password];
 
         /* Check if user authenticates. */
         if (false === $this->options["authenticator"]($params)) {
@@ -324,7 +324,7 @@ class HttpBasicAuthentication
      */
     public function setBeforeMiddleware($before)
     {
-        $this->options["before.middleware"] = $before;
+        $this->options["before.middleware"] = $before->bindTo($this);
         return $this;
     }
 
@@ -345,7 +345,7 @@ class HttpBasicAuthentication
      */
     public function setAfterMiddleware($after)
     {
-        $this->options["after.middleware"] = $after;
+        $this->options["after.middleware"] = $after->bindTo($this);
         return $this;
     }
 

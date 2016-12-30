@@ -302,7 +302,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 return $response
                     ->withBody(new Stream("php://memory"))
                     ->withStatus(401)
-                    ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $arguments["options"]["realm"]));
+                    ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $this->getRealm()));
             }
         ]);
 
