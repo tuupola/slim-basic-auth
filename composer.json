@@ -38,5 +38,8 @@
         "phpcs": "vendor/bin/phpcs --extensions=php --standard=PSR2 --ignore=*/vendor/* . -p" ,
         "phplint": "env phplint  '**/*.php' '!vendor/**'",
         "watch": "find . -name \"*.php\" -not -path \"./vendor/*\" | entr -c composer test"
+    },
+    "config": {
+        "process-timeout": 600
     }
 }
