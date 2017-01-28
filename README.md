@@ -138,7 +138,7 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 
 ### After middleware
 
-After middleware function is called only when authentication succeeds and after the incoming middleware stack has been called. You can use this to alter the response before passing it next outgoing middleware in the stack. If it returns anything else than `\Psr\Http\Message\RequestInterface` the return value will be ignored.
+After middleware function is called only when authentication succeeds and after the incoming middleware stack has been called. You can use this to alter the response before passing it next outgoing middleware in the stack. If it returns anything else than `\Psr\Http\Message\ResponseInterface` the return value will be ignored.
 
 ```php
 $app = new \Slim\App;
