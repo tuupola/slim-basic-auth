@@ -33,7 +33,6 @@ class HttpBasicAuthentication
         "path" => null,
         "passthrough" => null,
         "realm" => "Protected",
-        "environment" => "HTTP_AUTHORIZATION",
         "authenticator" => null,
         "before.middleware" => null,
         "after.middleware" => null,
@@ -100,24 +99,11 @@ class HttpBasicAuthentication
         }
 
         /* Just in case. */
-        $user = false;
-        $password = false;
+        $params = ["user" => null, "password" => null];
 
-        /* If using PHP in CGI mode. */
-        if (isset($server_params[$this->options["environment"]])) {
-            if (preg_match("/Basic\s+(.*)$/i", $server_params[$this->options["environment"]], $matches)) {
-                list($user, $password) = explode(":", base64_decode($matches[1]), 2);
-            }
-        } else {
-            if (isset($server_params["PHP_AUTH_USER"])) {
-                $user = $server_params["PHP_AUTH_USER"];
-            }
-            if (isset($server_params["PHP_AUTH_PW"])) {
-                $password = $server_params["PHP_AUTH_PW"];
-            }
+        if (preg_match("/Basic\s+(.*)$/i", $request->getHeaderLine("Authorization"), $matches)) {
+            list($params["user"], $params["password"]) = explode(":", base64_decode($matches[1]), 2);
         }
-
-        $params = ["user" => $user, "password" => $password];
 
         /* Check if user authenticates. */
         if (false === $this->options["authenticator"]($params)) {
@@ -251,17 +237,6 @@ class HttpBasicAuthentication
     public function setRealm($realm)
     {
         $this->options["realm"] = $realm;
-        return $this;
-    }
-
-    public function getEnvironment()
-    {
-        return $this->options["environment"];
-    }
-
-    public function setEnvironment($environment)
-    {
-        $this->options["environment"] = $environment;
         return $this;
     }
 
