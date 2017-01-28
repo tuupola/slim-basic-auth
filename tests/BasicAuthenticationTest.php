@@ -26,6 +26,15 @@ use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 use Zend\Diactoros\Stream;
 
+use Test\TrueRule;
+use Test\FalseRule;
+use Test\TrueAuthenticator;
+use Test\FalseAuthenticator;
+
+use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
+use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
+use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
+
 class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 {
 
@@ -48,17 +57,16 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("/admin", $auth->getPath());
         $this->assertEquals("/admin/ping", $auth->getPassthrough());
         $this->assertEquals("Mordor", $auth->getRealm());
-        $this->assertEquals("HTTP_AUTHORIZATION", $auth->getEnvironment());
         $this->assertInstanceOf(
-            "\Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator",
+            ArrayAuthenticator::class,
             $auth->getAuthenticator()
         );
         $this->assertInstanceOf(
-            "\Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule",
+            RequestPathRule::class,
             $rules->pop()
         );
         $this->assertInstanceOf(
-            "\Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule",
+            RequestMethodRule::class,
             $rules->pop()
         );
     }
@@ -74,33 +82,29 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 ]
             ]),
             "rules" => [
-                new \Test\TrueRule,
-                new \Test\FalseRule,
+                new TrueRule,
+                new FalseRule,
                 new RequestMethodRule(["passthrough" => ["OPTIONS"]])
             ]
         ]);
 
-        //$users = $auth->getUsers();
         $rules = $auth->getRules();
 
-        //$this->assertEquals("t00r", $users["root"]);
-        //$this->assertEquals("/admin", $auth->getPath());
         $this->assertEquals("Mordor", $auth->getRealm());
-        $this->assertEquals("HTTP_AUTHORIZATION", $auth->getEnvironment());
         $this->assertInstanceOf(
-            "\Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator",
+            ArrayAuthenticator::class,
             $auth->getAuthenticator()
         );
         $this->assertInstanceOf(
-            "\Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule",
+            RequestMethodRule::class,
             $rules->pop()
         );
         $this->assertInstanceOf(
-            "\Test\FalseRule",
+            FalseRule::class,
             $rules->pop()
         );
         $this->assertInstanceOf(
-            "\Test\TrueRule",
+            TrueRule::class,
             $rules->pop()
         );
     }
@@ -114,28 +118,28 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
     public function testSettersShouldBeChainable()
     {
         $auth = new HttpBasicAuthentication([
-            "authenticator" => new \Test\FalseAuthenticator,
+            "authenticator" => new FalseAuthenticator,
             "rules" => [
-                new \Test\FalseRule
+                new FalseRule
             ]
         ]);
 
-        $this->assertInstanceOf("\Test\FalseAuthenticator", $auth->getAuthenticator());
-        $this->assertInstanceOf("\Test\FalseRule", $auth->getRules()->pop());
+        $this->assertInstanceOf(FalseAuthenticator::class, $auth->getAuthenticator());
+        $this->assertInstanceOf(FalseRule::class, $auth->getRules()->pop());
 
         $auth
-            ->setAuthenticator(new \Test\TrueAuthenticator)
-            ->setRules([new \Test\TrueRule])
-            ->addRule(new \Test\FalseRule);
+            ->setAuthenticator(new TrueAuthenticator)
+            ->setRules([new TrueRule])
+            ->addRule(new FalseRule);
 
-        $this->assertInstanceOf("\Test\TrueAuthenticator", $auth->getAuthenticator());
-        $this->assertInstanceOf("\Test\FalseRule", $auth->getRules()->pop());
-        $this->assertInstanceOf("\Test\TrueRule", $auth->getRules()->pop());
+        $this->assertInstanceOf(TrueAuthenticator::class, $auth->getAuthenticator());
+        $this->assertInstanceOf(FalseRule::class, $auth->getRules()->pop());
+        $this->assertInstanceOf(TrueRule::class, $auth->getRules()->pop());
     }
 
     public function testShouldReturn200WithoutPassword()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/public"))
             ->withMethod("GET");
 
@@ -163,7 +167,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn401WithoutPassword()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("GET");
 
@@ -191,12 +195,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithPassword()
     {
-        $request = ServerRequestFactory::fromGlobals(
-            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
-        );
-        $request = $request
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+            ->withMethod("GET")
+            ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
         $response = new Response;
 
@@ -222,7 +224,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithOptions()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("OPTIONS");
 
@@ -250,7 +252,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithoutPasswordWithAnonymousFunction()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("GET");
 
@@ -282,12 +284,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn401WithFromAfter()
     {
-        $request = ServerRequestFactory::fromGlobals(
-            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
-        );
-        $request = $request
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+            ->withMethod("GET")
+            ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
         $response = new Response;
 
@@ -319,12 +319,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAlterResponseWithAfter()
     {
-        $request = ServerRequestFactory::fromGlobals(
-            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
-        );
-        $request = $request
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+            ->withMethod("GET")
+            ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
         $response = new Response;
 
@@ -353,7 +351,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCallErrorHandlerWith401()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("GET");
 
@@ -386,7 +384,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
     public function testErrorHandlerShouldAlterHeaders()
     {
 
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("GET");
 
@@ -416,76 +414,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(302, $response->getStatusCode());
     }
 
-    /*** CGI MODE **********************************************************/
-
-    public function testShouldReturn200WithPasswordInCgiMode()
-    {
-        $request = ServerRequestFactory::fromGlobals(
-            ["HTTP_AUTHORIZATION" => "Basic cm9vdDp0MDBy"]
-        );
-        $request = $request
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
-
-        $response = new Response;
-
-        $auth = new HttpBasicAuthentication([
-            "path" => "/admin",
-            "realm" => "Protected",
-            "users" => [
-                "root" => "t00r",
-                "user" => "passw0rd"
-            ]
-        ]);
-
-        $next = function (Request $request, Response $response) {
-            $response->getBody()->write("Success");
-            return $response;
-        };
-
-        $response = $auth($request, $response, $next);
-
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals("Success", $response->getBody());
-    }
-
-    public function testShouldHonorCgiEnviromentOption()
-    {
-        $request = ServerRequestFactory::fromGlobals(
-            ["FOO_BAR" => "Basic cm9vdDp0MDBy"]
-        );
-        $request = $request
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
-
-        $response = new Response;
-
-        $auth = new HttpBasicAuthentication([
-            "path" => "/admin",
-            "realm" => "Protected",
-            "environment" => "FOO_BAR",
-            "users" => [
-                "root" => "t00r",
-                "user" => "passw0rd"
-            ]
-        ]);
-
-        $next = function (Request $request, Response $response) {
-            $response->getBody()->write("Success");
-            return $response;
-        };
-
-        $response = $auth($request, $response, $next);
-
-        $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals("Success", $response->getBody());
-    }
-
     /*** OTHER *************************************************************/
 
     public function testShouldReturn200WithTrueAuthenticator()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("GET");
 
@@ -510,10 +443,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn401WithFalseAuthenticator()
     {
-        $request = ServerRequestFactory::fromGlobals(
-            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
-        );
-        $request = $request
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("GET");
 
@@ -538,7 +468,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithAnonymousFunction()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("GET");
 
@@ -565,12 +495,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn401WithAnonymousFunction()
     {
-        $request = ServerRequestFactory::fromGlobals(
-            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
-        );
-        $request = $request
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+            ->withMethod("GET")
+            ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
         $response = new Response;
 
@@ -595,12 +523,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldModifyRequestUsingBefore()
     {
-        $request = ServerRequestFactory::fromGlobals(
-            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
-        );
-        $request = $request
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+            ->withMethod("GET")
+            ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
         $response = new Response;
 
@@ -632,7 +558,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException("RuntimeException");
 
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("http://example.com/api"))
             ->withMethod("GET");
 
@@ -656,11 +582,8 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldRelaxInsecureInLocalhost()
     {
-        $request = ServerRequestFactory::fromGlobals(
-            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "t00r"]
-        );
-        $request = $request
-            ->withUri(new Uri("http://localhost/admin/item"))
+        $request = (new Request)
+            ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("GET");
 
         $response = new Response;
@@ -762,7 +685,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug2UrlShouldMatchRegex()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("http://example.com/status/foo"))
             ->withMethod("GET");
 
@@ -790,7 +713,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug3ShouldReturn401WithoutTrailingSlash()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin"))
             ->withMethod("GET");
 
@@ -818,7 +741,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug3ShouldReturn401WithTrailingSlash()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/admin"))
             ->withMethod("GET");
 
@@ -846,7 +769,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug9ShouldAllowUnauthenticatedHttp()
     {
-        $request = (new Request())
+        $request = (new Request)
             ->withUri(new Uri("http://example.com/public/foo"))
             ->withMethod("GET");
 
@@ -874,13 +797,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug31ShouldAllowColonInPassword()
     {
-        $request = ServerRequestFactory::fromGlobals(
-            ["HTTP_AUTHORIZATION" => "Basic Zm9vOmJhcjpwb3A="]
-        );
-
-        $request = $request
+        $request = (new Request)
             ->withUri(new Uri("https://example.com/api/foo"))
-            ->withMethod("GET");
+            ->withMethod("GET")
+            ->withHeader("Authorization", "Basic Zm9vOmJhcjpwb3A=");
 
         $response = new Response;
 
