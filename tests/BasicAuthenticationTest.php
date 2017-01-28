@@ -538,20 +538,20 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "user" => "passw0rd"
             ],
             "before.middleware" => function ($request, $response, $arguments) {
-                return $request->withAttribute("smoke", "tarryltons");
+                return $request->withAttribute("user", $arguments["user"]);
             }
         ]);
 
         $next = function (Request $request, Response $response) {
-            $smoke = $request->getAttribute("smoke");
-            $response->getBody()->write($smoke);
+            $user = $request->getAttribute("user");
+            $response->getBody()->write($user);
             return $response;
         };
 
         $response = $auth($request, $response, $next);
 
         $this->assertEquals(200, $response->getStatusCode());
-        $this->assertEquals("tarryltons", (string) $response->getBody());
+        $this->assertEquals("root", (string) $response->getBody());
     }
 
     public function testShouldNotAllowInsecure()

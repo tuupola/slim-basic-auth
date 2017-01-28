@@ -131,7 +131,7 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
         "somebody" => "passw0rd"
     ],
     "before.middleware" => function ($request, $response, $arguments) {
-        return $request->withAttribute("smoke", "tarryltons");
+        return $request->withAttribute("user", $arguments["user"]);
     }
 ]));
 ```
@@ -285,22 +285,6 @@ If this is not possible workaround is to pass credentials in an environment vari
 
 ```
 RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-```
-
-The above rewrite rule should work out of the box. In some cases server adds `REDIRECT_` prefix to environment name. In this case or if you want to use nonstandard environment use the parameter called `environment`.
-
-```php
-$app = new \Slim\App;
-
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
-    "path" => "/admin",
-    "realm" => "Protected",
-    "users" => [
-        "root" => "t00r",
-        "somebody" => "passw0rd"
-    ],
-    "environment" => "REDIRECT_HTTP_AUTHORIZATION"
-]));
 ```
 
 ## Testing
