@@ -15,7 +15,7 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-use \Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\RequestInterface;
 
 class RequestMethodRule implements RuleInterface
 {

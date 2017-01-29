@@ -120,7 +120,7 @@ class HttpBasicAuthentication
         /* Modify $request before calling next middleware. */
         if (is_callable($this->options["before.middleware"])) {
             $before_request = $this->options["before.middleware"]($request, $response, $params);
-            if ($before_request instanceof \Psr\Http\Message\RequestInterface) {
+            if ($before_request instanceof RequestInterface) {
                 $request = $before_request;
             }
         }
@@ -131,7 +131,7 @@ class HttpBasicAuthentication
         /* Modify $response before returning. */
         if (is_callable($this->options["after.middleware"])) {
             $after_response = $this->options["after.middleware"]($request, $response, $params);
-            if ($after_response instanceof \Psr\Http\Message\ResponseInterface) {
+            if ($after_response instanceof ResponseInterface) {
                 return $after_response;
             }
         }
@@ -176,7 +176,7 @@ class HttpBasicAuthentication
     {
         if (is_callable($this->options["error"])) {
             $handler_response = $this->options["error"]($request, $response, $arguments);
-            if (is_a($handler_response, "\Psr\Http\Message\ResponseInterface")) {
+            if ($handler_response instanceof ResponseInterface) {
                 return $handler_response;
             }
         }
