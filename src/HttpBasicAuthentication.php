@@ -34,8 +34,8 @@ class HttpBasicAuthentication
         "passthrough" => null,
         "realm" => "Protected",
         "authenticator" => null,
-        "before.middleware" => null,
-        "after.middleware" => null,
+        "before" => null,
+        "after" => null,
         "error" => null
     ];
 
@@ -118,8 +118,8 @@ class HttpBasicAuthentication
         }
 
         /* Modify $request before calling next middleware. */
-        if (is_callable($this->options["before.middleware"])) {
-            $before_request = $this->options["before.middleware"]($request, $response, $params);
+        if (is_callable($this->options["before"])) {
+            $before_request = $this->options["before"]($request, $response, $params);
             if ($before_request instanceof RequestInterface) {
                 $request = $before_request;
             }
@@ -129,8 +129,8 @@ class HttpBasicAuthentication
         $response = $next($request, $response);
 
         /* Modify $response before returning. */
-        if (is_callable($this->options["after.middleware"])) {
-            $after_response = $this->options["after.middleware"]($request, $response, $params);
+        if (is_callable($this->options["after"])) {
+            $after_response = $this->options["after"]($request, $response, $params);
             if ($after_response instanceof ResponseInterface) {
                 return $after_response;
             }
@@ -287,9 +287,9 @@ class HttpBasicAuthentication
      *
      * @return string
      */
-    public function getBeforeMiddleware()
+    public function getBefore()
     {
-        return $this->options["before.middleware"];
+        return $this->options["before"];
     }
 
     /**
@@ -297,9 +297,9 @@ class HttpBasicAuthentication
      *
      * @return self
      */
-    public function setBeforeMiddleware($before)
+    public function setBefore($before)
     {
-        $this->options["before.middleware"] = $before->bindTo($this);
+        $this->options["before"] = $before->bindTo($this);
         return $this;
     }
 
@@ -308,9 +308,9 @@ class HttpBasicAuthentication
      *
      * @return string
      */
-    public function getAfterMiddleware()
+    public function getAfter()
     {
-        return $this->options["after.middleware"];
+        return $this->options["after"];
     }
 
     /**
@@ -318,9 +318,9 @@ class HttpBasicAuthentication
      *
      * @return self
      */
-    public function setAfterMiddleware($after)
+    public function setAfter($after)
     {
-        $this->options["after.middleware"] = $after->bindTo($this);
+        $this->options["after"] = $after->bindTo($this);
         return $this;
     }
 

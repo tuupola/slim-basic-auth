@@ -298,7 +298,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "root" => "t00r",
                 "user" => "passw0rd"
             ],
-            "after.middleware" => function ($request, $response, $arguments) {
+            "after" => function ($request, $response, $arguments) {
                 return $response
                     ->withBody(new Stream("php://memory"))
                     ->withStatus(401)
@@ -333,7 +333,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "root" => "t00r",
                 "user" => "passw0rd"
             ],
-            "after.middleware" => function ($request, $response, $arguments) {
+            "after" => function ($request, $response, $arguments) {
                 return $response->withHeader("X-Brawndo", "plants crave");
             }
         ]);
@@ -537,7 +537,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "root" => "t00r",
                 "user" => "passw0rd"
             ],
-            "before.middleware" => function ($request, $response, $arguments) {
+            "before" => function ($request, $response, $arguments) {
                 return $request->withAttribute("user", $arguments["user"]);
             }
         ]);
@@ -660,8 +660,8 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $before = function () {
             return "It's got Electrolytes.";
         };
-        $auth->setBeforeMiddleware($before);
-        $this->assertEquals($before, $auth->getBeforeMiddleware());
+        $auth->setBefore($before);
+        $this->assertEquals($before, $auth->getBefore());
     }
 
     public function testShouldGetAndSetAfter()
@@ -676,8 +676,8 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $after = function () {
             return "That is what plants crave.";
         };
-        $auth->setAfterMiddleware($after);
-        $this->assertEquals($after, $auth->getAfterMiddleware());
+        $auth->setAfter($after);
+        $this->assertEquals($after, $auth->getAfter());
     }
 
 
