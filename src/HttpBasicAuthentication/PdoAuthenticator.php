@@ -15,7 +15,7 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-class PdoAuthenticator implements AuthenticatorInterface
+final class PdoAuthenticator implements AuthenticatorInterface
 {
     private $options;
 

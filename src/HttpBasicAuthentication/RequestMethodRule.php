@@ -17,7 +17,7 @@ namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 use Psr\Http\Message\ServerRequestInterface;
 
-class RequestMethodRule implements RuleInterface
+final class RequestMethodRule implements RuleInterface
 {
     protected $options = [
         "ignore" => ["OPTIONS"]

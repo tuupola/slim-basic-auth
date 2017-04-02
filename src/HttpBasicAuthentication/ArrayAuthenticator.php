@@ -15,7 +15,7 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-class ArrayAuthenticator implements AuthenticatorInterface
+final class ArrayAuthenticator implements AuthenticatorInterface
 {
 
     public $options;
