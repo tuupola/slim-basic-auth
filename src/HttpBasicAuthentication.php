@@ -76,6 +76,13 @@ class HttpBasicAuthentication
         }
     }
 
+    /**
+     * Process a request and return a response
+     *
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
     public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
     {
         $host = $request->getUri()->getHost();
@@ -139,7 +146,13 @@ class HttpBasicAuthentication
         return $response;
     }
 
-    public function hydrate($data = [])
+    /**
+     * Hydrate all options from given array
+     *
+     * @param RequestInterface $request
+     * @return boolean
+     */
+    public function hydrate(array $data = [])
     {
         foreach ($data as $key => $value) {
             /* https://github.com/facebook/hhvm/issues/6368 */
@@ -156,6 +169,12 @@ class HttpBasicAuthentication
         }
     }
 
+    /**
+     * Test if current request should be authenticated.
+     *
+     * @param array $data
+     * @return void
+     */
     private function shouldAuthenticate(RequestInterface $request)
     {
         /* If any of the rules in stack return false will not authenticate */
@@ -168,9 +187,11 @@ class HttpBasicAuthentication
     }
 
     /**
-     * Call the error handler if it exists
+     * Execute the error handler
      *
-     * @return void
+     * @param RequestInterface $request
+     * @param ResponseInterface $response
+     * @return ResponseInterface
      */
     public function processError(RequestInterface $request, ResponseInterface $response, $arguments)
     {
@@ -183,12 +204,23 @@ class HttpBasicAuthentication
         return $response;
     }
 
+    /**
+     * Set the authenticator
+     *
+     * @param callable $authenticator
+     * @return void
+     */
     private function authenticator(callable $authenticator)
     {
         $this->options["authenticator"] = $authenticator;
-        return $this;
     }
 
+    /**
+     * Set the users array
+     *
+     * @param array $users
+     * @return void
+     */
     private function users(array $users)
     {
         $this->options["users"] = $users;
@@ -197,6 +229,7 @@ class HttpBasicAuthentication
     /**
      * Set the secure flag
      *
+     * @param boolean $secure
      * @return void
      */
     private function secure($secure)
@@ -207,6 +240,7 @@ class HttpBasicAuthentication
     /**
      * Set hosts where secure rule is relaxed
      *
+     * @param array $relaxed
      * @return void
      */
     private function relaxed(array $relaxed)
@@ -215,18 +249,20 @@ class HttpBasicAuthentication
     }
 
     /**
-     * Set the before handler
+     * Set the handler which is called before other middlewares
      *
+     * @param callable $before
      * @return void
      */
-    private function before($before)
+    private function before(callable $before)
     {
         $this->options["before"] = $before->bindTo($this);
     }
 
     /**
-     * Set the after handler
+     * Set the handler which is called after other middlewares
      *
+     * @param callable $after
      * @return void
      */
     private function after($after)
@@ -235,8 +271,9 @@ class HttpBasicAuthentication
     }
 
     /**
-     * Set the error handler
+     * Set the handler which is if authentication fails
      *
+     * @param callable $error
      * @return void
      */
     private function error($error)
@@ -244,6 +281,15 @@ class HttpBasicAuthentication
         $this->options["error"] = $error;
     }
 
+    /**
+     * Set the rules which determine if current request should be authenticated.
+     *
+     * Rules must be callables which return a boolean. If any of the rules return
+     * boolean false current request will not be authenticated.
+     *
+     * @param callable $error
+     * @return void
+     */
     public function rules(array $rules)
     {
         /* Clear the stack */
@@ -257,6 +303,15 @@ class HttpBasicAuthentication
         return $this;
     }
 
+    /**
+     * Add a rule to the rules stack
+     *
+     * Rules must be callables which return a boolean. If any of the rules return
+     * boolean false current request will not be authenticated.
+     *
+     * @param callable $error
+     * @return self
+     */
     public function addRule(callable $callable)
     {
         $this->rules->push($callable);
