@@ -283,12 +283,6 @@ By default Apache [does not pass credentials](https://bugs.php.net/bug.php?id=35
 FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -host 127.0.0.1:9000 -pass-header Authorization
 ```
 
-If this is not possible workaround is to pass credentials in an environment variable using mod_rewrite.
-
-```
-RewriteRule .* - [env=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
-```
-
 ## Testing
 
 You can run tests either manually...
