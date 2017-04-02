@@ -18,7 +18,7 @@ namespace Tuupola\Middleware\HttpBasicAuthentication;
 final class ArrayAuthenticator implements AuthenticatorInterface
 {
 
-    public $options;
+    private $options;
 
     public function __construct($options = null)
     {
@@ -52,7 +52,7 @@ final class ArrayAuthenticator implements AuthenticatorInterface
         }
     }
 
-    public static function isHash($password)
+    private static function isHash($password)
     {
         return preg_match('/^\$(2|2a|2y)\$\d{2}\$.*/', $password) && (strlen($password) >= 60);
     }

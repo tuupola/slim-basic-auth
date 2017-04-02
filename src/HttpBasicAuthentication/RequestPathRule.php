@@ -26,7 +26,7 @@ final class RequestPathRule implements RuleInterface
     /**
      * Stores all the options passed to the rule
      */
-    protected $options = [
+    private $options = [
         "path" => ["/"],
         "ignore" => []
     ];
