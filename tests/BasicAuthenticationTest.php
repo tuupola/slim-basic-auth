@@ -37,104 +37,10 @@ use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
 
 class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 {
-
-    public function testShouldBeCreatedInEasyMode()
-    {
-        $auth = new HttpBasicAuthentication([
-            "path" => "/admin",
-            "passthrough" => "/admin/ping",
-            "realm" => "Mordor",
-            "users" => [
-                "root" => "t00r",
-                "user" => "passw0rd"
-            ]
-        ]);
-
-        $users = $auth->getUsers();
-        $rules = $auth->getRules();
-
-        $this->assertEquals("t00r", $users["root"]);
-        $this->assertEquals("/admin", $auth->getPath());
-        $this->assertEquals("/admin/ping", $auth->getPassthrough());
-        $this->assertEquals("Mordor", $auth->getRealm());
-        $this->assertInstanceOf(
-            ArrayAuthenticator::class,
-            $auth->getAuthenticator()
-        );
-        $this->assertInstanceOf(
-            RequestPathRule::class,
-            $rules->pop()
-        );
-        $this->assertInstanceOf(
-            RequestMethodRule::class,
-            $rules->pop()
-        );
-    }
-
-    public function testShouldBeCreatedInNormalMode()
-    {
-        $auth = new HttpBasicAuthentication([
-            "realm" => "Mordor",
-            "authenticator" => new ArrayAuthenticator([
-                "users" => [
-                    "root" => "t00r",
-                    "user" => "passw0rd"
-                ]
-            ]),
-            "rules" => [
-                new TrueRule,
-                new FalseRule,
-                new RequestMethodRule(["passthrough" => ["OPTIONS"]])
-            ]
-        ]);
-
-        $rules = $auth->getRules();
-
-        $this->assertEquals("Mordor", $auth->getRealm());
-        $this->assertInstanceOf(
-            ArrayAuthenticator::class,
-            $auth->getAuthenticator()
-        );
-        $this->assertInstanceOf(
-            RequestMethodRule::class,
-            $rules->pop()
-        );
-        $this->assertInstanceOf(
-            FalseRule::class,
-            $rules->pop()
-        );
-        $this->assertInstanceOf(
-            TrueRule::class,
-            $rules->pop()
-        );
-    }
-
     public function testShouldFailWithoutAuthenticator()
     {
         $this->setExpectedException("RuntimeException");
         $auth = new HttpBasicAuthentication();
-    }
-
-    public function testSettersShouldBeChainable()
-    {
-        $auth = new HttpBasicAuthentication([
-            "authenticator" => new FalseAuthenticator,
-            "rules" => [
-                new FalseRule
-            ]
-        ]);
-
-        $this->assertInstanceOf(FalseAuthenticator::class, $auth->getAuthenticator());
-        $this->assertInstanceOf(FalseRule::class, $auth->getRules()->pop());
-
-        $auth
-            ->setAuthenticator(new TrueAuthenticator)
-            ->setRules([new TrueRule])
-            ->addRule(new FalseRule);
-
-        $this->assertInstanceOf(TrueAuthenticator::class, $auth->getAuthenticator());
-        $this->assertInstanceOf(FalseRule::class, $auth->getRules()->pop());
-        $this->assertInstanceOf(TrueRule::class, $auth->getRules()->pop());
     }
 
     public function testShouldReturn200WithoutPassword()
@@ -175,7 +81,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $auth = new HttpBasicAuthentication([
             "path" => ["/admin"],
-            "realm" => "Protected",
+            "realm" => "Not sure",
             "users" => [
                 "root" => "t00r",
                 "user" => "passw0rd"
@@ -190,6 +96,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $response = $auth($request, $response, $next);
 
         $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals('Basic realm="Not sure"', $response->getHeaderline("WWW-Authenticate"));
         $this->assertEquals("", $response->getBody());
     }
 
@@ -282,6 +189,35 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Success", $response->getBody());
     }
 
+    public function testShouldReturn200WithPassthrough()
+    {
+        $request = (new Request)
+            ->withUri(new Uri("https://example.com/admin/ping"))
+            ->withMethod("GET");
+
+        $response = new Response;
+
+        $auth = new HttpBasicAuthentication([
+            "path" => "/admin",
+            "passthrough" => "/admin/ping",
+            "realm" => "Protected",
+            "users" => [
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ]
+        ]);
+
+        $next = function (Request $request, Response $response) {
+            $response->getBody()->write("Success");
+            return $response;
+        };
+
+        $response = $auth($request, $response, $next);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Success", $response->getBody());
+    }
+
     public function testShouldReturn401WithFromAfter()
     {
         $request = (new Request)
@@ -302,7 +238,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 return $response
                     ->withBody(new Stream("php://memory"))
                     ->withStatus(401)
-                    ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $this->getRealm()));
+                    ->withHeader("WWW-Authenticate", 'Basic realm="Go away!"');
             }
         ]);
 
@@ -314,6 +250,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $response = $auth($request, $response, $next);
 
         $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals('Basic realm="Go away!"', $response->getHeaderline("WWW-Authenticate"));
         $this->assertEquals("", (string) $response->getBody());
     }
 
@@ -583,12 +520,13 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
     public function testShouldRelaxInsecureInLocalhost()
     {
         $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
+            ->withUri(new Uri("http://localhost/api"))
             ->withMethod("GET");
 
         $response = new Response;
 
         $auth = new HttpBasicAuthentication([
+            "secure" => true,
             "path" => "/api",
             "users" => [
                 "root" => "t00r",
@@ -604,82 +542,31 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $response = $auth($request, $response, $next);
     }
 
-    public function testShouldGetAndSetSecure()
+    public function testShouldRelaxInsecureViaSetting()
     {
-        $auth = new HttpBasicAuthentication([
-            "path" => "/admin",
-            "realm" => "Protected",
-            "authenticator" => function ($user, $pass) {
-                return true;
-            }
-        ]);
-        $this->assertTrue($auth->getSecure());
-        $auth->setSecure(false);
-        $this->assertFalse($auth->getSecure());
-    }
+        $request = (new Request)
+            ->withUri(new Uri("http://example.com/api"))
+            ->withMethod("GET");
 
-    public function testShouldGetAndSetRelaxed()
-    {
-        $auth = new HttpBasicAuthentication([
-            "path" => "/admin",
-            "realm" => "Protected",
-            "authenticator" => function ($user, $pass) {
-                return true;
-            }
-        ]);
-        $relaxed = ["localhost", "dev.example.com"];
-        $auth->setRelaxed($relaxed);
-        $this->assertEquals($relaxed, $auth->getRelaxed());
-    }
+        $response = new Response;
 
-    public function testShouldGetAndSetErrorHandler()
-    {
         $auth = new HttpBasicAuthentication([
-            "path" => "/admin",
-            "realm" => "Protected",
-            "authenticator" => function ($user, $pass) {
-                return true;
-            }
+            "secure" => true,
+            "relaxed" => ["localhost", "example.com"],
+            "path" => "/api",
+            "users" => [
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ]
         ]);
-        $error = function () {
-            return "ERROR";
+
+        $next = function (Request $request, Response $response) {
+            $response->getBody()->write("Success");
+            return $response;
         };
-        $auth->setError($error);
-        $this->assertEquals($error, $auth->getError());
-    }
 
-    public function testShouldGetAndSetBefore()
-    {
-        $auth = new HttpBasicAuthentication([
-            "path" => "/admin",
-            "realm" => "Protected",
-            "authenticator" => function ($user, $pass) {
-                return true;
-            }
-        ]);
-        $before = function () {
-            return "It's got Electrolytes.";
-        };
-        $auth->setBefore($before);
-        $this->assertEquals($before, $auth->getBefore());
+        $response = $auth($request, $response, $next);
     }
-
-    public function testShouldGetAndSetAfter()
-    {
-        $auth = new HttpBasicAuthentication([
-            "path" => "/admin",
-            "realm" => "Protected",
-            "authenticator" => function ($user, $pass) {
-                return true;
-            }
-        ]);
-        $after = function () {
-            return "That is what plants crave.";
-        };
-        $auth->setAfter($after);
-        $this->assertEquals($after, $auth->getAfter());
-    }
-
 
     /*** BUGS *************************************************************/
 

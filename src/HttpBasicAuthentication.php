@@ -112,7 +112,7 @@ class HttpBasicAuthentication
                 ->withStatus(401)
                 ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
 
-            return $this->error($request, $response, [
+            return $this->processError($request, $response, [
                 "message" => "Authentication failed"
             ]);
         }
@@ -144,14 +144,14 @@ class HttpBasicAuthentication
         foreach ($data as $key => $value) {
             /* https://github.com/facebook/hhvm/issues/6368 */
             $key = str_replace(".", " ", $key);
-            $method = "set" . ucwords($key);
+            $method = lcfirst(ucwords($key));
             $method = str_replace(" ", "", $method);
             if (method_exists($this, $method)) {
                 /* Try to use setter */
                 call_user_func([$this, $method], $value);
             } else {
-                /* Or fallback to setting property directly */
-                $this->$key = $value;
+                /* Or fallback to setting option directly */
+                $this->options[$key] = $value;
             }
         }
     }
@@ -172,7 +172,7 @@ class HttpBasicAuthentication
      *
      * @return void
      */
-    public function error(RequestInterface $request, ResponseInterface $response, $arguments)
+    public function processError(RequestInterface $request, ResponseInterface $response, $arguments)
     {
         if (is_callable($this->options["error"])) {
             $handler_response = $this->options["error"]($request, $response, $arguments);
@@ -183,174 +183,68 @@ class HttpBasicAuthentication
         return $response;
     }
 
-    public function getAuthenticator()
-    {
-        return $this->options["authenticator"];
-    }
-
-    public function setAuthenticator($authenticator)
+    private function authenticator(callable $authenticator)
     {
         $this->options["authenticator"] = $authenticator;
         return $this;
     }
 
-    public function getUsers()
-    {
-        return $this->options["users"];
-    }
-
-    /* Do not mess with users right now */
-    private function setUsers($users)
+    private function users(array $users)
     {
         $this->options["users"] = $users;
-        return $this;
-    }
-
-    public function getPath()
-    {
-        return $this->options["path"];
-    }
-
-    /* Do not mess with path right now */
-    private function setPath($path)
-    {
-        $this->options["path"] = $path;
-        return $this;
-    }
-
-    public function getPassthrough()
-    {
-        return $this->options["passthrough"];
-    }
-
-    private function setPassthrough($passthrough)
-    {
-        $this->options["passthrough"] = $passthrough;
-        return $this;
-    }
-
-    public function getRealm()
-    {
-        return $this->options["realm"];
-    }
-
-    public function setRealm($realm)
-    {
-        $this->options["realm"] = $realm;
-        return $this;
-    }
-
-    /**
-     * Get the secure flag
-     *
-     * @return boolean
-     */
-    public function getSecure()
-    {
-        return $this->options["secure"];
     }
 
     /**
      * Set the secure flag
      *
-     * @return self
+     * @return void
      */
-    public function setSecure($secure)
+    private function secure($secure)
     {
-        $this->options["secure"] = !!$secure;
-        return $this;
-    }
-
-    /**
-     * Get hosts where secure rule is relaxed
-     *
-     * @return string
-     */
-    public function getRelaxed()
-    {
-        return $this->options["relaxed"];
+        $this->options["secure"] = (boolean) $secure;
     }
 
     /**
      * Set hosts where secure rule is relaxed
      *
-     * @return self
+     * @return void
      */
-    public function setRelaxed(array $relaxed)
+    private function relaxed(array $relaxed)
     {
         $this->options["relaxed"] = $relaxed;
-        return $this;
-    }
-
-    /**
-     * Get the before handler
-     *
-     * @return string
-     */
-    public function getBefore()
-    {
-        return $this->options["before"];
     }
 
     /**
      * Set the before handler
      *
-     * @return self
+     * @return void
      */
-    public function setBefore($before)
+    private function before($before)
     {
         $this->options["before"] = $before->bindTo($this);
-        return $this;
-    }
-
-    /**
-     * Get the after handler
-     *
-     * @return string
-     */
-    public function getAfter()
-    {
-        return $this->options["after"];
     }
 
     /**
      * Set the after handler
      *
-     * @return self
+     * @return void
      */
-    public function setAfter($after)
+    private function after($after)
     {
         $this->options["after"] = $after->bindTo($this);
-        return $this;
-    }
-
-    /**
-     * Get the error handler
-     *
-     * @return string
-     */
-    public function getError()
-    {
-        return $this->options["error"];
     }
 
     /**
      * Set the error handler
      *
-     * @return self
+     * @return void
      */
-    public function setError($error)
+    private function error($error)
     {
         $this->options["error"] = $error;
-        return $this;
     }
 
-    public function getRules()
-    {
-        return $this->rules;
-    }
-
-    public function setRules(array $rules)
+    public function rules(array $rules)
     {
         /* Clear the stack */
         unset($this->rules);
@@ -363,7 +257,7 @@ class HttpBasicAuthentication
         return $this;
     }
 
-    public function addRule($callable)
+    public function addRule(callable $callable)
     {
         $this->rules->push($callable);
         return $this;
