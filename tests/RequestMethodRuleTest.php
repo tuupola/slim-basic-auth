@@ -15,7 +15,7 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-use Zend\Diactoros\Request;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
@@ -25,7 +25,7 @@ class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldNotAuthenticateOptions()
     {
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("OPTIONS");
 
@@ -37,7 +37,7 @@ class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAuthenticatePost()
     {
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("POST");
 
@@ -49,7 +49,7 @@ class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAuthenticateGet()
     {
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("GET");
 
@@ -61,7 +61,7 @@ class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldConfigureIgnore()
     {
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("GET");
 

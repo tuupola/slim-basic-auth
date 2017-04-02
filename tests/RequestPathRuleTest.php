@@ -15,7 +15,7 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-use Zend\Diactoros\Request;
+use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
@@ -25,7 +25,7 @@ class RequestPathTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAcceptArrayAndStringAsPath()
     {
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/admin/protected"))
             ->withMethod("GET");
 
@@ -38,14 +38,14 @@ class RequestPathTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAuthenticateEverything()
     {
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/"))
             ->withMethod("GET");
 
         $rule = new RequestPathRule(["path" => "/"]);
         $this->assertTrue($rule($request));
 
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("GET");
 
@@ -54,14 +54,14 @@ class RequestPathTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAuthenticateOnlyApi()
     {
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/"))
             ->withMethod("GET");
 
         $rule = new RequestPathRule(["path" => "/api"]);
         $this->assertFalse($rule($request));
 
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("GET");
 
@@ -76,25 +76,25 @@ class RequestPathTest extends \PHPUnit_Framework_TestCase
         ]);
 
         /* Should not authenticate */
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("GET");
         $this->assertFalse($rule($request));
 
         /* Should authenticate */
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api/create"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
 
         /* Should authenticate */
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api/list"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
 
         /* Should not authenticate */
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api/ping"))
             ->withMethod("GET");
         $this->assertFalse($rule($request));
@@ -102,7 +102,7 @@ class RequestPathTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldIgnoreLogin()
     {
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("GET");
 
@@ -112,7 +112,7 @@ class RequestPathTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertTrue($rule($request));
 
-        $request = (new Request())
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api/login"))
             ->withMethod("GET");
 
@@ -121,28 +121,28 @@ class RequestPathTest extends \PHPUnit_Framework_TestCase
 
     public function testBug50ShouldAuthenticateMultipleSlashes()
     {
-        $request = (new Request)
+        $request = (new ServerRequest)
             ->withUri(new Uri("https://example.com/"))
             ->withMethod("GET");
         $rule = new RequestPathRule(["path" => "/v1/api"]);
         $this->assertFalse($rule($request));
-        $request = (new Request)
+        $request = (new ServerRequest)
             ->withUri(new Uri("https://example.com/v1/api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
-        $request = (new Request)
+        $request = (new ServerRequest)
             ->withUri(new Uri("https://example.com/v1//api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
-        $request = (new Request)
+        $request = (new ServerRequest)
             ->withUri(new Uri("https://example.com/v1//////api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
-        $request = (new Request)
+        $request = (new ServerRequest)
             ->withUri(new Uri("https://example.com//v1/api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
-        $request = (new Request)
+        $request = (new ServerRequest)
             ->withUri(new Uri("https://example.com//////v1/api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));

@@ -20,7 +20,7 @@ use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 
 class HttpBasicAuthentication
@@ -79,11 +79,11 @@ class HttpBasicAuthentication
     /**
      * Process a request and return a response
      *
-     * @param RequestInterface $request
+     * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
         $host = $request->getUri()->getHost();
         $scheme = $request->getUri()->getScheme();
@@ -127,7 +127,7 @@ class HttpBasicAuthentication
         /* Modify $request before calling next middleware. */
         if (is_callable($this->options["before"])) {
             $before_request = $this->options["before"]($request, $response, $params);
-            if ($before_request instanceof RequestInterface) {
+            if ($before_request instanceof ServerRequestInterface) {
                 $request = $before_request;
             }
         }
@@ -149,7 +149,7 @@ class HttpBasicAuthentication
     /**
      * Hydrate all options from given array
      *
-     * @param RequestInterface $request
+     * @param ServerRequestInterface $request
      * @return boolean
      */
     public function hydrate(array $data = [])
@@ -175,7 +175,7 @@ class HttpBasicAuthentication
      * @param array $data
      * @return void
      */
-    private function shouldAuthenticate(RequestInterface $request)
+    private function shouldAuthenticate(ServerRequestInterface $request)
     {
         /* If any of the rules in stack return false will not authenticate */
         foreach ($this->rules as $callable) {
@@ -189,11 +189,11 @@ class HttpBasicAuthentication
     /**
      * Execute the error handler
      *
-     * @param RequestInterface $request
+     * @param ServerRequestInterface $request
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function processError(RequestInterface $request, ResponseInterface $response, $arguments)
+    public function processError(ServerRequestInterface $request, ResponseInterface $response, $arguments)
     {
         if (is_callable($this->options["error"])) {
             $handler_response = $this->options["error"]($request, $response, $arguments);

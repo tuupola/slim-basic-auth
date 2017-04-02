@@ -15,9 +15,9 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 interface RuleInterface
 {
-    public function __invoke(RequestInterface $request);
+    public function __invoke(ServerRequestInterface $request);
 }

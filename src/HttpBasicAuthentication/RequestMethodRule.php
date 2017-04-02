@@ -15,7 +15,7 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class RequestMethodRule implements RuleInterface
 {
@@ -28,7 +28,7 @@ class RequestMethodRule implements RuleInterface
         $this->options = array_merge($this->options, $options);
     }
 
-    public function __invoke(RequestInterface $request)
+    public function __invoke(ServerRequestInterface $request)
     {
         return !in_array($request->getMethod(), $this->options["ignore"]);
     }
