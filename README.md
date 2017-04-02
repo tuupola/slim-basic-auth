@@ -1,14 +1,14 @@
-# PSR-7 Basic Auth Middleware
+# PSR-7 and PSR-15 Basic Auth Middleware
 
-This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication). It was originally developed for Slim but can be used with all frameworks using PSR-7 style middlewares. It has been tested  with [Slim Framework](http://www.slimframework.com/) and [Zend Expressive](https://zendframework.github.io/zend-expressive/).
+This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/wiki/Basic_access_authentication). It was originally developed for Slim but can be used with all frameworks using PSR-7 or PSR-15 style middlewares. It has been tested  with [Slim Framework](http://www.slimframework.com/) and [Zend Expressive](https://zendframework.github.io/zend-expressive/).
 
 
 [![Latest Version](https://img.shields.io/packagist/v/tuupola/slim-basic-auth.svg?style=flat-square)](https://packagist.org/packages/tuupola/slim-basic-auth)
 [![Packagist](https://img.shields.io/packagist/dm/tuupola/slim-basic-auth.svg)](https://packagist.org/packages/tuupola/slim-basic-auth)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
-[![Build Status](https://img.shields.io/travis/tuupola/slim-basic-auth/master.svg?style=flat-square)](https://travis-ci.org/tuupola/slim-basic-auth)
+[![Build Status](https://img.shields.io/travis/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://travis-ci.org/tuupola/slim-basic-auth)
 [![HHVM Status](https://img.shields.io/hhvm/tuupola/slim-basic-auth.svg?style=flat-square)](http://hhvm.h4cc.de/package/tuupola/slim-basic-auth)
-[![Coverage](http://img.shields.io/codecov/c/github/tuupola/slim-basic-auth/2.x.svg?style=flat-square)](https://codecov.io/gh/tuupola/slim-basic-auth/branch/2.x)
+[![Coverage](http://img.shields.io/codecov/c/github/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://codecov.io/gh/tuupola/slim-basic-auth/branch/3.x)
 
 
 ## Install
@@ -24,9 +24,9 @@ $ composer require tuupola/slim-basic-auth
 Configuration options are passed as an array. Only mandatory parameter is  `users`. This is an array where you pass one or more `"username" => "password"` combinations. Username is the key and password is the value.
 
 ```php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "users" => [
         "root" => "t00r",
         "somebody" => "passw0rd"
@@ -39,7 +39,7 @@ Same with Zend Expressive.
 ```php
 $app = Zend\Expressive\AppFactory::create();
 
-$app->pipe(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->pipe(new Tuupola\Middleware\HttpBasicAuthentication([
     "users" => [
         "root" => "t00r",
         "user" => "passw0rd"
@@ -59,9 +59,9 @@ somebody:$2y$10$6/vGXuMUoRlJUeDN.bUWduge4GhQbgPkm6pfyGxwgEWT0vEkHKBUW
 ```
 
 ```php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "users" => [
         "root" => '$2y$10$1lwCIlqktFZwEBIppL4ak.I1AHxjoKy9stLnbedwVMrt92aGz82.O',
         "somebody" => '$2y$10$6/vGXuMUoRlJUeDN.bUWduge4GhQbgPkm6pfyGxwgEWT0vEkHKBUW'
@@ -72,9 +72,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 Even if you are using hashed passwords it is not the best idea to store credentials in the code. Instead you could store them in environment or external file which is not committed to GitHub.
 
 ```php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "users" => [
         "admin" => getenv("ADMIN_PASSWORD")
     ]
@@ -87,9 +87,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 The optional `path` parameter allows you to specify the protected part of your website. It can be either a string or an array. You do not need to specify each URL. Instead think of `path` setting as a folder. In the example below everything starting with `/api` will be authenticated.
 
 ``` php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/api", /* or ["/admin", "/api"] */
     "realm" => "Protected",
     "users" => [
@@ -104,9 +104,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 With optional `ignore` parameter you can make exceptions to `path` parameter. In the example below everything starting with `/api` and `/admin`  will be authenticated with the exception of `/api/token` and `/admin/ping` which will not be authenticated.
 
 ``` php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => ["/api", "/admin"],
     "passthrough" => ["/api/token", "/admin/ping"],
     "realm" => "Protected",
@@ -122,9 +122,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 Before funcion is called only when authentication succeeds but before the next incoming middleware is called. You can use this to alter the request before passing it to the next incoming middleware in the stack. If it returns anything else than `\Psr\Http\Message\RequestInterface` the return value will be ignored.
 
 ```php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "users" => [
@@ -142,9 +142,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 After function is called only when authentication succeeds and after the incoming middleware stack has been called. You can use this to alter the response before passing it next outgoing middleware in the stack. If it returns anything else than `\Psr\Http\Message\ResponseInterface` the return value will be ignored.
 
 ```php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "users" => [
@@ -163,9 +163,9 @@ Browsers send passwords over the wire basically as cleartext. You should always 
 
 
 ``` php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "secure" => false,
     "users" => [
@@ -178,9 +178,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 Alternatively you can list your development host to have relaxed security.
 
 ``` php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "secure" => true,
     "relaxed" => ["localhost", "dev.example.com"],
@@ -199,7 +199,8 @@ If you are creating an Enterprise&trade; software which randomly lets people log
 
 
 ```php
-use \Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+use Tuupola\Middleware\HttpBasicAuthentication;
 
 class RandomAuthenticator implements AuthenticatorInterface {
     public function __invoke(array $arguments) {
@@ -207,9 +208,9 @@ class RandomAuthenticator implements AuthenticatorInterface {
     }
 }
 
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "authenticator" => new RandomAuthenticator
@@ -219,9 +220,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 Same thing can also be accomplished with anonymous function.
 
 ```php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "authenticator" => function ($arguments) {
@@ -235,9 +236,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 By default plugin returns an empty response body with 401 response. You can return custom body using by providing an error handler. This is useful for example when you need additional information why authentication failed.
 
 ```php
-$app = new \Slim\App;
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/api",
     "realm" => "Protected",
     "users" => [
@@ -258,12 +259,12 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 For those in hurry there is a ready made PDO authenticator. It covers most of the use cases. You probably end up implementing your own though.
 
 ```php
-use \Tuupola\Middleware\HttpBasicAuthentication\PdoAuthenticator;
+use Tuupola\Middleware\HttpBasicAuthentication\PdoAuthenticator;
 
-$pdo = new \PDO("sqlite:/tmp/users.sqlite");
-$app = new \Slim\App;
+$pdo = new PDO("sqlite:/tmp/users.sqlite");
+$app = new Slim\App;
 
-$app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => "/admin",
     "realm" => "Protected",
     "authenticator" => new PdoAuthenticator([
