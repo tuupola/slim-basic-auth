@@ -7,7 +7,6 @@ use Zend\Diactoros\Response as DiactorosResponse;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use Nyholm\Psr7\Response as NyholmResponse;
 use Interop\Http\Factory\ResponseFactoryInterface;
-use RuntimeException;
 
 final class ResponseFactory implements ResponseFactoryInterface
 {
@@ -29,6 +28,6 @@ final class ResponseFactory implements ResponseFactoryInterface
             return new NyholmResponse($code);
         }
 
-        throw new RuntimeException("No PSR-7 implementation available.");
+        throw new \RuntimeException("No PSR-7 implementation available");
     }
 }

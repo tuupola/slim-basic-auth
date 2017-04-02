@@ -15,13 +15,16 @@
 
 namespace Tuupola\Middleware;
 
-use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
-use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
-use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
-
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
+use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
+use Tuupola\Middleware\HttpBasicAuthentication\CallableDelegate;
+use Tuupola\Middleware\HttpBasicAuthentication\ResponseFactory;
+use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
+use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
 
 class HttpBasicAuthentication
 {
@@ -77,13 +80,26 @@ class HttpBasicAuthentication
     }
 
     /**
-     * Process a request and return a response
+     * Process a request in PSR-7 style and return a response
      *
      * @param ServerRequestInterface $request
      * @param ResponseInterface $response
+     * @param callable $next
      * @return ResponseInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
+    {
+        return $this->process($request, new CallableDelegate($next, $response));
+    }
+
+    /**
+     * Process a request in PSR-15 style and return a response
+     *
+     * @param ServerRequestInterface $request
+     * @param DelegateInterface $delegate
+     * @return ResponseInterface
+     */
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
     {
         $host = $request->getUri()->getHost();
         $scheme = $request->getUri()->getScheme();
@@ -91,7 +107,7 @@ class HttpBasicAuthentication
 
         /* If rules say we should not authenticate call next and return. */
         if (false === $this->shouldAuthenticate($request)) {
-            return $next($request, $response);
+            return $delegate->process($request);
         }
 
         /* HTTP allowed only if secure is false or server is in relaxed array. */
@@ -115,9 +131,12 @@ class HttpBasicAuthentication
         /* Check if user authenticates. */
         if (false === $this->options["authenticator"]($params)) {
             /* Set response headers before giving it to error callback */
-            $response = $response
-                ->withStatus(401)
-                ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
+            $response = (new ResponseFactory)
+                ->createResponse(401)
+                ->withHeader(
+                    "WWW-Authenticate",
+                    sprintf('Basic realm="%s"', $this->options["realm"])
+                );
 
             return $this->processError($request, $response, [
                 "message" => "Authentication failed"
@@ -126,6 +145,7 @@ class HttpBasicAuthentication
 
         /* Modify $request before calling next middleware. */
         if (is_callable($this->options["before"])) {
+            $response = (new ResponseFactory)->createResponse(200);
             $before_request = $this->options["before"]($request, $response, $params);
             if ($before_request instanceof ServerRequestInterface) {
                 $request = $before_request;
@@ -133,7 +153,7 @@ class HttpBasicAuthentication
         }
 
         /* Everything ok, call next middleware. */
-        $response = $next($request, $response);
+        $response = $delegate->process($request);
 
         /* Modify $response before returning. */
         if (is_callable($this->options["after"])) {
