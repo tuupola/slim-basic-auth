@@ -189,7 +189,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals("Success", $response->getBody());
     }
 
-    public function testShouldReturn200WithPassthrough()
+    public function testShouldReturn200WithIgnore()
     {
         $request = (new Request)
             ->withUri(new Uri("https://example.com/admin/ping"))
@@ -199,7 +199,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
-            "passthrough" => "/admin/ping",
+            "ignore" => "/admin/ping",
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",

@@ -99,9 +99,9 @@ $app->add(new \Tuupola\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
-### Passthrough
+### Ignore
 
-With optional `passthrough` parameter you can make exceptions to `path` parameter. In the example below everything starting with `/api` and `/admin`  will be authenticated with the exception of `/api/token` and `/admin/ping` which will not be authenticated.
+With optional `ignore` parameter you can make exceptions to `path` parameter. In the example below everything starting with `/api` and `/admin`  will be authenticated with the exception of `/api/token` and `/admin/ping` which will not be authenticated.
 
 ``` php
 $app = new \Slim\App;

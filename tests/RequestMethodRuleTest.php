@@ -59,7 +59,7 @@ class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($rule($request));
     }
 
-    public function testShouldConfigurePassThrough()
+    public function testShouldConfigureIgnore()
     {
         $request = (new Request())
             ->withUri(new Uri("https://example.com/api"))
@@ -69,7 +69,7 @@ class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
         $rule = new RequestMethodRule;
 
         $rule = new RequestMethodRule([
-            "passthrough" => ["GET"]
+            "ignore" => ["GET"]
         ]);
 
         $this->assertFalse($rule($request));

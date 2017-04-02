@@ -31,7 +31,7 @@ class HttpBasicAuthentication
         "relaxed" => ["localhost", "127.0.0.1"],
         "users" => null,
         "path" => null,
-        "passthrough" => null,
+        "ignore" => null,
         "realm" => "Protected",
         "authenticator" => null,
         "before" => null,
@@ -57,7 +57,7 @@ class HttpBasicAuthentication
         /* If nothing was passed in options add default rules. */
         if (!isset($options["rules"])) {
             $this->addRule(new RequestMethodRule([
-                "passthrough" => ["OPTIONS"]
+                "ignore" => ["OPTIONS"]
             ]));
         }
 
@@ -65,7 +65,7 @@ class HttpBasicAuthentication
         if (null !== $this->options["path"]) {
             $this->addRule(new RequestPathRule([
                 "path" => $this->options["path"],
-                "passthrough" => $this->options["passthrough"]
+                "ignore" => $this->options["ignore"]
             ]));
         }
 

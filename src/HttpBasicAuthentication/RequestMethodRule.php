@@ -20,7 +20,7 @@ use Psr\Http\Message\RequestInterface;
 class RequestMethodRule implements RuleInterface
 {
     protected $options = [
-        "passthrough" => ["OPTIONS"]
+        "ignore" => ["OPTIONS"]
     ];
 
     public function __construct(array $options = [])
@@ -30,6 +30,6 @@ class RequestMethodRule implements RuleInterface
 
     public function __invoke(RequestInterface $request)
     {
-        return !in_array($request->getMethod(), $this->options["passthrough"]);
+        return !in_array($request->getMethod(), $this->options["ignore"]);
     }
 }

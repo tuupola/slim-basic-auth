@@ -100,7 +100,7 @@ class RequestPathTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($rule($request));
     }
 
-    public function testShouldPassthroughLogin()
+    public function testShouldIgnoreLogin()
     {
         $request = (new Request())
             ->withUri(new Uri("https://example.com/api"))
@@ -108,7 +108,7 @@ class RequestPathTest extends \PHPUnit_Framework_TestCase
 
         $rule = new RequestPathRule([
             "path" => "/api",
-            "passthrough" => ["/api/login"]
+            "ignore" => ["/api/login"]
         ]);
         $this->assertTrue($rule($request));
 
