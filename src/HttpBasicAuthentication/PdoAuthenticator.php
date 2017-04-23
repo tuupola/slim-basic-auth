@@ -39,8 +39,6 @@ class PdoAuthenticator implements AuthenticatorInterface
         $user = $arguments["user"];
         $password = $arguments["password"];
 
-        $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
-
         $sql = $this->sql();
 
         $statement = $this->options["pdo"]->prepare($sql);
