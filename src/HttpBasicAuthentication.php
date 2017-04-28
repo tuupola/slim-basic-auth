@@ -285,7 +285,7 @@ class HttpBasicAuthentication
      * @param callable $after
      * @return void
      */
-    private function after($after)
+    private function after(callable $after)
     {
         $this->options["after"] = $after->bindTo($this);
     }
@@ -296,7 +296,7 @@ class HttpBasicAuthentication
      * @param callable $error
      * @return void
      */
-    private function error($error)
+    private function error(callable $error)
     {
         $this->options["error"] = $error;
     }
