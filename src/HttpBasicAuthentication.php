@@ -119,7 +119,7 @@ class HttpBasicAuthentication
         $params = ["user" => $user, "password" => $password];
 
         /* Check if user authenticates. */
-        if (false === $this->options["authenticator"]($params)) {
+        if (false === $this->options["authenticator"]($params, $request, $response)) {
             /* Set response headers before giving it to error callback */
             $response = $response
                 ->withStatus(401)
