@@ -2,7 +2,6 @@
 
 namespace Slim\Middleware\HttpBasicAuthentication;
 
-
 use Psr\Http\Message\RequestInterface;
 
 class RequestPathMethodRule
@@ -40,13 +39,13 @@ class RequestPathMethodRule
             $passthrough = rtrim($passthrough, "/");
 
             /** If path defined as string, we use this little hack */
-            if($passthrough === '0') {
+            if ($passthrough === '0') {
                 $passthrough    = $method;
                 $method         = null;
             }
 
             if (preg_match("@^{$passthrough}(/.*)?$@", $uri)) {
-                if((in_array(strtolower($request->getMethod()), (array)$method)) || empty((array)$method)) {
+                if ((in_array(strtolower($request->getMethod()), (array)$method)) || empty((array)$method)) {
                     return false;
                 }
             }
@@ -57,12 +56,12 @@ class RequestPathMethodRule
             $path = rtrim($path, "/");
 
             /** If path defined as string, we use this little hack */
-            if($path === '0') {
+            if ($path === '0') {
                 $path   = $method;
                 $method = null;
             }
             if (preg_match("@^{$path}(/.*)?$@", $uri)) {
-                if((in_array(strtolower($request->getMethod()), (array)$method)) || empty((array)$method)) {
+                if ((in_array(strtolower($request->getMethod()), (array)$method)) || empty((array)$method)) {
                     return true;
                 }
             }
