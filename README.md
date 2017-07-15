@@ -108,7 +108,7 @@ $app = new Slim\App;
 
 $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     "path" => ["/api", "/admin"],
-    "passthrough" => ["/api/token", "/admin/ping"],
+    "ignore" => ["/api/token", "/admin/ping"],
     "realm" => "Protected",
     "users" => [
         "root" => "t00r",
@@ -285,13 +285,11 @@ FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -host 127.0.0.1:9000 -pass-head
 
 ## Testing
 
-You can run tests either manually...
+You can run tests either manually or automatically on every code change. Automatic tests require [entr](http://entrproject.org/) to work.
 
 ``` bash
 $ composer test
 ```
-
-... or automatically on every code change. You will need [entr](http://entrproject.org/) for this to work.
 
 ``` bash
 $ brew install entr
@@ -300,7 +298,7 @@ $ composer watch
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Please see [CONTRIBUTING](https://github.com/tuupola/slim-basic-auth/blob/3.x/CONTRIBUTING.md) for details.
 
 ## Security
 
@@ -308,6 +306,6 @@ If you discover any security related issues, please email tuupola@appelsiini.net
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](https://github.com/tuupola/slim-basic-auth/blob/3.x/LICENSE.md) for more information.
 
 
