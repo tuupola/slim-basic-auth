@@ -19,10 +19,10 @@ use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Tuupola\Http\Factory\ResponseFactory;
 use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
 use Tuupola\Middleware\HttpBasicAuthentication\CallableDelegate;
-use Tuupola\Middleware\HttpBasicAuthentication\ResponseFactory;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
 
