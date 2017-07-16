@@ -16,11 +16,11 @@
 namespace Test;
 
 use Tuupola\Middleware\HttpBasicAuthentication\RuleInterface;
-use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
 class TrueRule implements RuleInterface
 {
-    public function __invoke(RequestInterface $request)
+    public function __invoke(ServerRequestInterface $request)
     {
         return true;
     }

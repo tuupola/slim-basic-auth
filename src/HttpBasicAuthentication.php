@@ -59,14 +59,14 @@ class HttpBasicAuthentication
 
         /* If nothing was passed in options add default rules. */
         if (!isset($options["rules"])) {
-            $this->addRule(new RequestMethodRule([
+            $this->rules->push(new RequestMethodRule([
                 "ignore" => ["OPTIONS"]
             ]));
         }
 
         /* If path was given in easy mode add rule for it. */
         if (null !== $this->options["path"]) {
-            $this->addRule(new RequestPathRule([
+            $this->rules->push(new RequestPathRule([
                 "path" => $this->options["path"],
                 "ignore" => $this->options["ignore"]
             ]));
@@ -169,10 +169,10 @@ class HttpBasicAuthentication
     /**
      * Hydrate all options from given array
      *
-     * @param ServerRequestInterface $request
-     * @return boolean
+     * @param array $data
+     * @return void
      */
-    public function hydrate(array $data = [])
+    private function hydrate(array $data = [])
     {
         foreach ($data as $key => $value) {
             /* https://github.com/facebook/hhvm/issues/6368 */
@@ -192,8 +192,8 @@ class HttpBasicAuthentication
     /**
      * Test if current request should be authenticated.
      *
-     * @param array $data
-     * @return void
+     * @param ServerRequestInterface $request
+     * @return boolean
      */
     private function shouldAuthenticate(ServerRequestInterface $request)
     {
@@ -307,20 +307,21 @@ class HttpBasicAuthentication
      * Rules must be callables which return a boolean. If any of the rules return
      * boolean false current request will not be authenticated.
      *
-     * @param callable $error
-     * @return void
+     * @param array $rules
+     * @return self
      */
-    public function rules(array $rules)
+    public function withRules(array $rules)
     {
+        $new = clone $this;
         /* Clear the stack */
-        unset($this->rules);
-        $this->rules = new \SplStack;
+        unset($new->rules);
+        $new->rules = new \SplStack;
 
         /* Add the rules */
         foreach ($rules as $callable) {
-            $this->addRule($callable);
+            $new = $new->addRule($callable);
         }
-        return $this;
+        return $new;
     }
 
     /**
@@ -334,7 +335,9 @@ class HttpBasicAuthentication
      */
     public function addRule(callable $callable)
     {
-        $this->rules->push($callable);
-        return $this;
+        $new = clone $this;
+        $new->rules = clone $this->rules;
+        $new->rules->push($callable);
+        return $new;
     }
 }

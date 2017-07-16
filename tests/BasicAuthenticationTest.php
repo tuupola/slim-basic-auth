@@ -174,7 +174,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $auth->addrule(function ($request) {
+        $auth = $auth->addrule(function ($request) {
             return false;
         });
 
@@ -566,6 +566,38 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         };
 
         $response = $auth($request, $response, $next);
+    }
+
+    public function testShouldBeImmutable()
+    {
+        $auth = new HttpBasicAuthentication([
+            "path" => "/api",
+            "users" => [
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ]
+        ]);
+
+        $auth2 = $auth->addRule(new TrueRule);
+        $auth3 = $auth->withRules([new TrueRule]);
+
+        /* Closure kludge to test private properties. */
+        $self = $this;
+
+        $closure = function () use ($self) {
+            $self->assertEquals(2, count($this->rules));
+        };
+        call_user_func($closure->bindTo($auth, HttpBasicAuthentication::class));
+
+        $closure = function () use ($self) {
+            $self->assertEquals(3, count($this->rules));
+        };
+        call_user_func($closure->bindTo($auth2, HttpBasicAuthentication::class));
+
+        $closure = function () use ($self) {
+            $self->assertEquals(1, count($this->rules));
+        };
+        call_user_func($closure->bindTo($auth3, HttpBasicAuthentication::class));
     }
 
     /*** BUGS *************************************************************/
