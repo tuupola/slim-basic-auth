@@ -7,7 +7,6 @@ This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/
 [![Packagist](https://img.shields.io/packagist/dm/tuupola/slim-basic-auth.svg)](https://packagist.org/packages/tuupola/slim-basic-auth)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
 [![Build Status](https://img.shields.io/travis/tuupola/slim-basic-auth/master.svg?style=flat-square)](https://travis-ci.org/tuupola/slim-basic-auth)
-[![HHVM Status](https://img.shields.io/hhvm/tuupola/slim-basic-auth.svg?style=flat-square)](http://hhvm.h4cc.de/package/tuupola/slim-basic-auth)
 [![Coverage](http://img.shields.io/codecov/c/github/tuupola/slim-basic-auth/2.x.svg?style=flat-square)](https://codecov.io/gh/tuupola/slim-basic-auth/branch/2.x)
 
 
