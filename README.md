@@ -285,17 +285,15 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 
 ## Testing
 
-You can run tests either manually...
+You can run tests either manually or automatically on every code change. Automatic tests require [entr](http://entrproject.org/) to work.
 
 ``` bash
-$ composer test
+$ make test
 ```
-
-... or automatically on every code change. You will need [entr](http://entrproject.org/) for this to work.
 
 ``` bash
 $ brew install entr
-$ composer watch
+$ make watch
 ```
 
 ## Contributing
