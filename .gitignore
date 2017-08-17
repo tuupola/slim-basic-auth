@@ -7,3 +7,5 @@
 composer.lock
 phpunit.xml
 /tests/_output/
+.phplint-cache
+coverage.xml
