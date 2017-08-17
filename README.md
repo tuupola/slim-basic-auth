@@ -287,12 +287,12 @@ FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -host 127.0.0.1:9000 -pass-head
 You can run tests either manually or automatically on every code change. Automatic tests require [entr](http://entrproject.org/) to work.
 
 ``` bash
-$ composer test
+$ make test
 ```
 
 ``` bash
 $ brew install entr
-$ composer watch
+$ make watch
 ```
 
 ## Contributing
