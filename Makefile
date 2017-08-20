@@ -11,7 +11,7 @@ help:
 	@echo "    all    Install dependencies and run linter and unit tests"
 	@echo ""
 
-dependencies:
+deps:
 	composer install --prefer-dist
 
 lint:
@@ -28,6 +28,6 @@ test: lint unit
 
 travis: lint unit
 
-all: dependencies test
+all: deps test
 
-.PHONY: help dependencies lint test watch all
+.PHONY: help deps lint test watch all
