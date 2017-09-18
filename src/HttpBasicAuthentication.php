@@ -126,7 +126,8 @@ class HttpBasicAuthentication
                 ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
 
             return $this->error($request, $response, [
-                "message" => "Authentication failed"
+                "message" => "Authentication failed",
+                "user" => $user,
             ]);
         }
 
