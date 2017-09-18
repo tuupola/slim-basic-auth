@@ -141,8 +141,8 @@ class HttpBasicAuthentication
 
                 return $this->error($request, $response, [
                     "message" => "Callback returned false",
-                    "user" => $user,
-                    ]);
+                    "user" => $user
+                ]);
             }
         }
 
