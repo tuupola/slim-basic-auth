@@ -140,8 +140,9 @@ class HttpBasicAuthentication
                     ->withHeader("WWW-Authenticate", sprintf('Basic realm="%s"', $this->options["realm"]));
 
                 return $this->error($request, $response, [
-                    "message" => "Callback returned false"
-                ]);
+                    "message" => "Callback returned false",
+                    "user" => $user,
+                    ]);
             }
         }
 
