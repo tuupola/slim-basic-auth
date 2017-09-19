@@ -2,6 +2,25 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+## 2.3.0 - 2017-09-19
+
+### Added
+
+- Username is now passed to `error` callback when authentication fails.
+
+```php
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "users" => [
+        "root" => "t00r",
+        "somebody" => "passw0rd"
+    ],
+    "error" => function ($request, $response, $arguments) {
+        var_dump($arguments["user"]);
+        var_dump($arguments["message"]);
+    }
+]));
+```
+
 ## 2.2.2 - 2017-02-27
 
 This is a security release.
