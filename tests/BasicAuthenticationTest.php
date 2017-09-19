@@ -315,7 +315,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCallErrorHandlerWith401()
     {
-        $request = (new Request())
+        $request = ServerRequestFactory::fromGlobals(
+            ["PHP_AUTH_USER" => "root", "PHP_AUTH_PW" => "wrong"]
+        );
+
+        $request = $request
             ->withUri(new Uri("https://example.com/admin/item"))
             ->withMethod("GET");
 
@@ -329,7 +333,8 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "user" => "passw0rd"
             ],
             "error" => function ($request, $response, $arguments) {
-                $response->getBody()->write("ERROR: " . $arguments["message"]);
+                $message = "ERROR: {$arguments["message"]} for {$arguments["user"]}";
+                $response->getBody()->write($message);
                 return $response;
             }
         ]);
@@ -342,7 +347,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         $response = $auth($request, $response, $next);
 
         $this->assertEquals(401, $response->getStatusCode());
-        $this->assertEquals("ERROR: Authentication failed", $response->getBody());
+        $this->assertEquals("ERROR: Authentication failed for root", (string) $response->getBody());
     }
 
     public function testErrorHandlerShouldAlterHeaders()
