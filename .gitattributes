@@ -10,3 +10,4 @@
 /phpunit.xml.dist export-ignore
 /CONTRIBUTING.md export-ignore
 /codecov.yml export-ignore
+Makefile
