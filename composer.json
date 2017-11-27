@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "php" : "^5.5 || ^7.0",
+        "php" : "^7.0",
         "psr/http-message": "^1.0",
         "http-interop/http-factory": "^0.3.0",
         "tuupola/http-factory": "^0.3.0",
