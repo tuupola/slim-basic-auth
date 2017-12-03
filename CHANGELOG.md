@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## [3.0.0](https://github.com/tuupola/slim-basic-aut/compare/3.0.0-rc.3...2.3.0) - Unreleased
+## [3.0.0](https://github.com/tuupola/slim-basic-auth/compare/3.0.0-rc.3...2.3.0) - Unreleased
 ### Changed
 - Namespace changed from `Slim\Middleware` to `Tuupola\Middleware`
 - Middleware now uses only `Authorization` header from the PSR-7 request. Both `PHP_AUTH_USER` and `PHP_AUTH_PW` globals as well as `HTTP_AUTHORIZATION` environment are now ignored.
