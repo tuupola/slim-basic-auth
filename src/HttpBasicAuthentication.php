@@ -26,7 +26,7 @@ use Tuupola\Middleware\HttpBasicAuthentication\CallableDelegate;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
 
-class HttpBasicAuthentication
+final class HttpBasicAuthentication implements MiddlewareInterface
 {
     private $rules;
     private $options = [
@@ -99,7 +99,7 @@ class HttpBasicAuthentication
      * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $host = $request->getUri()->getHost();
         $scheme = $request->getUri()->getScheme();
