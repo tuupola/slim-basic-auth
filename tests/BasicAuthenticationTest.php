@@ -15,25 +15,18 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-use Tuupola\Middleware\HttpBasicAuthentication;
-
+use Equip\Dispatch\MiddlewareCollection;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-
-use Zend\Diactoros\ServerRequest as Request;
-use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Response;
-use Zend\Diactoros\Uri;
-use Zend\Diactoros\Stream;
-
+use Psr\Http\Message\ServerRequestInterface;
 use Test\TrueRule;
 use Test\FalseRule;
 use Test\TrueAuthenticator;
 use Test\FalseAuthenticator;
-
-use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
-use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
+use Tuupola\Middleware\HttpBasicAuthentication;
+use Tuupola\Http\Factory\ResponseFactory;
+use Tuupola\Http\Factory\ServerRequestFactory;
+use Tuupola\Http\Factory\StreamFactory;
 
 class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 {
@@ -45,11 +38,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithoutPassword()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/public"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/public");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -60,7 +52,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -73,11 +65,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn401WithoutPassword()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => ["/admin"],
@@ -88,7 +79,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -102,12 +93,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithPassword()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET")
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -118,7 +108,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -131,11 +121,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithOptions()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("OPTIONS");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("OPTIONS", "https://example.com/admin/item");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -146,7 +135,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -159,11 +148,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithoutPasswordWithAnonymousFunction()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -178,7 +166,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             return false;
         });
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -191,11 +179,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithIgnore()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/ping"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/ping");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -207,7 +194,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -220,12 +207,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn401WithFromAfter()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET")
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -236,13 +222,13 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ],
             "after" => function ($request, $response, $arguments) {
                 return $response
-                    ->withBody(new Stream("php://memory"))
+                    ->withBody((new StreamFactory)->createStream())
                     ->withStatus(401)
                     ->withHeader("WWW-Authenticate", 'Basic realm="Go away!"');
             }
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -256,12 +242,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldAlterResponseWithAfter()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET")
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -275,7 +260,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -288,11 +273,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldCallErrorHandlerWith401()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -307,7 +291,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -320,12 +304,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testErrorHandlerShouldAlterHeaders()
     {
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
-
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -341,7 +323,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -355,11 +337,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithTrueAuthenticator()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -367,7 +348,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             "authenticator" => new \Test\TrueAuthenticator()
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -380,11 +361,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn401WithFalseAuthenticator()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -392,7 +372,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             "authenticator" => new \Test\FalseAuthenticator()
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -405,11 +385,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn200WithAnonymousFunction()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -419,7 +398,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -432,12 +411,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldReturn401WithAnonymousFunction()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET")
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -447,7 +425,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -460,12 +438,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldModifyRequestUsingBefore()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin/item"))
-            ->withMethod("GET")
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -479,7 +456,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             }
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $user = $request->getAttribute("user");
             $response->getBody()->write($user);
             return $response;
@@ -495,11 +472,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException("RuntimeException");
 
-        $request = (new Request)
-            ->withUri(new Uri("http://example.com/api"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "http://example.com/api");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/api",
@@ -509,7 +485,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -519,11 +495,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldRelaxInsecureInLocalhost()
     {
-        $request = (new Request)
-            ->withUri(new Uri("http://localhost/api"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "http://localhost/api");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "secure" => true,
@@ -534,7 +509,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -544,11 +519,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldRelaxInsecureViaSetting()
     {
-        $request = (new Request)
-            ->withUri(new Uri("http://example.com/api"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/api");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "secure" => true,
@@ -560,7 +534,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -600,15 +574,39 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         call_user_func($closure->bindTo($auth3, HttpBasicAuthentication::class));
     }
 
+    public function testShouldHandlePsr15()
+    {
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/");
+
+        $response = (new ResponseFactory)->createResponse();
+
+        $default = function (RequestInterface $request) {
+            $response = (new ResponseFactory)->createResponse();
+            $response->getBody()->write("Success");
+            return $response;
+        };
+        $collection = new MiddlewareCollection([
+            new HttpBasicAuthentication([
+                "users" => [
+                    "root" => "t00r",
+                    "user" => "passw0rd"
+                ]
+            ])
+        ]);
+        $response = $collection->dispatch($request, $default);
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $response->getBody());
+    }
+
     /*** BUGS *************************************************************/
 
     public function testBug2UrlShouldMatchRegex()
     {
-        $request = (new Request)
-            ->withUri(new Uri("http://example.com/status/foo"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/status/foo");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/stat",
@@ -619,7 +617,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -632,11 +630,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug3ShouldReturn401WithoutTrailingSlash()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/",
@@ -647,7 +644,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -660,11 +657,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug3ShouldReturn401WithTrailingSlash()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/admin"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/",
@@ -675,7 +671,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -688,11 +684,10 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug9ShouldAllowUnauthenticatedHttp()
     {
-        $request = (new Request)
-            ->withUri(new Uri("http://example.com/public/foo"))
-            ->withMethod("GET");
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/public/foo");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => ["/api", "/bar"],
@@ -703,7 +698,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
@@ -716,12 +711,11 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testBug31ShouldAllowColonInPassword()
     {
-        $request = (new Request)
-            ->withUri(new Uri("https://example.com/api/foo"))
-            ->withMethod("GET")
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/api/foo")
             ->withHeader("Authorization", "Basic Zm9vOmJhcjpwb3A=");
 
-        $response = new Response;
+        $response = (new ResponseFactory)->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => ["/api", "/bar"],
@@ -731,7 +725,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
             ]
         ]);
 
-        $next = function (Request $request, Response $response) {
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
             $response->getBody()->write("Success");
             return $response;
         };
