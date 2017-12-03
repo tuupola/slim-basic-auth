@@ -15,18 +15,18 @@
 
 namespace Tuupola\Middleware;
 
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
-use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\Server\MiddlewareInterface;
+use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Tuupola\Http\Factory\ResponseFactory;
 use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use Tuupola\Middleware\HttpBasicAuthentication\CallableDelegate;
+use Tuupola\Middleware\HttpBasicAuthentication\CallableHandler;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
 
-class HttpBasicAuthentication
+final class HttpBasicAuthentication implements MiddlewareInterface
 {
     private $rules;
     private $options = [
@@ -89,17 +89,17 @@ class HttpBasicAuthentication
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        return $this->process($request, new CallableDelegate($next, $response));
+        return $this->process($request, new CallableHandler($next, $response));
     }
 
     /**
      * Process a request in PSR-15 style and return a response
      *
      * @param ServerRequestInterface $request
-     * @param DelegateInterface $delegate
+     * @param RequestHandlerInterface $handler
      * @return ResponseInterface
      */
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate)
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $host = $request->getUri()->getHost();
         $scheme = $request->getUri()->getScheme();
@@ -107,7 +107,7 @@ class HttpBasicAuthentication
 
         /* If rules say we should not authenticate call next and return. */
         if (false === $this->shouldAuthenticate($request)) {
-            return $delegate->process($request);
+            return $handler->handle($request);
         }
 
         /* HTTP allowed only if secure is false or server is in relaxed array. */
@@ -153,7 +153,7 @@ class HttpBasicAuthentication
         }
 
         /* Everything ok, call next middleware. */
-        $response = $delegate->process($request);
+        $response = $handler->handle($request);
 
         /* Modify $response before returning. */
         if (is_callable($this->options["after"])) {
