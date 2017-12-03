@@ -9,7 +9,6 @@ This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/
 [![Build Status](https://img.shields.io/travis/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://travis-ci.org/tuupola/slim-basic-auth)
 [![Coverage](http://img.shields.io/codecov/c/github/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://codecov.io/gh/tuupola/slim-basic-auth/branch/3.x)
 
-
 ## Install
 
 Install latest version using [composer](https://getcomposer.org/).
