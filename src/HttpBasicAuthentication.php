@@ -22,7 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 use Tuupola\Http\Factory\ResponseFactory;
 use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use Tuupola\Middleware\HttpBasicAuthentication\CallableDelegate;
+use Tuupola\Middleware\HttpBasicAuthentication\CallableHandler;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
 
@@ -89,7 +89,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
     {
-        return $this->process($request, new CallableDelegate($next, $response));
+        return $this->process($request, new CallableHandler($next, $response));
     }
 
     /**
