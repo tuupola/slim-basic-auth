@@ -170,6 +170,38 @@ $app->add(new \Slim\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
+## Accessing Authenticated User
+
+By default, a successfully authenticated user will be available in your route via:
+
+```php
+$user = $request->getAttribute("authorized_user");
+```
+
+If you need to use a different attribute name, this is configurable via "authorized_user_attribute". For example: 
+
+``` php
+$app = new \Slim\App;
+
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/admin",
+    "secure" => true,
+    "authorized_user_attribute" => "something_else_you_want_to_use"
+    "relaxed" => ["localhost", "dev.example.com"],
+    "users" => [
+        "root" => "t00r",
+        "somebody" => "passw0rd"
+    ]
+]));
+```
+
+Now you would access the user with:
+
+```php
+$user = $request->getAttribute("something_else_you_want_to_use");
+```
+
+
 ## Custom authentication methods
 
 Sometimes passing users in an array is not enough. To authenticate against custom datasource you can pass a callable as `authenticator` parameter. This can be either a class which implements AuthenticatorInterface or anonymous function. Callable receives an array containing `user` and `password` as argument. In both cases authenticator must return either `true` or `false`.
