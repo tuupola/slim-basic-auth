@@ -20,14 +20,16 @@ use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Tuupola\Http\Factory\ResponseFactory;
+use Tuupola\Middleware\DoublePassTrait;
 use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
-use Tuupola\Middleware\HttpBasicAuthentication\CallableHandler;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
 
 final class HttpBasicAuthentication implements MiddlewareInterface
 {
+    use DoublePassTrait;
+
     private $rules;
     private $options = [
         "secure" => true,
@@ -77,19 +79,6 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         if (null === $this->options["authenticator"]) {
             throw new \RuntimeException("Authenticator or users array must be given");
         }
-    }
-
-    /**
-     * Process a request in PSR-7 style and return a response
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @param callable $next
-     * @return ResponseInterface
-     */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $next)
-    {
-        return $this->process($request, new CallableHandler($next, $response));
     }
 
     /**
