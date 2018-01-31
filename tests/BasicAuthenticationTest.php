@@ -285,7 +285,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "root" => "t00r",
                 "user" => "passw0rd"
             ],
-            "error" => function ($request, $response, $arguments) {
+            "error" => function ($response, $arguments) {
                 $response->getBody()->write("ERROR: " . $arguments["message"]);
                 return $response;
             }
@@ -316,7 +316,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "root" => "t00r",
                 "user" => "passw0rd"
             ],
-            "error" => function ($request, $response, $arguments) {
+            "error" => function ($response, $arguments) {
                 return $response
                     ->withStatus(302)
                     ->withHeader("Location", "/foo/bar");
