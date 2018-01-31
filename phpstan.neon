@@ -1,0 +1,3 @@
+parameters:
+	ignoreErrors:
+		- '#Constant __PHPUNIT_ATTR_DRIVER_NAME__ not found#'
