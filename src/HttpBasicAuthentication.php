@@ -190,8 +190,11 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     /**
      * Execute the error handler.
      */
-    public function processError(ServerRequestInterface $request, ResponseInterface $response, $arguments)
-    {
+    private function processError(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        array $arguments
+    ): ResponseInterface {
         if (is_callable($this->options["error"])) {
             $handler_response = $this->options["error"]($request, $response, $arguments);
             if ($handler_response instanceof ResponseInterface) {
@@ -199,6 +202,21 @@ final class HttpBasicAuthentication implements MiddlewareInterface
             }
         }
         return $response;
+    }
+
+    /**
+     * Set path where middleware should bind to.
+     */
+    private function path($path): void
+    {
+        $this->options["path"] = (array) $path;
+    }
+    /**
+     * Set path which middleware ignores.
+     */
+    private function ignore($ignore): void
+    {
+        $this->options["ignore"] = (array) $ignore;
     }
 
     /**
