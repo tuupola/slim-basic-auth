@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of Slim HTTP Basic Authentication middleware
@@ -19,5 +20,5 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface RuleInterface
 {
-    public function __invoke(ServerRequestInterface $request);
+    public function __invoke(ServerRequestInterface $request): bool;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of Slim HTTP Basic Authentication middleware
@@ -33,7 +34,7 @@ final class ArrayAuthenticator implements AuthenticatorInterface
         }
     }
 
-    public function __invoke(array $arguments)
+    public function __invoke(array $arguments): bool
     {
         $user = $arguments["user"];
         $password = $arguments["password"];
@@ -52,7 +53,7 @@ final class ArrayAuthenticator implements AuthenticatorInterface
         }
     }
 
-    private static function isHash($password)
+    private static function isHash($password): bool
     {
         return preg_match('/^\$(2|2a|2y)\$\d{2}\$.*/', $password) && (strlen($password) >= 60);
     }

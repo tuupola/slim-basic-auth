@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of Slim HTTP Basic Authentication middleware
@@ -24,29 +25,19 @@ use Psr\Http\Message\ServerRequestInterface;
 final class RequestPathRule implements RuleInterface
 {
     /**
-     * Stores all the options passed to the rule
+     * Stores all the options passed to the rule.
      */
     private $options = [
         "path" => ["/"],
         "ignore" => []
     ];
 
-    /**
-     * Create a new rule instance
-     *
-     * @param string[] $options
-     * @return void
-     */
     public function __construct($options = [])
     {
         $this->options = array_merge($this->options, $options);
     }
 
-    /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @return boolean
-     */
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request): bool
     {
         $uri = "/" . $request->getUri()->getPath();
         $uri = preg_replace("#/+#", "/", $uri);

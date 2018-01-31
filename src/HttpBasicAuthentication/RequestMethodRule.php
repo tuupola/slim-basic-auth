@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of Slim HTTP Basic Authentication middleware
@@ -28,7 +29,7 @@ final class RequestMethodRule implements RuleInterface
         $this->options = array_merge($this->options, $options);
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request): bool
     {
         return !in_array($request->getMethod(), $this->options["ignore"]);
     }

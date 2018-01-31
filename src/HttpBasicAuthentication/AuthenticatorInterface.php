@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of Slim HTTP Basic Authentication middleware
@@ -17,5 +18,5 @@ namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 interface AuthenticatorInterface
 {
-    public function __invoke(array $arguments);
+    public function __invoke(array $arguments): bool;
 }
