@@ -20,5 +20,5 @@ use Psr\Http\Message\ServerRequestInterface;
 
 interface RuleInterface
 {
-    public function __invoke(ServerRequestInterface $request);
+    public function __invoke(ServerRequestInterface $request): bool;
 }

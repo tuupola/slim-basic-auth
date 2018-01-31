@@ -16,6 +16,7 @@ declare(strict_types=1);
 
 namespace Tuupola\Middleware;
 
+use Closure;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -83,11 +84,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     }
 
     /**
-     * Process a request in PSR-15 style and return a response
-     *
-     * @param ServerRequestInterface $request
-     * @param RequestHandlerInterface $handler
-     * @return ResponseInterface
+     * Process a request in PSR-15 style and return a response.
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
@@ -157,12 +154,9 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     }
 
     /**
-     * Hydrate all options from given array
-     *
-     * @param array $data
-     * @return void
+     * Hydrate all options from given array.
      */
-    private function hydrate(array $data = [])
+    private function hydrate(array $data = []): void
     {
         foreach ($data as $key => $value) {
             /* https://github.com/facebook/hhvm/issues/6368 */
@@ -181,11 +175,8 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
     /**
      * Test if current request should be authenticated.
-     *
-     * @param ServerRequestInterface $request
-     * @return boolean
      */
-    private function shouldAuthenticate(ServerRequestInterface $request)
+    private function shouldAuthenticate(ServerRequestInterface $request): bool
     {
         /* If any of the rules in stack return false will not authenticate */
         foreach ($this->rules as $callable) {
@@ -197,11 +188,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     }
 
     /**
-     * Execute the error handler
-     *
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface $response
-     * @return ResponseInterface
+     * Execute the error handler.
      */
     public function processError(ServerRequestInterface $request, ResponseInterface $response, $arguments)
     {
@@ -215,78 +202,57 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     }
 
     /**
-     * Set the authenticator
-     *
-     * @param callable $authenticator
-     * @return void
+     * Set the authenticator.
      */
-    private function authenticator(callable $authenticator)
+    private function authenticator(callable $authenticator): void
     {
         $this->options["authenticator"] = $authenticator;
     }
 
     /**
-     * Set the users array
-     *
-     * @param array $users
-     * @return void
+     * Set the users array.
      */
-    private function users(array $users)
+    private function users(array $users): void
     {
         $this->options["users"] = $users;
     }
 
     /**
-     * Set the secure flag
-     *
-     * @param boolean $secure
-     * @return void
+     * Set the secure flag.
      */
-    private function secure($secure)
+    private function secure(bool $secure): void
     {
-        $this->options["secure"] = (boolean) $secure;
+        $this->options["secure"] = $secure;
     }
 
     /**
-     * Set hosts where secure rule is relaxed
-     *
-     * @param array $relaxed
-     * @return void
+     * Set hosts where secure rule is relaxed.
      */
-    private function relaxed(array $relaxed)
+    private function relaxed(array $relaxed): void
     {
         $this->options["relaxed"] = $relaxed;
     }
 
     /**
-     * Set the handler which is called before other middlewares
-     *
-     * @param callable $before
-     * @return void
+     * Set the handler which is called before other middlewares.
      */
-    private function before(callable $before)
+    private function before(Closure $before): void
     {
         $this->options["before"] = $before->bindTo($this);
     }
 
     /**
-     * Set the handler which is called after other middlewares
-     *
-     * @param callable $after
-     * @return void
+     * Set the handler which is called after other middlewares.
      */
-    private function after(callable $after)
+    private function after(Closure $after): void
     {
         $this->options["after"] = $after->bindTo($this);
     }
 
     /**
-     * Set the handler which is if authentication fails
-     *
-     * @param callable $error
-     * @return void
+     * Set the handler which is if authentication fails.
      */
-    private function error(callable $error)
+    private function error(callable $error): void
     {
         $this->options["error"] = $error;
     }
@@ -298,9 +264,8 @@ final class HttpBasicAuthentication implements MiddlewareInterface
      * boolean false current request will not be authenticated.
      *
      * @param array $rules
-     * @return self
      */
-    public function withRules(array $rules)
+    public function withRules(array $rules): self
     {
         $new = clone $this;
         /* Clear the stack */
@@ -315,15 +280,12 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     }
 
     /**
-     * Add a rule to the rules stack
+     * Add a rule to the rules stack.
      *
      * Rules must be callables which return a boolean. If any of the rules return
      * boolean false current request will not be authenticated.
-     *
-     * @param callable $error
-     * @return self
      */
-    public function addRule(callable $callable)
+    public function addRule(callable $callable): self
     {
         $new = clone $this;
         $new->rules = clone $this->rules;

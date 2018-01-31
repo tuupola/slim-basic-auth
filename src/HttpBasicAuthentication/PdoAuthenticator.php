@@ -35,7 +35,7 @@ final class PdoAuthenticator implements AuthenticatorInterface
         }
     }
 
-    public function __invoke(array $arguments)
+    public function __invoke(array $arguments): bool
     {
         $user = $arguments["user"];
         $password = $arguments["password"];
@@ -52,7 +52,7 @@ final class PdoAuthenticator implements AuthenticatorInterface
         return false;
     }
 
-    public function sql()
+    public function sql(): string
     {
         $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
 

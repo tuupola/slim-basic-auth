@@ -29,7 +29,7 @@ final class RequestMethodRule implements RuleInterface
         $this->options = array_merge($this->options, $options);
     }
 
-    public function __invoke(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request): bool
     {
         return !in_array($request->getMethod(), $this->options["ignore"]);
     }

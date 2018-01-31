@@ -18,5 +18,5 @@ namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 interface AuthenticatorInterface
 {
-    public function __invoke(array $arguments);
+    public function __invoke(array $arguments): bool;
 }
