@@ -129,7 +129,7 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
         "root" => "t00r",
         "somebody" => "passw0rd"
     ],
-    "before" => function ($request, $response, $arguments) {
+    "before" => function ($request, $arguments) {
         return $request->withAttribute("user", $arguments["user"]);
     }
 ]));

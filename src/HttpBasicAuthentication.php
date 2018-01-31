@@ -133,7 +133,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         /* Modify $request before calling next middleware. */
         if (is_callable($this->options["before"])) {
             $response = (new ResponseFactory)->createResponse(200);
-            $before_request = $this->options["before"]($request, $response, $params);
+            $before_request = $this->options["before"]($request, $params);
             if ($before_request instanceof ServerRequestInterface) {
                 $request = $before_request;
             }
