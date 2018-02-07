@@ -144,7 +144,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
         /* Modify $response before returning. */
         if (is_callable($this->options["after"])) {
-            $after_response = $this->options["after"]($request, $response, $params);
+            $after_response = $this->options["after"]($response, $params);
             if ($after_response instanceof ResponseInterface) {
                 return $after_response;
             }

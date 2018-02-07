@@ -220,7 +220,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "root" => "t00r",
                 "user" => "passw0rd"
             ],
-            "after" => function ($request, $response, $arguments) {
+            "after" => function ($response, $arguments) {
                 return $response
                     ->withBody((new StreamFactory)->createStream())
                     ->withStatus(401)
@@ -255,7 +255,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
                 "root" => "t00r",
                 "user" => "passw0rd"
             ],
-            "after" => function ($request, $response, $arguments) {
+            "after" => function ($response, $arguments) {
                 return $response->withHeader("X-Brawndo", "plants crave");
             }
         ]);
