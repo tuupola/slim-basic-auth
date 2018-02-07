@@ -273,6 +273,14 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     }
 
     /**
+     * Set the rules
+     */
+    private function rules(array $rules)
+    {
+        $this->rules = $rules;
+    }
+
+    /**
      * Set the rules which determine if current request should be authenticated.
      *
      * Rules must be callables which return a boolean. If any of the rules return

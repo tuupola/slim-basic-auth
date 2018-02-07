@@ -604,6 +604,49 @@ class HttpBasicAuthenticationTest extends TestCase
         $this->assertEquals("", $response->getBody());
     }
 
+    public function testShouldHandleRulesArrayBug()
+    {
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/api");
+
+        $default = function (ServerRequestInterface $request) {
+            $response = (new ResponseFactory)->createResponse();
+            $response->getBody()->write("Success");
+            return $response;
+        };
+
+        $collection = new MiddlewareCollection([
+            new HttpBasicAuthentication([
+                "users" => [
+                    "root" => "t00r",
+                    "user" => "passw0rd"
+                ],
+                "rules" => [
+                    new RequestPathRule([
+                        "path" => ["/api"],
+                        "ignore" => ["/api/login"],
+                    ]),
+                    new RequestMethodRule([
+                        "ignore" => ["OPTIONS"],
+                    ])
+                ],
+            ])
+        ]);
+
+        $response = $collection->dispatch($request, $default);
+
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $response->getBody());
+
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/api/login");
+
+        $response = $collection->dispatch($request, $default);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Success", $response->getBody());
+    }
+
     /*** BUGS *************************************************************/
 
     public function testBug2UrlShouldMatchRegex()
