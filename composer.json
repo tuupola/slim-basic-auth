@@ -3,13 +3,13 @@
     "type": "library",
     "description": "PSR-7 and PSR-15 HTTP Basic Authentication Middleware",
     "keywords": ["middleware", "auth", "psr-7", "psr-15"],
-    "homepage": "http://www.appelsiini.net/projects/slim-basic-auth",
+    "homepage": "https://appelsiini.net/projects/slim-basic-auth",
     "license": "MIT",
     "authors": [
         {
             "name": "Mika Tuupola",
             "email": "tuupola@appelsiini.net",
-            "homepage": "http://www.appelsiini.net/"
+            "homepage": "https://appelsiini.net/"
         }
     ],
     "require": {
