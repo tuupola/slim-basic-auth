@@ -15,10 +15,10 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-class ArrayAuthenticatorTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ArrayAuthenticatorTest extends TestCase
 {
-
-
     public function testShouldReturnTrue()
     {
         $authenticator = new ArrayAuthenticator([

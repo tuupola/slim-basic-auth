@@ -15,12 +15,13 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 
-class RequestPathTest extends \PHPUnit_Framework_TestCase
+class RequestPathTest extends TestCase
 {
 
     public function testShouldAcceptArrayAndStringAsPath()

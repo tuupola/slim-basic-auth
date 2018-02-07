@@ -15,12 +15,13 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
+use PHPUnit\Framework\TestCase;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 
-class RequestMethodRuleTest extends \PHPUnit_Framework_TestCase
+class RequestMethodRuleTest extends TestCase
 {
 
     public function testShouldNotAuthenticateOptions()

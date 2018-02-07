@@ -16,6 +16,7 @@
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 use Equip\Dispatch\MiddlewareCollection;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -28,11 +29,11 @@ use Tuupola\Http\Factory\ResponseFactory;
 use Tuupola\Http\Factory\ServerRequestFactory;
 use Tuupola\Http\Factory\StreamFactory;
 
-class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
+class HttpBasicAuthenticationTest extends TestCase
 {
     public function testShouldFailWithoutAuthenticator()
     {
-        $this->setExpectedException("RuntimeException");
+        $this->expectException("RuntimeException");
         $auth = new HttpBasicAuthentication();
     }
 
@@ -470,7 +471,7 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
 
     public function testShouldNotAllowInsecure()
     {
-        $this->setExpectedException("RuntimeException");
+        $this->expectException("RuntimeException");
 
         $request = (new ServerRequestFactory)
             ->createServerRequest("GET", "http://example.com/api");
@@ -515,6 +516,8 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         };
 
         $response = $auth($request, $response, $next);
+
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
     public function testShouldRelaxInsecureViaSetting()
@@ -540,6 +543,8 @@ class HttpBasicAuthenticationTest extends \PHPUnit_Framework_TestCase
         };
 
         $response = $auth($request, $response, $next);
+
+        $this->assertEquals(401, $response->getStatusCode());
     }
 
     public function testShouldBeImmutable()

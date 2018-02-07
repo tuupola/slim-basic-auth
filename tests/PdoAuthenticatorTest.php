@@ -15,7 +15,9 @@
 
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
-class PdoAuthenticatorTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class PdoAuthenticatorTest extends TestCase
 {
 
     public $pdo;
