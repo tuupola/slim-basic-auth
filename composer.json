@@ -44,6 +44,7 @@
         "overtrue/phplint": "^0.2.4",
         "equip/dispatch": "dev-approved-psr15 as 1.0.x-dev",
         "phpstan/phpstan": "^0.9.2",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^7.0",
+        "codedungeon/phpunit-result-printer": "^0.6.0"
     }
 }
