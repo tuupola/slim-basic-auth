@@ -125,7 +125,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
                     sprintf('Basic realm="%s"', $this->options["realm"])
                 );
 
-            return $this->processError($request, $response, [
+            return $this->processError($response, [
                 "message" => "Authentication failed"
             ]);
         }
@@ -133,7 +133,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         /* Modify $request before calling next middleware. */
         if (is_callable($this->options["before"])) {
             $response = (new ResponseFactory)->createResponse(200);
-            $before_request = $this->options["before"]($request, $response, $params);
+            $before_request = $this->options["before"]($request, $params);
             if ($before_request instanceof ServerRequestInterface) {
                 $request = $before_request;
             }
@@ -144,7 +144,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
         /* Modify $response before returning. */
         if (is_callable($this->options["after"])) {
-            $after_response = $this->options["after"]($request, $response, $params);
+            $after_response = $this->options["after"]($response, $params);
             if ($after_response instanceof ResponseInterface) {
                 return $after_response;
             }
@@ -190,13 +190,10 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     /**
      * Execute the error handler.
      */
-    private function processError(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        array $arguments
-    ): ResponseInterface {
+    private function processError(ResponseInterface $response, array $arguments): ResponseInterface
+    {
         if (is_callable($this->options["error"])) {
-            $handler_response = $this->options["error"]($request, $response, $arguments);
+            $handler_response = $this->options["error"]($response, $arguments);
             if ($handler_response instanceof ResponseInterface) {
                 return $handler_response;
             }
