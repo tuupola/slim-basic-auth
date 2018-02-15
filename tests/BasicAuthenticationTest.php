@@ -783,4 +783,31 @@ class HttpBasicAuthenticationTest extends TestCase
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals("Success", $response->getBody());
     }
+
+    public function testPull59ShouldNotErrorWithMalformedCredentials()
+    {
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/api/foo")
+            ->withHeader("Authorization", "Basic Zm9vCg=="); /* foo */
+
+        $response = (new ResponseFactory)->createResponse();
+
+        $auth = new HttpBasicAuthentication([
+            "path" => ["/api", "/bar"],
+            "realm" => "Protected",
+            "users" => [
+                "foo" => "bar"
+            ]
+        ]);
+
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
+            $response->getBody()->write("Success");
+            return $response;
+        };
+
+        $response = $auth($request, $response, $next);
+
+        $this->assertEquals(401, $response->getStatusCode());
+        $this->assertEquals("", $response->getBody());
+    }
 }
