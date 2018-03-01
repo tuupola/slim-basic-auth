@@ -7,7 +7,7 @@ This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/
 [![Packagist](https://img.shields.io/packagist/dm/tuupola/slim-basic-auth.svg)](https://packagist.org/packages/tuupola/slim-basic-auth)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
 [![Build Status](https://img.shields.io/travis/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://travis-ci.org/tuupola/slim-basic-auth)
-[![Coverage](http://img.shields.io/codecov/c/github/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://codecov.io/gh/tuupola/slim-basic-auth/branch/3.x)
+[![Coverage](https://img.shields.io/codecov/c/github/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://codecov.io/gh/tuupola/slim-basic-auth/branch/3.x)
 
 Heads up! You are reading documentation for [3.x branch](https://github.com/tuupola/slim-basic-auth/tree/3.x) which is PHP 7.1 and up only. If you are using older version of PHP see the [2.x branch](https://github.com/tuupola/slim-basic-auth/tree/2.x). These two branches are not backwards compatible, see [UPGRADING](https://github.com/tuupola/slim-basic-auth/blob/3.x/UPGRADING.md) for instructions how to upgrade.
 
