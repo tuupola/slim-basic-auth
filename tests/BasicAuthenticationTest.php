@@ -552,8 +552,7 @@ class HttpBasicAuthenticationTest extends TestCase
         $request = (new ServerRequestFactory)
             ->createServerRequest("GET", "http://example.com/api")
             ->withHeader("X-Forwarded-Proto", "https")
-            ->withHeader("'X-Forwarded-Port", "443");
-
+            ->withHeader("X-Forwarded-Port", "443");
 
         $response = (new ResponseFactory)->createResponse();
 
