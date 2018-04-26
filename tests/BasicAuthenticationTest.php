@@ -547,6 +547,36 @@ class HttpBasicAuthenticationTest extends TestCase
         $this->assertEquals(401, $response->getStatusCode());
     }
 
+    public function testShouldRelaxForwardedViaSetting()
+    {
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "http://example.com/api")
+            ->withHeader("X-Forwarded-Proto", "https")
+            ->withHeader("'X-Forwarded-Port", "443");
+
+
+        $response = (new ResponseFactory)->createResponse();
+
+        $auth = new HttpBasicAuthentication([
+            "secure" => true,
+            "relaxed" => ["localhost", "headers"],
+            "path" => "/api",
+            "users" => [
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ]
+        ]);
+
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
+            $response->getBody()->write("Success");
+            return $response;
+        };
+
+        $response = $auth($request, $response, $next);
+
+        $this->assertEquals(401, $response->getStatusCode());
+    }
+
     public function testShouldBeImmutable()
     {
         $auth = new HttpBasicAuthentication([
