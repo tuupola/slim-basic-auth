@@ -191,6 +191,22 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
+Or if you terminate https somewhere other than Slim and forward the request using http, you can instruct `HttpBasicAuthentication` to inspect headers to verify that the request originated with https.
+
+```php
+$app = new Slim\App;
+
+$app->add(new Tuupola\Middleware\HttpBasicAuthentication([
+    "path" => "/admin",
+    "secure" => true,
+    "relaxed" => ["localhost", "headers"],
+    "users" => [
+        "root" => "t00r",
+        "somebody" => "passw0rd"
+    ]
+]));
+```
+
 ## Custom authentication methods
 
 Sometimes passing users in an array is not enough. To authenticate against custom datasource you can pass a callable as `authenticator` parameter. This can be either a class which implements AuthenticatorInterface or anonymous function. Callable receives an array containing `user` and `password` as argument. In both cases authenticator must return either `true` or `false`.
