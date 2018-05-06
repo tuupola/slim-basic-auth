@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-## [3.1.0](https://github.com/tuupola/slim-basic-auth/compare/3.1.0...3.0.0) - unreleased
+## [3.1.0](https://github.com/tuupola/slim-basic-auth/compare/3.1.0...3.0.0) - 20180506
 ### Added
 - Option to trust `X-Forwarded-Proto` and `X-Forwarded-Port` when detecting https requests.
 
