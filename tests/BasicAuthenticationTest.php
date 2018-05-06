@@ -523,7 +523,7 @@ class HttpBasicAuthenticationTest extends TestCase
     public function testShouldRelaxInsecureViaSetting()
     {
         $request = (new ServerRequestFactory)
-            ->createServerRequest("GET", "https://example.com/api");
+            ->createServerRequest("GET", "http://example.com/api");
 
         $response = (new ResponseFactory)->createResponse();
 
