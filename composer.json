@@ -33,7 +33,7 @@
     "require-dev": {
         "codedungeon/phpunit-result-printer": "^0.19.14",
         "equip/dispatch": "^2.0",
-        "overtrue/phplint": "^0.2.4",
+        "overtrue/phplint": "^1.1",
         "phpstan/phpstan": "^0.9.2",
         "phpunit/phpunit": "^7.0",
         "squizlabs/php_codesniffer": "^3.2",
