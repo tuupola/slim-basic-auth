@@ -163,12 +163,12 @@ Basic authentication transmits credentials in clear text. For this reason HTTPS 
 
 By default, localhost is allowed to use HTTP. The security behavior of `HttpBasicAuthentication` can also be configured to allow:
 
-- [a whitelist of domains to connect insecurely](#security-whitelist)
-- [forwarding of an HTTPS connection to HTTP](#security-forwarding)
-- [all traffic](#security-disabling)
+- [a whitelist of domains to connect insecurely](#how-to-configure-a-whitelist)
+- [forwarding of an HTTPS connection to HTTP](#allow-https-termination-and-forwarding)
+- [all unencrypted traffic](#allow-all-unencrypted-traffic)
 
-### <a name="security-whitelist"></a>How to configure a whitelist:
-You can list hosts to allow access insecurely.  For example, to allow HTTP traffic from your development host `dev.example.com`, add the hostname to the `relaxed` config key:
+### How to configure a whitelist:
+You can list hosts to allow access insecurely.  For example, to allow HTTP traffic to your development host `dev.example.com`, add the hostname to the `relaxed` config key.
 
 ``` php
 $app = new Slim\App;
@@ -183,8 +183,8 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
     ]
 ]));
 ```
-### <a name="security-forwarding"></a> Allow HTTPS termination and forwarding
-If public traffic terminates SSL on a load balancer or proxy and forwards to the application host insecurely, `HttpBasicAuthentication` can inspect request headers to ensure that the original client request was initiated securely.  To enable, add the string `headers` to the `relaxed` config key:
+### Allow HTTPS termination and forwarding
+If public traffic terminates SSL on a load balancer or proxy and forwards to the application host insecurely, `HttpBasicAuthentication` can inspect request headers to ensure that the original client request was initiated securely.  To enable, add the string `headers` to the `relaxed` config key.
 
 ```php
 $app = new Slim\App;
@@ -200,8 +200,8 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
 ]));
 ```
 
-### <a name="security-disabling"></a>
-To allow insecure usage by any host, you must enable it manually by setting `secure` to `false`:
+### Allow all unencrypted traffic
+To allow insecure usage by any host, you must enable it manually by setting `secure` to `false`. This is generally a bad idea. Use only if you know what you are doing.
 
 ``` php
 $app = new Slim\App;
