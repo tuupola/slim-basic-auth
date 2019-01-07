@@ -151,7 +151,7 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
         "root" => "t00r",
         "somebody" => "passw0rd"
     ],
-    "after" => function ($request, $response, $arguments) {
+    "after" => function ($response, $arguments) {
         return $response->withHeader("X-Brawndo", "plants crave");
     }
 ]));
