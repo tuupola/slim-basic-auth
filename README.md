@@ -227,7 +227,7 @@ use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use Tuupola\Middleware\HttpBasicAuthentication;
 
 class RandomAuthenticator implements AuthenticatorInterface {
-    public function __invoke(array $arguments) {
+    public function __invoke(array $arguments): bool {
         return (bool)rand(0,1);
     }
 }
