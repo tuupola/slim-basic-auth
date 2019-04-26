@@ -34,6 +34,7 @@ class HttpBasicAuthentication
         "passthrough" => null,
         "realm" => "Protected",
         "environment" => "HTTP_AUTHORIZATION",
+        "authorized_user_attribute" => "authorized_user",
         "authenticator" => null,
         "callback" => null,
         "error" => null
@@ -145,10 +146,9 @@ class HttpBasicAuthentication
                 ]);
             }
         }
-
-
-        /* Everything ok, call next middleware. */
-        return $next($request, $response);
+        
+        /* Everything ok, set argument and call next middleware. */
+        return $next($request->withAttribute($this->options["authorized_user_attribute"], $user), $response);
     }
 
     private function hydrate($data = [])
