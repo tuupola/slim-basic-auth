@@ -273,7 +273,11 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
         $data = [];
         $data["status"] = "error";
         $data["message"] = $arguments["message"];
-        return $response->write(json_encode($data, JSON_UNESCAPED_SLASHES));
+
+        $body = $response->getBody();
+        $body->write(json_encode($data, JSON_UNESCAPED_SLASHES));
+
+        return $response->withBody($body);
     }
 ]));
 ```
