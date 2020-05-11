@@ -120,6 +120,35 @@ class HttpBasicAuthenticationTest extends TestCase
         $this->assertEquals("Success", $response->getBody());
     }
 
+    public function testShouldReturn200WithMultipleHeaders()
+    {
+        $request = (new ServerRequestFactory)
+            ->createServerRequest("GET", "https://example.com/admin/item")
+            ->withHeader("Authorization", "Basic cm9vdDp0MDBy,Basic cm9vdDp0MDBy");
+
+        $response = (new ResponseFactory)->createResponse();
+
+        $auth = new HttpBasicAuthentication([
+            "path" => "/admin",
+            "realm" => "Protected",
+            "users" => [
+                "root" => "t00r",
+                "user" => "passw0rd"
+            ]
+        ]);
+
+        $next = function (ServerRequestInterface $request, ResponseInterface $response) {
+            $response->getBody()->write("Success");
+            return $response;
+        };
+
+        $response = $auth($request, $response, $next);
+
+        $this->assertEquals(200, $response->getStatusCode());
+        $this->assertEquals("Success", $response->getBody());
+    }
+
+
     public function testShouldReturn200WithOptions()
     {
         $request = (new ServerRequestFactory)
