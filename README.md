@@ -159,7 +159,9 @@ $app->add(new Tuupola\Middleware\HttpBasicAuthentication([
 
 ## Security
 
-Browsers send passwords over the wire basically as cleartext. You should always use HTTPS. If the middleware detects insecure usage over HTTP it will throw `RuntimeException`. This rule is relaxed for localhost. To allow insecure usage you must enable it manually by setting `secure` to `false`.
+Basic authentication transmits credentials in clear text. For this reason HTTPS should always be used together with basic authentication. If the middleware detects insecure usage over HTTP it will throw a `RuntimeException` with the following message: `Insecure use of middleware over HTTP denied by configuration`.
+
+By default this rule is relaxed for localhost. To always allow insecure usage you must enable it manually by setting `secure` to `false`.
 
 
 ``` php
