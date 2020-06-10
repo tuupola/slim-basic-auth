@@ -99,19 +99,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
         /* HTTP allowed only if secure is false or server is in relaxed array. */
         if ("https" !== $scheme && true === $this->options["secure"]) {
-            $allowedHost = in_array($host, $this->options["relaxed"]);
-
-            /* if 'headers' is in the 'relaxed' key, then we check for forwarding */
-            $allowedForward = false;
-            if (in_array("headers", $this->options["relaxed"])) {
-                if ($request->getHeaderLine("X-Forwarded-Proto") === "https"
-                    && $request->getHeaderLine('X-Forwarded-Port') === "443"
-                ) {
-                    $allowedForward = true;
-                }
-            }
-
-            if (!($allowedHost || $allowedForward)) {
+            if (!in_array($host, $this->options["relaxed"])) {
                 $message = sprintf(
                     "Insecure use of middleware over %s denied by configuration.",
                     strtoupper($scheme)
