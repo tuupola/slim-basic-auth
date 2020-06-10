@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+# [4.0.0](https://github.com/tuupola//slim-basic-auth/compare/3.2.1...4.x) - unreleased
+### Removed
+- Support for relaxing security setting via HTTPS proxy headers. Either set `secure` to `false` or use a separate middleware for setting request protocol according to headers ([#94](https://github.com/tuupola/branca-middleware/pull/94)).
+
+
 # [3.2.1](https://github.com/tuupola//slim-basic-auth/compare/3.2.0...3.2.1) - 2018-10-15
 ### Added
 - Support for tuupola/callable-handler:^1.0 and tuupola/http-factory:^1.0
