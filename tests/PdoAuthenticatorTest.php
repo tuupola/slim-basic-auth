@@ -22,7 +22,7 @@ class PdoAuthenticatorTest extends TestCase
 
     public $pdo;
 
-    public function setup()
+    public function setup(): void
     {
         $this->pdo = new \PDO("sqlite::memory:");
         //$this->pdo = new \PDO("sqlite:/tmp/test.db");
