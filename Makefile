@@ -34,7 +34,7 @@ watch:
 
 test: lint static unit
 
-travis: lint static unit
+travis: lint unit
 
 all: deps test
 

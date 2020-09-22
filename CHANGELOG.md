@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
+# [3.3.0](https://github.com/tuupola//slim-basic-auth/compare/3.2.1...master) - unreleased
+
+### Added
+- Allow installing with PHP 8 ([#99](https://github.com/tuupola/slim-basic-auth/pull/99/files)).
+
 # [3.2.1](https://github.com/tuupola//slim-basic-auth/compare/3.2.0...3.2.1) - 2018-10-15
 ### Added
 - Support for tuupola/callable-handler:^1.0 and tuupola/http-factory:^1.0
