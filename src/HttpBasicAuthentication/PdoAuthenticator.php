@@ -18,8 +18,15 @@ namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 final class PdoAuthenticator implements AuthenticatorInterface
 {
+    /**
+     * Stores all the options passed to the authenticator.
+     * @var mixed[]
+     */
     private $options;
 
+    /**
+     * @param mixed[] $options
+     */
     public function __construct(array $options = [])
     {
 
@@ -35,6 +42,9 @@ final class PdoAuthenticator implements AuthenticatorInterface
         }
     }
 
+    /**
+     * @param string[] $arguments
+     */
     public function __invoke(array $arguments): bool
     {
         $user = $arguments["user"];
@@ -74,6 +84,6 @@ final class PdoAuthenticator implements AuthenticatorInterface
                  LIMIT 1";
         }
 
-        return preg_replace("!\s+!", " ", $sql);
+        return (string) preg_replace("!\s+!", " ", $sql);
     }
 }

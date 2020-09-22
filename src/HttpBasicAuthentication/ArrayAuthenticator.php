@@ -18,10 +18,16 @@ namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 final class ArrayAuthenticator implements AuthenticatorInterface
 {
-
+    /**
+     * Stores all the options passed to the authenticator.
+     * @var mixed[]
+     */
     private $options;
 
-    public function __construct($options = null)
+    /**
+     * @param mixed[] $options
+     */
+    public function __construct(array $options = [])
     {
 
         /* Default options. */
@@ -30,10 +36,13 @@ final class ArrayAuthenticator implements AuthenticatorInterface
         ];
 
         if ($options) {
-            $this->options = array_merge($this->options, (array)$options);
+            $this->options = array_merge($this->options, $options);
         }
     }
 
+    /**
+     * @param string[] $arguments
+     */
     public function __invoke(array $arguments): bool
     {
         $user = $arguments["user"];
@@ -53,7 +62,7 @@ final class ArrayAuthenticator implements AuthenticatorInterface
         }
     }
 
-    private static function isHash($password): bool
+    private static function isHash(string $password): bool
     {
         return preg_match('/^\$(2|2a|2y)\$\d{2}\$.*/', $password) && (strlen($password) >= 60);
     }
