@@ -10,9 +10,9 @@ php:
 
 jobs:
     fast_finish: true
-    env:
-    global:
-        - COMPOSER_ARGS="--no-interaction"
+    include:
+    - php: nightly
+      env: COMPOSER_ARGS="--no-interaction --ignore-platform-reqs"
     allow_failures:
         - php: nightly
 
