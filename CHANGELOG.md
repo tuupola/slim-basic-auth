@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file, in reverse chronological order by release.
 
-# [3.3.0](https://github.com/tuupola//slim-basic-auth/compare/3.2.1...master) - unreleased
+# [3.3.0](https://github.com/tuupola//slim-basic-auth/compare/3.2.1...3.3.0) - 2020-09-23
 
 ### Added
 - Allow installing with PHP 8 ([#99](https://github.com/tuupola/slim-basic-auth/pull/99/files)).
