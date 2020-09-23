@@ -21,18 +21,27 @@ use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use SplStack;
 use Tuupola\Http\Factory\ResponseFactory;
 use Tuupola\Middleware\DoublePassTrait;
 use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
+use Tuupola\Middleware\HttpBasicAuthentication\RuleInterface;
 
 final class HttpBasicAuthentication implements MiddlewareInterface
 {
     use DoublePassTrait;
 
+    /**
+     * @var SplStack<RuleInterface>
+     */
     private $rules;
+
+    /**
+     * @var mixed[]
+     */
     private $options = [
         "secure" => true,
         "relaxed" => ["localhost", "127.0.0.1"],
@@ -46,10 +55,13 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         "error" => null
     ];
 
-    public function __construct($options = [])
+    /**
+     * @param mixed[] $options
+     */
+    public function __construct(array $options = [])
     {
         /* Setup stack for rules */
-        $this->rules = new \SplStack;
+        $this->rules = new SplStack;
 
         /* Store passed in options overwriting any defaults */
         $this->hydrate($options);
@@ -170,6 +182,8 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
     /**
      * Hydrate all options from given array.
+     *
+     * @param mixed[] $data
      */
     private function hydrate(array $data = []): void
     {
@@ -180,6 +194,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
             $method = str_replace(" ", "", $method);
             if (method_exists($this, $method)) {
                 /* Try to use setter */
+                /** @phpstan-ignore-next-line */
                 call_user_func([$this, $method], $value);
             } else {
                 /* Or fallback to setting option directly */
@@ -204,6 +219,8 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
     /**
      * Execute the error handler.
+     *
+     * @param mixed[] $arguments
      */
     private function processError(ResponseInterface $response, array $arguments): ResponseInterface
     {
@@ -218,6 +235,8 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
     /**
      * Set path where middleware should bind to.
+     *
+     * @param string|string[] $path
      */
     private function path($path): void
     {
@@ -225,6 +244,8 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     }
     /**
      * Set path which middleware ignores.
+     *
+     * @param string[] $ignore
      */
     private function ignore($ignore): void
     {
@@ -241,6 +262,8 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
     /**
      * Set the users array.
+     *
+     * @param string[] $users
      */
     private function users(array $users): void
     {
@@ -257,6 +280,8 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
     /**
      * Set hosts where secure rule is relaxed.
+     *
+     * @param string[] $relaxed
      */
     private function relaxed(array $relaxed): void
     {
@@ -289,10 +314,15 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
     /**
      * Set the rules
+     *
+     * @param RuleInterface[] $rules
      */
-    private function rules(array $rules)
+    private function rules(array $rules): void
     {
-        $this->rules = $rules;
+        $this->rules = new SplStack;
+        foreach ($rules as $callable) {
+            $this->rules->push($callable);
+        }
     }
 
     /**
@@ -301,14 +331,14 @@ final class HttpBasicAuthentication implements MiddlewareInterface
      * Rules must be callables which return a boolean. If any of the rules return
      * boolean false current request will not be authenticated.
      *
-     * @param array $rules
+     * @param RuleInterface[] $rules
      */
     public function withRules(array $rules): self
     {
         $new = clone $this;
         /* Clear the stack */
         unset($new->rules);
-        $new->rules = new \SplStack;
+        $new->rules = new SplStack;
 
         /* Add the rules */
         foreach ($rules as $callable) {
