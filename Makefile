@@ -27,7 +27,7 @@ unit:
 	phpdbg -qrr vendor/bin/phpunit --coverage-text --coverage-clover=coverage.xml --coverage-html=./report/
 
 static:
-	vendor/bin/phpstan analyse src --level max -c phpstan.neon
+	vendor/bin/phpstan analyse src --level max
 
 watch:
 	find . -name "*.php" -not -path "./vendor/*" -o -name "*.json" -not -path "./vendor/*" | entr -c make test
