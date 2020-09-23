@@ -9,4 +9,5 @@ phpunit.xml
 /tests/_output/
 .phplint-cache
 coverage.xml
+.phpunit.result.cache
 
