@@ -43,4 +43,60 @@ All notable changes to this project will be documented in this file, in reverse 
 ### Removed
 - Most setters and getters for settings. Pass settings in an array only during initialization.
 
+## 2.3.0 - 2017-09-19
 
+### Added
+
+- Username is now passed to `error` callback when authentication fails.
+
+```php
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "users" => [
+        "root" => "t00r",
+        "somebody" => "passw0rd"
+    ],
+    "error" => function ($request, $response, $arguments) {
+        var_dump($arguments["user"]);
+        var_dump($arguments["message"]);
+    }
+]));
+```
+
+## 2.2.2 - 2017-02-27
+
+This is a security release.
+
+`RequestPathRule` now removes multiple slashes from the URI before determining whether the path should be authenticated or not. For HTTP client `/foo` and `//foo` are different URIs and technically valid according to [RFC3986](https://tools.ietf.org/html/rfc3986). However on serverside it depends on implementation and often `/foo`, `//foo` and even `/////foo` are considered a same route.
+
+Different PSR-7 implementations were behaving in different way. Diactoros [removes multiple leading slashes](https://github.com/zendframework/zend-diactoros/blob/master/CHANGELOG.md#104---2015-06-23). By default Slim does not alter any slashes. However when installed in subfolder [Slim removes all slashes](https://github.com/slimphp/Slim/issues/1554).
+
+This means if you are authenticating a subfolder, for example `/api` and Slim is installed in document root it was possible to bypass authentication by doing a request to `//api`. Problem did not exist if Slim was installed in subfolder. Diactoros was not affected.
+
+```php
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "path" => "/api",
+    "users" => [
+        "root" => "t00r",
+        "somebody" => "passw0rd"
+    ]
+]));
+```
+
+If you were using default setting of authenticating all routes you were not affected.
+
+```php
+$app->add(new \Slim\Middleware\HttpBasicAuthentication([
+    "users" => [
+        "root" => "t00r",
+        "somebody" => "passw0rd"
+    ]
+]));
+```
+
+### Fixed
+
+- Ported fix for bug [slim-jwt-auth/50](https://github.com/tuupola/slim-jwt-auth/issues/50) where in some cases it was possible to bypass authentication by adding multiple slashes to request URI.
+
+## Older
+
+I was lazy and did no keep a changelog before this.

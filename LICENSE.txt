@@ -1,6 +1,5 @@
-<?php
 
-/*
+The MIT License (MIT)
 
 Copyright (c) 2013-2020 Mika Tuupola
 
@@ -21,22 +20,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
-*/
-
-/**
- * @see       https://github.com/tuupola/slim-basic-auth
- * @license   https://www.opensource.org/licenses/mit-license.php
- */
-
-namespace Test;
-
-use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
-
-class FalseAuthenticator implements AuthenticatorInterface
-{
-    public function __invoke(array $arguments): bool
-    {
-        return false;
-    }
-}
