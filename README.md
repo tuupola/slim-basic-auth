@@ -5,7 +5,7 @@ This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/
 
 [![Latest Version](https://img.shields.io/packagist/v/tuupola/slim-basic-auth.svg?style=flat-square)](https://packagist.org/packages/tuupola/slim-basic-auth)
 [![Packagist](https://img.shields.io/packagist/dm/tuupola/slim-basic-auth.svg)](https://packagist.org/packages/tuupola/slim-basic-auth)
-[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.txt)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![Build Status](https://img.shields.io/travis/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://travis-ci.org/tuupola/slim-basic-auth)
 [![Coverage](https://img.shields.io/codecov/c/github/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://codecov.io/gh/tuupola/slim-basic-auth/branch/3.x)
 
@@ -334,6 +334,6 @@ If you discover any security related issues, please email tuupola@appelsiini.net
 
 ## License
 
-The MIT License (MIT). Please see [License File](https://github.com/tuupola/slim-basic-auth/blob/3.x/LICENSE.md) for more information.
+The MIT License (MIT). Please see [LICENSE](https://github.com/tuupola/slim-basic-auth/blob/3.x/LICENSE) for more information.
 
 
