@@ -83,7 +83,7 @@ final class PdoAuthenticator implements AuthenticatorInterface
     {
         $driver = $this->options["pdo"]->getAttribute(\PDO::ATTR_DRIVER_NAME);
 
-        /* Workaround to test without sqlsrv with Travis */
+        /* Workaround to test without sqlsrv with */
         if (defined("__PHPUNIT_ATTR_DRIVER_NAME__")) {
             $driver = __PHPUNIT_ATTR_DRIVER_NAME__;
         }
