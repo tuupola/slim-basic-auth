@@ -39,15 +39,14 @@ use Zend\Diactoros\Uri;
 
 class RequestMethodRuleTest extends TestCase
 {
-
     public function testShouldNotAuthenticateOptions()
     {
         $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("OPTIONS");
 
-        $response = new Response;
-        $rule = new RequestMethodRule;
+        $response = new Response();
+        $rule = new RequestMethodRule();
 
         $this->assertFalse($rule($request));
     }
@@ -58,8 +57,8 @@ class RequestMethodRuleTest extends TestCase
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("POST");
 
-        $response = new Response;
-        $rule = new RequestMethodRule;
+        $response = new Response();
+        $rule = new RequestMethodRule();
 
         $this->assertTrue($rule($request));
     }
@@ -70,8 +69,8 @@ class RequestMethodRuleTest extends TestCase
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("GET");
 
-        $response = new Response;
-        $rule = new RequestMethodRule;
+        $response = new Response();
+        $rule = new RequestMethodRule();
 
         $this->assertTrue($rule($request));
     }
@@ -82,8 +81,8 @@ class RequestMethodRuleTest extends TestCase
             ->withUri(new Uri("https://example.com/api"))
             ->withMethod("GET");
 
-        $response = new Response;
-        $rule = new RequestMethodRule;
+        $response = new Response();
+        $rule = new RequestMethodRule();
 
         $rule = new RequestMethodRule([
             "ignore" => ["GET"]

@@ -35,7 +35,6 @@ use PHPUnit\Framework\TestCase;
 
 class PdoAuthenticatorTest extends TestCase
 {
-
     public $pdo;
 
     public function setup(): void
