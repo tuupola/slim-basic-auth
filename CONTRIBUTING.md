@@ -31,7 +31,7 @@ When in doubt see Tim Pope's blogpost [A Note About Git Commit Messages](http://
 
 ## Follow the existing coding standards
 
-Code should look like it is written by one person. Follow the original coding standard. It might be different than yours but it is not a holy war. This project uses **[PSR-2 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-2-coding-style-guide.md)**.
+Code should look like it is written by one person. Follow the original coding standard. It might be different than yours but it is not a holy war. This project uses **[PSR-12 Coding Standard](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-12-extended-coding-style-guide.md)**.
 
 ## Include tests
 

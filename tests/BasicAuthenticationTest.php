@@ -55,10 +55,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn200WithoutPassword()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/public");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -82,10 +82,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn401WithoutPassword()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => ["/admin"],
@@ -110,11 +110,11 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn200WithPassword()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -138,10 +138,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn200WithOptions()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("OPTIONS", "https://example.com/admin/item");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -165,10 +165,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn200WithoutPasswordWithAnonymousFunction()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -196,10 +196,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn200WithIgnore()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/ping");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -224,11 +224,11 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn401WithFromAfter()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -239,7 +239,7 @@ class HttpBasicAuthenticationTest extends TestCase
             ],
             "after" => function ($response, $arguments) {
                 return $response
-                    ->withBody((new StreamFactory)->createStream())
+                    ->withBody((new StreamFactory())->createStream())
                     ->withStatus(401)
                     ->withHeader("WWW-Authenticate", 'Basic realm="Go away!"');
             }
@@ -259,11 +259,11 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldAlterResponseWithAfter()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -290,10 +290,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldCallErrorHandlerWith401()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -321,10 +321,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testErrorHandlerShouldAlterHeaders()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -354,10 +354,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn200WithTrueAuthenticator()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -378,10 +378,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn401WithFalseAuthenticator()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -402,10 +402,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn200WithAnonymousFunction()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -428,11 +428,11 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldReturn401WithAnonymousFunction()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -455,11 +455,11 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldModifyRequestUsingBefore()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin/item")
             ->withHeader("Authorization", "Basic cm9vdDp0MDBy");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
@@ -489,10 +489,10 @@ class HttpBasicAuthenticationTest extends TestCase
     {
         $this->expectException("RuntimeException");
 
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "http://example.com/api");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/api",
@@ -512,10 +512,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldRelaxInsecureInLocalhost()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "http://localhost/api");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "secure" => true,
@@ -538,10 +538,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldRelaxInsecureViaSetting()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "http://example.com/api");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "secure" => true,
@@ -565,12 +565,12 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldRelaxForwardedViaSetting()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "http://example.com/api")
             ->withHeader("X-Forwarded-Proto", "https")
             ->withHeader("X-Forwarded-Port", "443");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "secure" => true,
@@ -602,8 +602,8 @@ class HttpBasicAuthenticationTest extends TestCase
             ]
         ]);
 
-        $auth2 = $auth->addRule(new TrueRule);
-        $auth3 = $auth->withRules([new TrueRule]);
+        $auth2 = $auth->addRule(new TrueRule());
+        $auth3 = $auth->withRules([new TrueRule()]);
 
         /* Closure kludge to test private properties. */
         $self = $this;
@@ -626,13 +626,13 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldHandlePsr15()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $default = function (RequestInterface $request) {
-            $response = (new ResponseFactory)->createResponse();
+            $response = (new ResponseFactory())->createResponse();
             $response->getBody()->write("Success");
             return $response;
         };
@@ -651,11 +651,11 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testShouldHandleRulesArrayBug()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/api");
 
         $default = function (ServerRequestInterface $request) {
-            $response = (new ResponseFactory)->createResponse();
+            $response = (new ResponseFactory())->createResponse();
             $response->getBody()->write("Success");
             return $response;
         };
@@ -683,7 +683,7 @@ class HttpBasicAuthenticationTest extends TestCase
         $this->assertEquals(401, $response->getStatusCode());
         $this->assertEquals("", $response->getBody());
 
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/api/login");
 
         $response = $collection->dispatch($request, $default);
@@ -696,10 +696,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testBug2UrlShouldMatchRegex()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/status/foo");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/stat",
@@ -723,10 +723,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testBug3ShouldReturn401WithoutTrailingSlash()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/",
@@ -750,10 +750,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testBug3ShouldReturn401WithTrailingSlash()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/admin");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => "/",
@@ -777,10 +777,10 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testBug9ShouldAllowUnauthenticatedHttp()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/public/foo");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => ["/api", "/bar"],
@@ -804,11 +804,11 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testBug31ShouldAllowColonInPassword()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/api/foo")
             ->withHeader("Authorization", "Basic Zm9vOmJhcjpwb3A=");
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => ["/api", "/bar"],
@@ -831,11 +831,11 @@ class HttpBasicAuthenticationTest extends TestCase
 
     public function testPull59ShouldNotErrorWithMalformedCredentials()
     {
-        $request = (new ServerRequestFactory)
+        $request = (new ServerRequestFactory())
             ->createServerRequest("GET", "https://example.com/api/foo")
             ->withHeader("Authorization", "Basic Zm9vCg=="); /* foo */
 
-        $response = (new ResponseFactory)->createResponse();
+        $response = (new ResponseFactory())->createResponse();
 
         $auth = new HttpBasicAuthentication([
             "path" => ["/api", "/bar"],

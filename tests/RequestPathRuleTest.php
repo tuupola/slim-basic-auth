@@ -39,7 +39,6 @@ use Zend\Diactoros\Uri;
 
 class RequestPathTest extends TestCase
 {
-
     public function testShouldAcceptArrayAndStringAsPath()
     {
         $request = (new ServerRequest())
@@ -138,28 +137,28 @@ class RequestPathTest extends TestCase
 
     public function testBug50ShouldAuthenticateMultipleSlashes()
     {
-        $request = (new ServerRequest)
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/"))
             ->withMethod("GET");
         $rule = new RequestPathRule(["path" => "/v1/api"]);
         $this->assertFalse($rule($request));
-        $request = (new ServerRequest)
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/v1/api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
-        $request = (new ServerRequest)
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/v1//api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
-        $request = (new ServerRequest)
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/v1//////api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
-        $request = (new ServerRequest)
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com//v1/api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));
-        $request = (new ServerRequest)
+        $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com//////v1/api"))
             ->withMethod("GET");
         $this->assertTrue($rule($request));

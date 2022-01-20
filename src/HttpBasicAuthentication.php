@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 /*
 
 Copyright (c) 2013-2020 Mika Tuupola
@@ -30,6 +28,8 @@ SOFTWARE.
  * @see       https://github.com/tuupola/slim-basic-auth
  * @license   https://www.opensource.org/licenses/mit-license.php
  */
+
+ declare(strict_types=1);
 
 namespace Tuupola\Middleware;
 
@@ -78,7 +78,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     public function __construct(array $options = [])
     {
         /* Setup stack for rules */
-        $this->rules = new SplStack;
+        $this->rules = new SplStack();
 
         /* Store passed in options overwriting any defaults */
         $this->hydrate($options);
@@ -133,7 +133,8 @@ final class HttpBasicAuthentication implements MiddlewareInterface
             /* if 'headers' is in the 'relaxed' key, then we check for forwarding */
             $allowedForward = false;
             if (in_array("headers", $this->options["relaxed"])) {
-                if ($request->getHeaderLine("X-Forwarded-Proto") === "https"
+                if (
+                    $request->getHeaderLine("X-Forwarded-Proto") === "https"
                     && $request->getHeaderLine('X-Forwarded-Port') === "443"
                 ) {
                     $allowedForward = true;
@@ -162,7 +163,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         /* Check if user authenticates. */
         if (false === $this->options["authenticator"]($params)) {
             /* Set response headers before giving it to error callback */
-            $response = (new ResponseFactory)
+            $response = (new ResponseFactory())
                 ->createResponse(401)
                 ->withHeader(
                     "WWW-Authenticate",
@@ -176,7 +177,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
         /* Modify $request before calling next middleware. */
         if (is_callable($this->options["before"])) {
-            $response = (new ResponseFactory)->createResponse(200);
+            $response = (new ResponseFactory())->createResponse(200);
             $before_request = $this->options["before"]($request, $params);
             if ($before_request instanceof ServerRequestInterface) {
                 $request = $before_request;
@@ -336,7 +337,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
      */
     private function rules(array $rules): void
     {
-        $this->rules = new SplStack;
+        $this->rules = new SplStack();
         foreach ($rules as $callable) {
             $this->rules->push($callable);
         }
@@ -355,7 +356,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         $new = clone $this;
         /* Clear the stack */
         unset($new->rules);
-        $new->rules = new SplStack;
+        $new->rules = new SplStack();
 
         /* Add the rules */
         foreach ($rules as $callable) {
