@@ -153,10 +153,13 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         /* Just in case. */
         $params = ["user" => null, "password" => null];
 
-        if (preg_match("/Basic\s+(.*)$/i", $request->getHeaderLine("Authorization"), $matches)) {
-            $explodedCredential = explode(":", base64_decode($matches[1]), 2);
-            if (count($explodedCredential) == 2) {
-                list($params["user"], $params["password"]) = $explodedCredential;
+        $authheader = explode(",", $request->getHeaderLine("Authorization"));
+        foreach ($authheader as $h) {
+            if (preg_match("/Basic\s+(.*)$/i", $h, $matches)) {
+                $explodedCredential = explode(":", base64_decode($matches[1]), 2);
+                if (count($explodedCredential) == 2) {
+                    list($params["user"], $params["password"]) = $explodedCredential;
+                }
             }
         }
 
