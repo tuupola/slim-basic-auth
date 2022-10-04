@@ -65,7 +65,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         "authenticator" => null,
         "before" => null,
         "after" => null,
-        "error" => null
+        "error" => null,
     ];
 
     /**
@@ -82,14 +82,14 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         /* If array of users was passed in options create an authenticator */
         if (is_array($this->options["users"])) {
             $this->options["authenticator"] = new ArrayAuthenticator([
-                "users" => $this->options["users"]
+                "users" => $this->options["users"],
             ]);
         }
 
         /* If nothing was passed in options add default rules. */
         if (!isset($options["rules"])) {
             $this->rules->push(new RequestMethodRule([
-                "ignore" => ["OPTIONS"]
+                "ignore" => ["OPTIONS"],
             ]));
         }
 
@@ -97,7 +97,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         if (null !== $this->options["path"]) {
             $this->rules->push(new RequestPathRule([
                 "path" => $this->options["path"],
-                "ignore" => $this->options["ignore"]
+                "ignore" => $this->options["ignore"],
             ]));
         }
 
@@ -147,7 +147,10 @@ final class HttpBasicAuthentication implements MiddlewareInterface
         }
 
         /* Just in case. */
-        $params = ["user" => null, "password" => null];
+        $params = [
+            "user" => null,
+            "password" => null,
+        ];
 
         if (preg_match("/Basic\s+(.*)$/i", $request->getHeaderLine("Authorization"), $matches)) {
             $explodedCredential = explode(":", base64_decode($matches[1]), 2);
@@ -167,7 +170,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
                 );
 
             return $this->processError($response, [
-                "message" => "Authentication failed"
+                "message" => "Authentication failed",
             ]);
         }
 
