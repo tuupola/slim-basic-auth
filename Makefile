@@ -4,7 +4,7 @@ help:
 	@echo ""
 	@echo "Available tasks:"
 	@echo "    test    		Run all tests and generate coverage"
-	@echo "    watch   		Run all tests and coverage when a source file is upaded"
+	@echo "    watch   		Run all tests and coverage when a source file is updated"
 	@echo "    lint    		Run linter and code style checker"
 	@echo "    lint-fix		Fix linter and code style checker errors"
 	@echo "    rector		Do a Rector dry run"
