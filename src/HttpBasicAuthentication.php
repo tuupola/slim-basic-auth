@@ -51,14 +51,10 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 {
     use DoublePassTrait;
 
-    /**
-     * @var SplStack<RuleInterface>
-     */
+    /** @var SplStack<RuleInterface> */
     private $rules;
 
-    /**
-     * @var mixed[]
-     */
+    /** @var mixed[] */
     private $options = [
         "secure" => true,
         "relaxed" => ["localhost", "127.0.0.1"],
@@ -260,6 +256,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     {
         $this->options["path"] = (array) $path;
     }
+
     /**
      * Set path which middleware ignores.
      *
