@@ -32,9 +32,9 @@ SOFTWARE.
 namespace Tuupola\Middleware\HttpBasicAuthentication;
 
 use PHPUnit\Framework\TestCase;
+use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequest;
 use Zend\Diactoros\ServerRequestFactory;
-use Zend\Diactoros\Response;
 use Zend\Diactoros\Uri;
 
 class RequestPathTest extends TestCase

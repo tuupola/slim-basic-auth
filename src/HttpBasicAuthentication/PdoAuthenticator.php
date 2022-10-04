@@ -46,7 +46,6 @@ final class PdoAuthenticator implements AuthenticatorInterface
      */
     public function __construct(array $options = [])
     {
-
         /* Default options. */
         $this->options = [
             "table" => "users",

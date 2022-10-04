@@ -24,25 +24,25 @@ SOFTWARE.
 
 */
 
- /**
-  * @see       https://github.com/tuupola/slim-basic-auth
-  * @license   https://www.opensource.org/licenses/mit-license.php
-  */
+/**
+ * @see       https://github.com/tuupola/slim-basic-auth
+ * @license   https://www.opensource.org/licenses/mit-license.php
+ */
 
- declare(strict_types=1);
+declare(strict_types=1);
 
 namespace Tuupola\Middleware;
 
 use Closure;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use SplStack;
 use Tuupola\Http\Factory\ResponseFactory;
 use Tuupola\Middleware\DoublePassTrait;
-use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use Tuupola\Middleware\HttpBasicAuthentication\ArrayAuthenticator;
+use Tuupola\Middleware\HttpBasicAuthentication\AuthenticatorInterface;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestMethodRule;
 use Tuupola\Middleware\HttpBasicAuthentication\RequestPathRule;
 use Tuupola\Middleware\HttpBasicAuthentication\RuleInterface;
