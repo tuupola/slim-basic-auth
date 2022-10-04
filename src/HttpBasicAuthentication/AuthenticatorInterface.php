@@ -24,10 +24,10 @@ SOFTWARE.
 
 */
 
-/**
- * @see       https://github.com/tuupola/slim-basic-auth
- * @license   https://www.opensource.org/licenses/mit-license.php
- */
+ /**
+  * @see       https://github.com/tuupola/slim-basic-auth
+  * @license   https://www.opensource.org/licenses/mit-license.php
+  */
 
  declare(strict_types=1);
 

@@ -24,10 +24,10 @@ SOFTWARE.
 
 */
 
-/**
- * @see       https://github.com/tuupola/slim-basic-auth
- * @license   https://www.opensource.org/licenses/mit-license.php
- */
+ /**
+  * @see       https://github.com/tuupola/slim-basic-auth
+  * @license   https://www.opensource.org/licenses/mit-license.php
+  */
 
  declare(strict_types=1);
 
@@ -51,10 +51,14 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 {
     use DoublePassTrait;
 
-    /** @var SplStack<RuleInterface> */
+    /**
+     * @var SplStack<RuleInterface>
+     */
     private $rules;
 
-    /** @var mixed[] */
+    /**
+     * @var mixed[]
+     */
     private $options = [
         "secure" => true,
         "relaxed" => ["localhost", "127.0.0.1"],
