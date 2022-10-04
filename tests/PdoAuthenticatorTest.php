@@ -91,7 +91,7 @@ class PdoAuthenticatorTest extends TestCase
 
         $this->assertEquals(
             "SELECT * FROM users WHERE user = ? LIMIT 1",
-            $authenticator->sql("root", "nosuch")
+            $authenticator->sql()
         );
     }
 
@@ -105,7 +105,7 @@ class PdoAuthenticatorTest extends TestCase
         ]);
         $this->assertEquals(
             "SELECT TOP 1 * FROM users WHERE user = ?",
-            $authenticator->sql("root", "nosuch")
+            $authenticator->sql()
         );
     }
 }
