@@ -85,7 +85,7 @@ class RequestMethodRuleTest extends TestCase
         $rule = new RequestMethodRule();
 
         $rule = new RequestMethodRule([
-            "ignore" => ["GET"]
+            "ignore" => ["GET"],
         ]);
 
         $this->assertFalse($rule($request));

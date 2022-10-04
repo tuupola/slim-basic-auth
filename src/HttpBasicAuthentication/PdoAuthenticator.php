@@ -51,7 +51,7 @@ final class PdoAuthenticator implements AuthenticatorInterface
         $this->options = [
             "table" => "users",
             "user" => "user",
-            "hash" => "hash"
+            "hash" => "hash",
         ];
 
         if ($options) {

@@ -42,7 +42,7 @@ final class RequestMethodRule implements RuleInterface
      * @var mixed[]
      */
     protected $options = [
-        "ignore" => ["OPTIONS"]
+        "ignore" => ["OPTIONS"],
     ];
 
     /**

@@ -65,8 +65,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -92,8 +92,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Not sure",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -121,8 +121,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -148,8 +148,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -175,8 +175,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $auth = $auth->addrule(function ($request) {
@@ -207,8 +207,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -235,14 +235,14 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
+                "user" => "passw0rd",
             ],
             "after" => function ($response, $arguments) {
                 return $response
                     ->withBody((new StreamFactory())->createStream())
                     ->withStatus(401)
                     ->withHeader("WWW-Authenticate", 'Basic realm="Go away!"');
-            }
+            },
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -270,11 +270,11 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
+                "user" => "passw0rd",
             ],
             "after" => function ($response, $arguments) {
                 return $response->withHeader("X-Brawndo", "plants crave");
-            }
+            },
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -300,12 +300,12 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
+                "user" => "passw0rd",
             ],
             "error" => function ($response, $arguments) {
                 $response->getBody()->write("ERROR: " . $arguments["message"]);
                 return $response;
-            }
+            },
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -331,13 +331,13 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
+                "user" => "passw0rd",
             ],
             "error" => function ($response, $arguments) {
                 return $response
                     ->withStatus(302)
                     ->withHeader("Location", "/foo/bar");
-            }
+            },
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -362,7 +362,7 @@ class HttpBasicAuthenticationTest extends TestCase
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "authenticator" => new \Test\TrueAuthenticator()
+            "authenticator" => new \Test\TrueAuthenticator(),
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -386,7 +386,7 @@ class HttpBasicAuthenticationTest extends TestCase
         $auth = new HttpBasicAuthentication([
             "path" => "/admin",
             "realm" => "Protected",
-            "authenticator" => new \Test\FalseAuthenticator()
+            "authenticator" => new \Test\FalseAuthenticator(),
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -412,7 +412,7 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "authenticator" => function ($arguments) {
                 return true;
-            }
+            },
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -439,7 +439,7 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "authenticator" => function ($arguments) {
                 return false;
-            }
+            },
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -466,11 +466,11 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
+                "user" => "passw0rd",
             ],
             "before" => function ($request, $arguments) {
                 return $request->withAttribute("user", $arguments["user"]);
-            }
+            },
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -498,8 +498,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "path" => "/api",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -522,8 +522,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "path" => "/api",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -549,8 +549,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "path" => "/api",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -578,8 +578,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "path" => "/api",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -598,8 +598,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "path" => "/api",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $auth2 = $auth->addRule(new TrueRule());
@@ -640,9 +640,9 @@ class HttpBasicAuthenticationTest extends TestCase
             new HttpBasicAuthentication([
                 "users" => [
                     "root" => "t00r",
-                    "user" => "passw0rd"
-                ]
-            ])
+                    "user" => "passw0rd",
+                ],
+            ]),
         ]);
         $response = $collection->dispatch($request, $default);
         $this->assertEquals(401, $response->getStatusCode());
@@ -664,7 +664,7 @@ class HttpBasicAuthenticationTest extends TestCase
             new HttpBasicAuthentication([
                 "users" => [
                     "root" => "t00r",
-                    "user" => "passw0rd"
+                    "user" => "passw0rd",
                 ],
                 "rules" => [
                     new RequestPathRule([
@@ -673,9 +673,9 @@ class HttpBasicAuthenticationTest extends TestCase
                     ]),
                     new RequestMethodRule([
                         "ignore" => ["OPTIONS"],
-                    ])
+                    ]),
                 ],
-            ])
+            ]),
         ]);
 
         $response = $collection->dispatch($request, $default);
@@ -706,8 +706,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -733,8 +733,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -760,8 +760,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -787,8 +787,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "realm" => "Protected",
             "users" => [
                 "root" => "t00r",
-                "user" => "passw0rd"
-            ]
+                "user" => "passw0rd",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -814,8 +814,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "path" => ["/api", "/bar"],
             "realm" => "Protected",
             "users" => [
-                "foo" => "bar:pop"
-            ]
+                "foo" => "bar:pop",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {
@@ -841,8 +841,8 @@ class HttpBasicAuthenticationTest extends TestCase
             "path" => ["/api", "/bar"],
             "realm" => "Protected",
             "users" => [
-                "foo" => "bar"
-            ]
+                "foo" => "bar",
+            ],
         ]);
 
         $next = function (ServerRequestInterface $request, ResponseInterface $response) {

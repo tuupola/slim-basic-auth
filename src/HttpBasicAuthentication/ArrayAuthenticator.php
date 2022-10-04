@@ -49,7 +49,7 @@ final class ArrayAuthenticator implements AuthenticatorInterface
 
         /* Default options. */
         $this->options = [
-            "users" => []
+            "users" => [],
         ];
 
         if ($options) {

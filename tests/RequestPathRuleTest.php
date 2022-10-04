@@ -45,10 +45,14 @@ class RequestPathTest extends TestCase
             ->withUri(new Uri("https://example.com/admin/protected"))
             ->withMethod("GET");
 
-        $rule = new RequestPathRule(["path" => "/admin"]);
+        $rule = new RequestPathRule([
+            "path" => "/admin",
+        ]);
         $this->assertTrue($rule($request));
 
-        $rule = new RequestPathRule(["path" => ["/admin"]]);
+        $rule = new RequestPathRule([
+            "path" => ["/admin"],
+        ]);
         $this->assertTrue($rule($request));
     }
 
@@ -58,7 +62,9 @@ class RequestPathTest extends TestCase
             ->withUri(new Uri("https://example.com/"))
             ->withMethod("GET");
 
-        $rule = new RequestPathRule(["path" => "/"]);
+        $rule = new RequestPathRule([
+            "path" => "/",
+        ]);
         $this->assertTrue($rule($request));
 
         $request = (new ServerRequest())
@@ -74,7 +80,9 @@ class RequestPathTest extends TestCase
             ->withUri(new Uri("https://example.com/"))
             ->withMethod("GET");
 
-        $rule = new RequestPathRule(["path" => "/api"]);
+        $rule = new RequestPathRule([
+            "path" => "/api",
+        ]);
         $this->assertFalse($rule($request));
 
         $request = (new ServerRequest())
@@ -88,7 +96,7 @@ class RequestPathTest extends TestCase
     {
         /* Authenticate only create and list actions */
         $rule = new RequestPathRule([
-            "path" => ["/api/create", "/api/list"]
+            "path" => ["/api/create", "/api/list"],
         ]);
 
         /* Should not authenticate */
@@ -124,7 +132,7 @@ class RequestPathTest extends TestCase
 
         $rule = new RequestPathRule([
             "path" => "/api",
-            "ignore" => ["/api/login"]
+            "ignore" => ["/api/login"],
         ]);
         $this->assertTrue($rule($request));
 
@@ -140,7 +148,9 @@ class RequestPathTest extends TestCase
         $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/"))
             ->withMethod("GET");
-        $rule = new RequestPathRule(["path" => "/v1/api"]);
+        $rule = new RequestPathRule([
+            "path" => "/v1/api",
+        ]);
         $this->assertFalse($rule($request));
         $request = (new ServerRequest())
             ->withUri(new Uri("https://example.com/v1/api"))

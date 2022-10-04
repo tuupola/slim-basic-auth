@@ -60,24 +60,33 @@ class PdoAuthenticatorTest extends TestCase
     public function testShouldReturnTrue()
     {
         $authenticator = new PdoAuthenticator([
-            "pdo" => $this->pdo
+            "pdo" => $this->pdo,
         ]);
-        $this->assertTrue($authenticator(["user" => "root", "password" => "t00r"]));
+        $this->assertTrue($authenticator([
+            "user" => "root",
+            "password" => "t00r",
+        ]));
     }
 
     public function testShouldReturnFalse()
     {
         $authenticator = new PdoAuthenticator([
-            "pdo" => $this->pdo
+            "pdo" => $this->pdo,
         ]);
-        $this->assertFalse($authenticator(["user" => "root", "password" => "nosuch"]));
-        $this->assertFalse($authenticator(["user" => "nosuch", "password" => "nosuch"]));
+        $this->assertFalse($authenticator([
+            "user" => "root",
+            "password" => "nosuch",
+        ]));
+        $this->assertFalse($authenticator([
+            "user" => "nosuch",
+            "password" => "nosuch",
+        ]));
     }
 
     public function testShouldUseLimit()
     {
         $authenticator = new PdoAuthenticator([
-            "pdo" => $this->pdo
+            "pdo" => $this->pdo,
         ]);
 
         $this->assertEquals(
@@ -92,7 +101,7 @@ class PdoAuthenticatorTest extends TestCase
         define("__PHPUNIT_ATTR_DRIVER_NAME__", "sqlsrv");
 
         $authenticator = new PdoAuthenticator([
-            "pdo" => $this->pdo
+            "pdo" => $this->pdo,
         ]);
         $this->assertEquals(
             "SELECT TOP 1 * FROM users WHERE user = ?",
