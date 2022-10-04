@@ -3,14 +3,16 @@
 help:
 	@echo ""
 	@echo "Available tasks:"
-	@echo "    test    	Run all tests and generate coverage"
-	@echo "    watch   	Run all tests and coverage when a source file is upaded"
-	@echo "    lint    	Run linter and code style checker"
-	@echo "    lint-fix	Fix linter and code style checker errors"
-	@echo "    unit    	Run unit tests and generate coverage"
-	@echo "    static  	Run static analysis"
-	@echo "    vendor  	Install dependencies"
-	@echo "    clean   	Remove vendor and composer.lock"
+	@echo "    test    		Run all tests and generate coverage"
+	@echo "    watch   		Run all tests and coverage when a source file is upaded"
+	@echo "    lint    		Run linter and code style checker"
+	@echo "    lint-fix		Fix linter and code style checker errors"
+	@echo "    rector		Do a Rector dry run"
+	@echo "    rector-fix 	Apply Rector rules to the code"
+	@echo "    unit    	  	Run unit tests and generate coverage"
+	@echo "    static  		Run static analysis"
+	@echo "    vendor  		Install dependencies"
+	@echo "    clean   		Remove vendor and composer.lock"
 	@echo ""
 
 vendor: $(wildcard composer.lock)
@@ -21,6 +23,13 @@ lint: vendor
 	vendor/bin/ecs check src tests
 
 lint-fix: vendor
+	vendor/bin/ecs check src tests --fix
+
+rector:
+	vendor/bin/rector --clear-cache --dry-run
+
+rector-fix:
+	vendor/bin/rector --clear-cache
 	vendor/bin/ecs check src tests --fix
 
 unit: vendor
