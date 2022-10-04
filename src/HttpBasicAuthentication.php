@@ -375,6 +375,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
     {
         $new = clone $this;
         $new->rules = clone $this->rules;
+        /* @phpstan-ignore-next-line */
         $new->rules->push($callable);
         return $new;
     }
