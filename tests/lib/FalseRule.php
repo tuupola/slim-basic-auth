@@ -31,8 +31,8 @@ SOFTWARE.
 
 namespace Test;
 
-use Tuupola\Middleware\HttpBasicAuthentication\RuleInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Tuupola\Middleware\HttpBasicAuthentication\RuleInterface;
 
 class FalseRule implements RuleInterface
 {

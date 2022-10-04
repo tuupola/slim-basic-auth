@@ -36,14 +36,14 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Test\TrueRule;
+use Test\FalseAuthenticator;
 use Test\FalseRule;
 use Test\TrueAuthenticator;
-use Test\FalseAuthenticator;
-use Tuupola\Middleware\HttpBasicAuthentication;
+use Test\TrueRule;
 use Tuupola\Http\Factory\ResponseFactory;
 use Tuupola\Http\Factory\ServerRequestFactory;
 use Tuupola\Http\Factory\StreamFactory;
+use Tuupola\Middleware\HttpBasicAuthentication;
 
 class HttpBasicAuthenticationTest extends TestCase
 {
