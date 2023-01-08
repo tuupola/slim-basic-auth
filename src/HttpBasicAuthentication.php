@@ -175,6 +175,7 @@ final class HttpBasicAuthentication implements MiddlewareInterface
 
             return $this->processError($response, [
                 "message" => "Authentication failed",
+                "params" => $params,
             ]);
         }
 
