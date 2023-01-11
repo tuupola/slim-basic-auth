@@ -6,7 +6,7 @@ This middleware implements [HTTP Basic Authentication](https://en.wikipedia.org/
 [![Latest Version](https://img.shields.io/packagist/v/tuupola/slim-basic-auth.svg?style=flat-square)](https://packagist.org/packages/tuupola/slim-basic-auth)
 [![Packagist](https://img.shields.io/packagist/dm/tuupola/slim-basic-auth.svg)](https://packagist.org/packages/tuupola/slim-basic-auth)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![Build Status](https://img.shields.io/github/workflow/status/tuupola/slim-basic-auth/Tests/3.x?style=flat-square)](https://github.com/tuupola/slim-basic-auth/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/tuupola/slim-basic-auth/tests.yml?branch=3.x&style=flat-square)](https://github.com/tuupola/slim-basic-auth/actions)
 [![Coverage](https://img.shields.io/codecov/c/github/tuupola/slim-basic-auth/3.x.svg?style=flat-square)](https://codecov.io/gh/tuupola/slim-basic-auth/branch/3.x)
 
 Heads up! You are reading documentation for [3.x branch](https://github.com/tuupola/slim-basic-auth/tree/3.x) which is PHP 7.1 and up only. If you are using older version of PHP see the [2.x branch](https://github.com/tuupola/slim-basic-auth/tree/2.x). These two branches are not backwards compatible, see [UPGRADING](https://github.com/tuupola/slim-basic-auth/blob/3.x/UPGRADING.md) for instructions how to upgrade.
@@ -335,5 +335,3 @@ If you discover any security related issues, please email tuupola@appelsiini.net
 ## License
 
 The MIT License (MIT). Please see [LICENSE](https://github.com/tuupola/slim-basic-auth/blob/3.x/LICENSE) for more information.
-
-
